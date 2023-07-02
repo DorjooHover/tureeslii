@@ -15,8 +15,11 @@ class Routes {
   static String profile = '$menu/profile';
   static String changeCity = '$menu/changeCity';
   static String editProfile = '$profile/edit';
-
+  // notification
   static String notification = '/notification';
+  // location
+  static String location = '/location';
+
   // auth
   static String auth = '/auth';
   static String register = '/register';
@@ -38,6 +41,9 @@ class Routes {
   static String getAcceptedOrderRoute() => acceptedOrder;
   static String getNotificationRoute() => notification;
   static String getSplashRoute() => splash;
+  // location
+  static String getLocationRoute() => location;
+  // auth
   static String getLoginRoute() => auth;
   static String getRegisterRoute() => register;
   static String getRegisterCustomRoute() => registerCustom;
@@ -88,6 +94,13 @@ class Routes {
         page: () => SignInView(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 1000)),
+    // location
+    GetPage(
+        name: location,
+        page: () => const LocationView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 1000)),
+
     // notification
     GetPage(
         name: notification,

@@ -14,7 +14,7 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   List<Widget> views = [
-    const SizedBox(),
+    const LocationView(),
     const BookmarkView(),
     const NotificationView(),
     const OrderView(),

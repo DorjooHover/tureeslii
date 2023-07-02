@@ -43,6 +43,8 @@ dependencies:
   flutter_svg: ^2.0.4
   carousel_slider: ^4.2.1
   intl: ^0.18.0
+  google_maps_flutter: ^2.2.5
+  location: ^4.4.0
 
 dev_dependencies:
   flutter_test:
