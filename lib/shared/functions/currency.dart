@@ -1,4 +1,4 @@
-String currencyFormat(double value) {
+String currencyFormat(double value, bool isD) {
   String result = '';
   double temp = value;
   while (temp ~/ 1000 > 0) {
@@ -10,13 +10,13 @@ String currencyFormat(double value) {
       tempStr = temp2.toStringAsFixed(0).toString();
     }
     if (result.length > 2) {
-      result = "$tempStr'$result";
+      result = "$tempStr${isD ? "," : "'"}$result";
     } else {
       result = tempStr;
     }
     temp = temp / 1000;
   }
-  result = "${temp.toStringAsFixed(0)}'$result";
+  result = "${temp.toStringAsFixed(0)}${isD ? "," : "'"}$result";
 
   return result;
 }

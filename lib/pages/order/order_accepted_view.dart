@@ -104,7 +104,8 @@ class _OrderAcceptedViewState extends State<OrderAcceptedView> {
                                     left: 26,
                                     child: RichText(
                                       text: TextSpan(
-                                        text: '${currencyFormat(1250000)} ',
+                                        text:
+                                            '${currencyFormat(1250000, false)} ',
                                         style: Theme.of(context)
                                             .textTheme
                                             .displaySmall,

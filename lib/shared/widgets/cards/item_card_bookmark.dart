@@ -41,6 +41,12 @@ class BookmarkCard extends StatelessWidget {
                                     offset:
                                         const Offset(0, 4), // Shadow position
                                   ),
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.25),
+                                    blurRadius: 4,
+                                    spreadRadius: 0.25,
+                                    offset: const Offset(0, 0),
+                                  )
                                 ],
                               ),
                               child: ClipRRect(
@@ -107,7 +113,7 @@ class BookmarkCard extends StatelessWidget {
           children: [
             RichText(
               text: TextSpan(
-                text: '${currencyFormat(1250000)} ',
+                text: '${currencyFormat(1250000, false)} ',
                 style: Theme.of(context).textTheme.titleLarge,
                 children: <TextSpan>[
                   TextSpan(

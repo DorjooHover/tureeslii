@@ -47,6 +47,9 @@ const String otpString = 'Таны утасруу илгээсэн 4 оронт�
 
 // global
 const String or = 'Эсвэл';
+const String search = 'Хайлт хийх';
+const String search1 = 'Хайх';
+const String sort = 'Эрэмбэлэх';
 const String save = 'Хадгалах';
 const String verify = 'Баталгаажуулах';
 const String male = 'Эрэгтэй';

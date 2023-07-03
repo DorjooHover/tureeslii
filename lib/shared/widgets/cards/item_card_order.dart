@@ -106,7 +106,7 @@ class OrderCard extends StatelessWidget {
                 space4,
                 RichText(
                   text: TextSpan(
-                    text: '${currencyFormat(1250000)} ',
+                    text: '${currencyFormat(1250000, false)} ',
                     style: Theme.of(context).textTheme.titleLarge,
                     children: <TextSpan>[
                       TextSpan(

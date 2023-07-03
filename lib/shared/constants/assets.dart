@@ -10,7 +10,7 @@ const imageLogoMini = '${images}logo_mini.png';
 const imageAppBarText = '${images}appBarText.png';
 const imageLogoTextWhite = '${images}logoTextWhite.png';
 const imageLogoMiniYellow = '${images}logo_mini_yellow.png';
-
+const imageDot = '${images}dot.png';
 // icons
 const iconHeart = '${icons}heart.svg';
 const iconHeartActive = '${icons}heartRed.svg';
@@ -35,6 +35,9 @@ const iconNotVerified = '${icons}notVerified.svg';
 const iconEdit = '${icons}edit.svg';
 const iconDeleteAccount = '${icons}deleteAccount.svg';
 const iconLogout = '${icons}logout.svg';
+const iconSort = '${icons}sort.svg';
+const iconSearch = '${icons}search.svg';
+
 
 // navigation bar
 const navLocation = '${nav}marker.svg';

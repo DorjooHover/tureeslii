@@ -14,6 +14,7 @@ const double huge = 64.0;
 
 ///
 const SizedBox space8 = SizedBox(height: 8, width: 8);
+const SizedBox space2 = SizedBox(height: 2, width: 2);
 const SizedBox space4 = SizedBox(height: 4, width: 4);
 const SizedBox space6 = SizedBox(height: 6, width: 6);
 const SizedBox space10 = SizedBox(height: 10.0, width: 10.0);

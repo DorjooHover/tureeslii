@@ -19,6 +19,8 @@ class Routes {
   static String notification = '/notification';
   // location
   static String location = '/location';
+  static String locationFilter = '$location/filter';
+
 
   // auth
   static String auth = '/auth';
@@ -43,6 +45,8 @@ class Routes {
   static String getSplashRoute() => splash;
   // location
   static String getLocationRoute() => location;
+  static String getLocationFilterRoute() => locationFilter;
+ 
   // auth
   static String getLoginRoute() => auth;
   static String getRegisterRoute() => register;
@@ -100,6 +104,12 @@ class Routes {
         page: () => const LocationView(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 1000)),
+    GetPage(
+        name: locationFilter,
+        page: () => const FilterView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 1000)),
+
 
     // notification
     GetPage(
