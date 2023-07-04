@@ -22,7 +22,7 @@ const TextStyle headline = TextStyle(
 );
 const TextStyle headlineSmall = TextStyle(
   fontSize: 18,
-  color: black,
+  color: black ,
   height: 1.5,
   fontWeight: FontWeight.bold,
 );

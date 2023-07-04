@@ -112,7 +112,7 @@ class LoginView extends StatelessWidget {
                 MainIconButton(
                     text: register,
                     onPressed: () {
-                      Get.toNamed(Routes.getRegisterRoute());
+                      Get.toNamed(Routes.register);
                     },
                     back: true),
               ],

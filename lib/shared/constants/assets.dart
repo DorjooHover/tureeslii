@@ -1,6 +1,7 @@
 const images = 'assets/images/';
 const icons = 'assets/icons/';
 const nav = 'assets/icons/navigationBar/';
+const detail = 'assets/icons/detail/';
 // images
 const imageLogo = '${images}logo.png';
 const image404 = '${images}404.png';
@@ -37,7 +38,32 @@ const iconDeleteAccount = '${icons}deleteAccount.svg';
 const iconLogout = '${icons}logout.svg';
 const iconSort = '${icons}sort.svg';
 const iconSearch = '${icons}search.svg';
+const iconIncreasePrice = '${icons}increasePrice.svg';
+const iconDecreasePrice = '${icons}decreasePrice.svg';
+const iconNewStart = '${icons}newStart.svg';
+const iconOldStart = '${icons}oldStart.svg';
+const iconSend = '${icons}send.svg';
+const iconVerifiedWhite = '${icons}verifiedWhite.svg';
+const iconHeartWhite = '${icons}heartWhite.svg';
 
+// detail
+
+// in payment
+const detailSokh = '${detail}sokh.svg';
+const detailInternet = '${detail}internet.svg';
+const detailAccommodation = '${detail}accommodation.svg';
+const detailElectronic = '${detail}electronic.svg';
+const detailPayment = '${detail}payment.svg';
+
+// flat
+const detailFloor = '${detail}floor.svg';
+const detailArea = '${detail}area.svg';
+const detailBathroom = '${detail}bathroom.svg';
+const detailWaterSupply = '${detail}waterSupply.svg';
+const detailHeating = '${detail}heating.svg';
+
+// feature
+// const detailHeating = '${detail}heating.svg';
 
 // navigation bar
 const navLocation = '${nav}marker.svg';

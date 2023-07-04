@@ -10,6 +10,7 @@ export '404.dart';
 export 'bookmark/bookmark_view.dart';
 export 'error.dart';
 export 'location/filter_view.dart';
+export 'location/item_detail_view.dart';
 export 'location/location_view.dart';
 export 'no_data.dart';
 export 'order/order_accepted_view.dart';

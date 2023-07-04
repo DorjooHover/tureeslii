@@ -6,18 +6,23 @@ class RowRadio extends StatelessWidget {
       {super.key,
       required this.groupValue,
       required this.onChanged,
+      this.border = const Border(
+          bottom: BorderSide(color: gray, width: 1),
+          left: BorderSide(color: gray, width: 1),
+          top: BorderSide(color: gray, width: 1),
+          right: BorderSide(color: gray, width: 1)),
       required this.list});
   final List<String> list;
   final String groupValue;
+  final Border border;
   final Function(String? value) onChanged;
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 50,
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: gray, width: 1)),
+      decoration:
+          BoxDecoration(borderRadius: BorderRadius.circular(5), border: border),
       child: Row(
         children: <Widget>[
           ...list

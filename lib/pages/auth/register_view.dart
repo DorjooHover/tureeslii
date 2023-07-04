@@ -43,7 +43,7 @@ class RegisterView extends StatelessWidget {
                     MainIconButton(
                       text: login,
                       onPressed: () {
-                        Get.toNamed(Routes.getLoginRoute());
+                        Get.toNamed(Routes.auth);
                       },
                       forward: true,
                     ),

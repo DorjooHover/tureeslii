@@ -9,6 +9,7 @@ const double origin = 16.0;
 const double medium = 24.0;
 
 const double large = 32.0;
+const double big = 48.0;
 
 const double huge = 64.0;
 

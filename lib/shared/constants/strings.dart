@@ -44,11 +44,34 @@ const String howRent = 'Түрээсээ хэрхэн төлөх вэ?';
 const String incomeRent = 'Төлөгчийн орлогын хэмжээ?';
 const String briefInformation = 'Өөрийнхөө талаарх товч мэдээлэл';
 const String otpString = 'Таны утасруу илгээсэн 4 оронтой тоог оруулна уу.';
+const String startRentDate = ' Түрээслэж эхлэх огноо';
+const String startEndDate = ' Дуусах огноо';
+
+// filter
+const String floor = 'Давхар';
+const String paymentCondition = 'Төлбөрийн нөхцөл';
+const String itemsIncludedFee = 'Төлбөрт багтах зүйлс';
+const String byDay = 'Өдрөөр';
+const String byMonth = 'Сараар';
+const String verification = 'Баталгаажуулалт';
+
+// flat detail
+const String inPrice = 'Төлбөрт багтсан';
+const String flatCondition = 'Байрны нөхцөл';
+const String furniture = 'Тавилга';
+const String flatFeature = 'Байрны онцлог';
+const String rentCondition = 'Түрээсийн нөхцөл';
+const String restrictions = 'Хязгаарлалтууд';
 
 // global
 const String or = 'Эсвэл';
+const String payment = 'Төлбөр';
+const String typeStr = 'Төрөл';
+const String yearStr = 'он';
+const String other = 'Бусад';
 const String search = 'Хайлт хийх';
 const String search1 = 'Хайх';
+const String startAgain = 'Дахин эхлэх';
 const String sort = 'Эрэмбэлэх';
 const String save = 'Хадгалах';
 const String verify = 'Баталгаажуулах';
@@ -71,9 +94,12 @@ const String additionInfo = 'Нэмэлт мэдээлэл';
 const String time = 'Хугацаа';
 const String day = 'өдөр';
 const String month = 'сар';
+
+
 const String accepted = 'Зөвшөөрсөн';
 const String city = 'ХОТУУД';
 const String requested = 'Хүсэл илгээсэн';
+const String request = 'Хүсэл илгээх';
 const String denied = 'Татгалзсан';
 const String errorPageText = 'Уучлаарай, алдаа гарлаа. Та дахин оролдоно уу.';
 const String page404Text = 'Мэдээлэл татаж барсангүй та дахин оролдоно уу';

@@ -31,11 +31,15 @@ class _LocationViewState extends State<LocationView> {
 
   final double _headerHeight = 100.0;
   final double _maxHeight = 600.0;
+  final double sortMaxHeight = 320.0;
+  final double sortHeaderHeight = 320.0;
+  double sortBodyHeight = 0.0;
   bool _isDragUp = true;
   double _bodyHeight = 0.0;
   int selected = -1;
   List<int> list = [0, 1, 2, 3, 4, 5];
   final random = Random();
+  bool isSort = false;
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
@@ -125,11 +129,11 @@ class _LocationViewState extends State<LocationView> {
                   // addMarkers();
                 },
                 markers: {
-                  Marker(
-                    markerId: MarkerId("currentLocation"),
-                    position: LatLng(currentLocation!.latitude!,
-                        currentLocation!.longitude!),
-                  ),
+                  // Marker(
+                  //   markerId: MarkerId("currentLocation"),
+                  //   position: LatLng(currentLocation!.latitude!,
+                  //       currentLocation!.longitude!),
+                  // ),
                   ...markers
                 },
               )
@@ -149,7 +153,17 @@ class _LocationViewState extends State<LocationView> {
                     ? _maxHeight - 160
                     : _headerHeight) +
                 26,
-            child: LocationCard(data: Apartment())),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.easeOut,
+              height: selected != -1 ? 160 : 0,
+              child: LocationCard(
+                data: Apartment(),
+                onTap: () {
+                  Get.toNamed(Routes.locationDetail);
+                },
+              ),
+            )),
         Positioned(
           bottom: 0.0,
           child: AnimatedContainer(
@@ -236,26 +250,9 @@ class _LocationViewState extends State<LocationView> {
                               ),
                               MainIconButton(
                                 onPressed: () {
-                                  Get.bottomSheet(
-                                    Container(
-                                        height: 150,
-                                        color: Colors.greenAccent,
-                                        child: Column(
-                                          children: [
-                                            Text('Hii 1', textScaleFactor: 2),
-                                            Text('Hii 2', textScaleFactor: 2),
-                                            Text('Hii 3', textScaleFactor: 2),
-                                            Text('Hii 4', textScaleFactor: 2),
-                                          ],
-                                        )),
-                                    barrierColor: Colors.red[50],
-                                    isDismissible: false,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(35),
-                                        side: BorderSide(
-                                            width: 5, color: Colors.black)),
-                                    enableDrag: false,
-                                  );
+                                  setState(() {
+                                    isSort = !isSort;
+                                  });
                                 },
                                 back: true,
                                 text: sort,
@@ -287,7 +284,97 @@ class _LocationViewState extends State<LocationView> {
                 ),
               )),
         ),
+        Positioned(
+          bottom: 0,
+          child: AnimatedContainer(
+            height: isSort ? sortMaxHeight : 0.0,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.fastOutSlowIn,
+            child: dragBottomSheet(),
+          ),
+        ),
       ],
+    );
+  }
+
+  Widget dragBottomSheet() {
+    final Size _size = MediaQuery.of(context).size;
+    return GestureDetector(
+      onVerticalDragUpdate: (DragUpdateDetails data) {
+        double draggedAmount = _size.height - data.globalPosition.dy;
+
+        if (draggedAmount > 10.0) {
+          setState(() {
+            isSort = !isSort;
+          });
+        }
+      },
+      onVerticalDragEnd: (DragEndDetails data) {
+        setState(() {
+          isSort = !isSort;
+        });
+      },
+      child: Container(
+        width: _size.width,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(20.0),
+            topLeft: Radius.circular(20.0),
+          ),
+        ),
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              space13,
+              Container(
+                width: 50,
+                height: 4,
+                decoration: BoxDecoration(
+                    color: Color(0xffC9C9C9),
+                    borderRadius: BorderRadius.circular(2.5)),
+              ),
+              space24,
+              ...sortValues
+                  .map(
+                    (e) => GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isSort = !isSort;
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 13, horizontal: 40),
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(color: Color(0xffEFEFEF)))),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(e['text']!,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                        color: e['is']! == 'true'
+                                            ? orange
+                                            : Colors.black)),
+                            SvgPicture.asset(e['icon']!),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+              space64
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

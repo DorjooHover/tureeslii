@@ -14,6 +14,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.logo = true,
       this.currentIndex,
       this.height = 63,
+      this.child,
       this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
       this.bgColor = Colors.white});
   final Color statusBarColor;
@@ -23,7 +24,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool logo;
   final int? currentIndex;
   final MainAxisAlignment mainAxisAlignment;
-
+  final Widget? child;
   @override
   Size get preferredSize => Size.fromHeight(height);
 
@@ -80,7 +81,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                           height: 22,
                         )
                       : const SizedBox(),
-                  const SizedBox()
+                  child ?? const SizedBox(),
                 ],
               )
             : Stack(

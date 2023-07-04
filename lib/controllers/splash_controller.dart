@@ -86,9 +86,9 @@ class SplashController extends GetxController {
       token,
       (tkn) {
         if (tkn == null) {
-          Get.toNamed(Routes.getMainRoute());
+          Get.toNamed(Routes.main);
         } else {
-          Get.toNamed(Routes.getLoginRoute());
+          Get.toNamed(Routes.auth);
         }
       },
     );

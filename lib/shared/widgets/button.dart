@@ -153,17 +153,24 @@ class MainIconButton extends StatelessWidget {
 }
 
 class AdditionCard extends StatelessWidget {
-  const AdditionCard({super.key, required this.title, required this.child});
+  const AdditionCard(
+      {super.key, this.color = gray, required this.title, required this.child});
   final String title;
   final Widget child;
+  final Color color;
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          title,
-          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: gray),
+        FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Text(
+            title,
+            maxLines: 1,
+            style:
+                Theme.of(context).textTheme.bodySmall!.copyWith(color: color),
+          ),
         ),
         space4,
         child
