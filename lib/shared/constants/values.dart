@@ -3,6 +3,7 @@ import 'package:tureeslii/shared/constants/assets.dart';
 import 'package:tureeslii/shared/constants/strings.dart';
 
 const String conditionUrl = "https://tureeslii.mn/information/TERMS";
+const String fileUrl = "https://tureeslii.mn/files/";
 
 const menuHelp = [
   {'url': '', "text": contractCondition},

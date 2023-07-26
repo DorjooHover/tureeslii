@@ -6,7 +6,7 @@ import 'package:tureeslii/shared/index.dart';
 
 class BookmarkCard extends StatelessWidget {
   const BookmarkCard({super.key, required this.data});
-  final Apartment data;
+  final Post data;
   @override
   Widget build(BuildContext context) {
     List<int> list = [1, 2, 3, 4, 5];

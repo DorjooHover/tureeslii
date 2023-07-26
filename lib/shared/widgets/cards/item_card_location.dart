@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class LocationCard extends StatelessWidget {
   const LocationCard({super.key, this.onTap, required this.data});
-  final Apartment data;
+  final Post data;
   final Function()? onTap;
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,7 @@ class LocationCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: small),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: small),
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(18)),
         child: Row(
@@ -46,7 +47,10 @@ class LocationCard extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(origin),
                         child: Image.network(
-                          'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                          data.postAttachments != null &&
+                                  data.postAttachments?[0].fileThumb != null
+                              ? '$fileUrl${data.postAttachments![0].fileThumb}'
+                              : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
                           fit: BoxFit.cover,
                         ),
                       )),
@@ -84,7 +88,7 @@ class LocationCard extends StatelessWidget {
                               SvgPicture.asset(iconRoom),
                               space2,
                               Text(
-                                '12',
+                                data.roomCount.toString(),
                                 style: Theme.of(context)
                                     .textTheme
                                     .labelLarge!
@@ -100,7 +104,7 @@ class LocationCard extends StatelessWidget {
                               SvgPicture.asset(iconBed),
                               space2,
                               Text(
-                                '5',
+                                data.bedroom.toString(),
                                 style: Theme.of(context)
                                     .textTheme
                                     .labelLarge!
@@ -116,7 +120,7 @@ class LocationCard extends StatelessWidget {
                               SvgPicture.asset(iconBath),
                               space2,
                               Text(
-                                '3',
+                                data.bathroom.toString(),
                                 style: Theme.of(context)
                                     .textTheme
                                     .labelLarge!
@@ -141,12 +145,13 @@ class LocationCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('СБД • Орон сууц • 2023.01.10',
+                    Text(
+                        '${data.district} • Орон сууц • ${DateFormat.yMd().format(DateTime.parse(data.startDate!))}',
                         maxLines: 1,
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
                             color: gray, fontWeight: FontWeight.w400)),
                     Text(
-                      '2 өрөө, гал тогоо тусдаа хуучны дулаахан байрыг баруун европуудад удаан хугацаагаар түрээслүүлнэ ',
+                      data.title ?? "",
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context)
@@ -157,7 +162,7 @@ class LocationCard extends StatelessWidget {
                     space16,
                     RichText(
                       text: TextSpan(
-                        text: '${currencyFormat(450000, false)} ',
+                        text: '${currencyFormat(data.price!, false)} ',
                         style: Theme.of(context)
                             .textTheme
                             .bodyMedium!

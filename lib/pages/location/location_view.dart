@@ -2,13 +2,16 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:custom_info_window/custom_info_window.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:label_marker/label_marker.dart';
 import 'package:location/location.dart';
-import 'package:tureeslii/model/apartment.dart';
+import 'package:tureeslii/model/models.dart';
+import 'package:tureeslii/pages/location/item_detail_view.dart';
+import 'package:tureeslii/provider/api_prodiver.dart';
 import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/index.dart';
 
@@ -28,7 +31,7 @@ class _LocationViewState extends State<LocationView> {
 
   CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
-
+  final ApiRepository _apiRepository = Get.find();
   final double _headerHeight = 100.0;
   final double _maxHeight = 600.0;
   final double sortMaxHeight = 320.0;
@@ -37,9 +40,34 @@ class _LocationViewState extends State<LocationView> {
   bool _isDragUp = true;
   double _bodyHeight = 0.0;
   int selected = -1;
-  List<int> list = [0, 1, 2, 3, 4, 5];
   final random = Random();
   bool isSort = false;
+
+  final isLoading = false.obs;
+  List<Post> posts = <Post>[];
+  bool loading = false;
+  int page = 0;
+  int limit = 10;
+  SortData sortData = SortData();
+  List<FilterData> filterData = <FilterData>[];
+  Future<void> getPosts() async {
+    isLoading.value = true;
+    try {
+      List<Post> res = await _apiRepository.getAllPosts(
+        page,
+        limit,
+        sortData,
+        filterData,
+      );
+
+      setState(() {
+        posts = res;
+      });
+      isLoading.value = false;
+    } on DioException catch (e) {
+      isLoading.value = false;
+    }
+  }
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
@@ -54,27 +82,26 @@ class _LocationViewState extends State<LocationView> {
     });
     moveCurrentLocation();
     addCustomIcon();
-    addMarkers();
   }
 
   void addMarkers() {
-    for (int e in list) {
-      double lat = 47.9269479 + (random.nextDouble() / 100 * e);
-      double lng = 106.9738868 - (random.nextDouble() / 100 * e);
+    for (Post post in posts) {
+      double lat = double.parse(post.lat!);
+      double lng = double.parse(post.long!);
       locations.add(LatLng(lat, lng));
       markers.addLabelMarker(LabelMarker(
-        label: currencyFormat((e + 1) * 400000, true) + '₮',
-        backgroundColor: e == selected ? orange : Colors.white,
+        label: '${currencyFormat(post.price!, true)}₮',
+        backgroundColor: post.id! == selected ? orange : Colors.white,
         textStyle: TextStyle(
             fontSize: 27,
-            color: e != selected ? orange : Colors.white,
+            color: post.id! != selected ? orange : Colors.white,
             height: 1.5,
             fontWeight: FontWeight.w400),
-        markerId: MarkerId('$e'),
+        markerId: MarkerId('${post.id!}'),
         position: LatLng(lat, lng),
         onTap: () {
           setState(() {
-            selected = e;
+            selected = post.id!;
           });
         },
       ));
@@ -95,6 +122,7 @@ class _LocationViewState extends State<LocationView> {
   void initState() {
     super.initState();
     getCurrentLocation();
+    getPosts().then((value) => addMarkers());
   }
 
   void moveCurrentLocation() async {
@@ -147,23 +175,29 @@ class _LocationViewState extends State<LocationView> {
           offset: 50,
         ),
         Positioned(
-            left: origin,
-            right: origin,
-            bottom: (selected != -1 && !_isDragUp
-                    ? _maxHeight - 160
-                    : _headerHeight) +
-                26,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 600),
-              curve: Curves.easeOut,
-              height: selected != -1 ? 160 : 0,
-              child: LocationCard(
-                data: Apartment(),
-                onTap: () {
-                  Get.toNamed(Routes.locationDetail);
-                },
-              ),
-            )),
+          left: origin,
+          right: origin,
+          bottom: (selected != -1 && !_isDragUp
+                  ? _maxHeight - 160
+                  : _headerHeight) +
+              26,
+          child: selected != -1
+              ? AnimatedContainer(
+                  duration: const Duration(milliseconds: 600),
+                  curve: Curves.easeOut,
+                  height: selected != -1 ? 160 : 0,
+                  child: LocationCard(
+                    data: posts.firstWhere((Post post) => post.id == selected),
+                    onTap: () {
+                      Get.to(() => ItemDetailView(
+                            data:
+                                posts.firstWhere((post) => post.id == selected),
+                          ));
+                    },
+                  ),
+                )
+              : const SizedBox(),
+        ),
         Positioned(
           bottom: 0.0,
           child: AnimatedContainer(
@@ -272,8 +306,8 @@ class _LocationViewState extends State<LocationView> {
                           color: Colors.white,
                           child: Column(
                             children: <Widget>[
-                              ...list
-                                  .map((e) => BookmarkCard(data: Apartment()))
+                              ...posts
+                                  .map((Post post) => BookmarkCard(data: post))
                                   .toList()
                             ],
                           ),

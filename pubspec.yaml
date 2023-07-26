@@ -47,7 +47,8 @@ dependencies:
   location: ^4.4.0
   label_marker: ^1.0.1
   custom_info_window: ^1.0.1
-  # drop_shadow: ^0.1.0
+  google_sign_in: ^6.1.4
+  # flutter_facebook_auth: ^4.4.1+1
 
 dev_dependencies:
   flutter_test:

@@ -23,17 +23,16 @@ class MainController extends GetxController
   User? get user => rxUser.value;
   set user(value) => rxUser.value = value;
 
+  getUser(User user) {
+    change(user, status: RxStatus.success());
+    update();
+  }
+
   Future<void> setupApp() async {
     isLoading.value = true;
     try {
-      user = await _apiRepository.getUser();
+      // user = await _apiRepository.getUser();
       change(user, status: RxStatus.success());
-      if (user?.userType == 'lawyer') {
-        currentUserType.value = 'lawyer';
-      }
-      if (user?.userType == 'our') {
-        currentUserType.value = 'our';
-      }
 
       isLoading.value = false;
     } on DioError catch (e) {
@@ -43,11 +42,6 @@ class MainController extends GetxController
       update();
     }
   }
-
-  // changeOrderStatus(String id, String status) {
-  //   Map data = {"id": id, "status": status};
-  //   socket.emit('change_order_status', data);
-  // }
 
   @override
   void onInit() async {

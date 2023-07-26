@@ -5,8 +5,8 @@ import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class ItemDetailView extends StatelessWidget {
-  const ItemDetailView({super.key});
-
+  const ItemDetailView({super.key, required this.data});
+  final Post data;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +32,7 @@ class ItemDetailView extends StatelessWidget {
               child: Column(
                 children: [
                   ItemDetailCard(
-                    data: Apartment(),
+                    data: data,
                   ),
                   space36,
                   space4,
@@ -40,190 +40,7 @@ class ItemDetailView extends StatelessWidget {
                   space36,
                   space4,
                   MoreDetailCard(
-                    flatDetail: FlatDetail(
-                      inPayment: InPayment(
-                        payment: DetailName(
-                            icon: detailPayment,
-                            name: 'Төлбөр',
-                            value: '600000',
-                            type: 'number'),
-                        electronic: DetailName(
-                          icon: detailElectronic,
-                          name: 'Цахилгаан',
-                          value: 'Багтаагүй',
-                        ),
-                        accommodation: DetailName(
-                          icon: detailAccommodation,
-                          name: 'Байрны мөнгө',
-                          value: 'Багтаагүй',
-                        ),
-                        internet: DetailName(
-                          icon: detailInternet,
-                          name: 'Интернет',
-                          value: 'Багтаагүй',
-                        ),
-                        sokh: DetailName(
-                          icon: detailSokh,
-                          name: 'СӨХ',
-                          value: 'Багтаагүй',
-                        ),
-                      ),
-                      flat: Flat(
-                        area: DetailName(
-                          icon: detailArea,
-                          name: 'Байрны талбай м2',
-                          value: '15.7',
-                        ),
-                        bathroom: DetailName(
-                          icon: detailBathroom,
-                          name: '00-н өрөө',
-                          value: 'Дотор',
-                        ),
-                        floor: DetailName(
-                          icon: detailFloor,
-                          name: 'Давхар',
-                          value: '21',
-                        ),
-                        heating: DetailName(
-                          icon: detailHeating,
-                          name: 'Халаалт',
-                          value: 'Төвийн',
-                        ),
-                        waterSupply: DetailName(
-                          icon: detailArea,
-                          name: 'Усан хангамж',
-                          value: 'Төвийн',
-                        ),
-                      ),
-                      feature: Feature(
-                        elevator: DetailName(
-                          icon: detailArea,
-                          name: 'Цахилгаан шат',
-                          value: 'Байхгүй',
-                        ),
-                        balcony: DetailName(
-                          icon: detailBathroom,
-                          name: 'Тагт',
-                          value: 'Байхгүй',
-                        ),
-                        cabelTV: DetailName(
-                          icon: detailFloor,
-                          name: 'Кабелийн ТВ',
-                          value: 'Байхгүй',
-                        ),
-                        net: DetailName(
-                          icon: detailHeating,
-                          name: 'Интернет',
-                          value: 'Байхгүй',
-                        ),
-                        oven: DetailName(
-                          icon: detailArea,
-                          name: 'Зуух',
-                          value: 'Байхгүй',
-                        ),
-                        refrigerator: DetailName(
-                          icon: detailArea,
-                          name: 'Хөргөгч',
-                          value: 'Байхгүй',
-                        ),
-                        washing: DetailName(
-                          icon: detailArea,
-                          name: 'Угаалгын машин',
-                          value: 'Байхгүй',
-                        ),
-                      ),
-                      furniture: Furniture(
-                        bed: DetailName(
-                          icon: detailArea,
-                          name: 'Ор',
-                          value: 'Байгаа',
-                        ),
-                        cabinet: DetailName(
-                          icon: detailBathroom,
-                          name: 'Шүүгээ',
-                          value: 'Байгаа',
-                        ),
-                        chair: DetailName(
-                          icon: detailFloor,
-                          name: 'Сандал',
-                          value: 'Байгаа',
-                        ),
-                        drawer: DetailName(
-                          icon: detailHeating,
-                          name: 'Шургуулга',
-                          value: 'Байгаа',
-                        ),
-                        kitchen: DetailName(
-                          icon: detailArea,
-                          name: 'Гал тогооны тавилга',
-                          value: 'Байгаа',
-                        ),
-                        sofa: DetailName(
-                          icon: detailArea,
-                          name: 'Буйдан',
-                          value: 'Байгаа',
-                        ),
-                        table: DetailName(
-                          icon: detailArea,
-                          name: 'Ширээ',
-                          value: 'Байгаа',
-                        ),
-                      ),
-                      rentCondition: RentCondition(
-                        bailCondition: DetailName(
-                          icon: detailArea,
-                          name: 'Барьцааны нөхцөл',
-                          value: 'Байхгүй',
-                        ),
-                        cancelCondition: DetailName(
-                            icon: detailBathroom,
-                            name: 'Цуцлах нөхцөл',
-                            value: 'Хатуу',
-                            warning: ''),
-                        contractCondition: DetailName(
-                            icon: detailFloor,
-                            name: 'Гэрээний нөхцөл',
-                            value: 'Өдрөөр',
-                            warning: ''),
-                        paymentCondition: DetailName(
-                          icon: detailHeating,
-                          name: 'Төлбөрийн нөхцөл',
-                          value: '1 сар',
-                        ),
-                        whomRent: DetailName(
-                          icon: detailArea,
-                          name: 'Хэнд түрээслэх',
-                          value: 'Хамаагүй',
-                        ),
-                      ),
-                      restrictions: Restrictions(
-                        invite: DetailName(
-                          icon: detailArea,
-                          name: 'Зочин урих',
-                          value: 'Болохгүй',
-                        ),
-                        isLiveTogether: DetailName(
-                          icon: detailBathroom,
-                          name: 'Түрээслүүлэгч цуг амьдрах эсэх',
-                          value: 'Үгүй',
-                        ),
-                        pet: DetailName(
-                          icon: detailFloor,
-                          name: 'Тэжээвэр амьтан',
-                          value: 'Болохгүй',
-                        ),
-                        smoke: DetailName(
-                          icon: detailHeating,
-                          name: 'Тамхи татах',
-                          value: 'Болохгүй',
-                        ),
-                        whomRent: DetailName(
-                          icon: detailArea,
-                          name: 'Хэнд түрээслэх',
-                          value: '2',
-                        ),
-                      ),
-                    ),
+                    data:data            
                   ),
                   space20
                 ],

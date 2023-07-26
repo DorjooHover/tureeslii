@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/provider/dio_provider.dart';
 
@@ -5,31 +6,180 @@ class ApiRepository {
   ApiRepository({required this.apiProvider});
 
   final DioProvider apiProvider;
-  Future<User> getUser() async {
-    try {
-      final response =
-          await apiProvider.get('/user/me') as Map<String, dynamic>;
 
-      return User.fromJson(response);
-    } on Exception {
+  // auth
+  Future<User> login(String username, String password) async {
+    try {
+      final data = {"username": username, "password": password};
+
+      final res = await apiProvider.post('/auth/login', data: data);
+      return User.fromJson(res['data']);
+    } on DioException catch (e) {
+      if (e.response!.statusCode == 401 && e.response?.data['message'] != "") {
+        throw Exception('Нэвтрэх нэр эсвэл нууц үг буруу байна');
+      }
+      if (e.response!.statusCode == 401) {
+        throw Exception('Та Нэвтрэх нэр, нууц үгээ оруулна уу');
+      }
       rethrow;
     }
   }
-  // Future<LoginResponse> login(String phone, String password) async {
-  //   final data = {"phone": phone, "password": password};
-  //   final res = await apiProvider.post('/auth/login', data: data);
 
-  //   return LoginResponse.fromJson(res);
-  // }
+  Future<bool> register(String email, String password, String mobile,
+      String firstname, String lastname) async {
+    try {
+      final data = {
+        "password": password,
+        "isCreator": false,
+        "mobile": mobile,
+        "firstname": firstname,
+        "lastname": lastname,
+        "email": email
+      };
+      await apiProvider.post('/auth/register', data: data);
 
-  // Future<List<Service>> servicesList() async {
-  //   try {
-  //     final response = await apiProvider.get('/service');
-  //     final services =
-  //         (response as List).map((e) => Service.fromJson(e)).toList();
-  //     return services;
-  //   } on Exception {
-  //     rethrow;
-  //   }
-  // }
+      return true;
+    } on DioException catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> sendEmailVerifyCode() async {
+    try {
+      await apiProvider.get('/auth/requestVerifyCode');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> verifyEmailCode(String code) async {
+    try {
+      final data = {"code": code};
+      final res = await apiProvider.post('/auth/verifyEmail', data: data);
+      return res['success'];
+    } on DioException catch (e) {
+      throw Exception("Алдаа гарлаа");
+    }
+  }
+
+  // posts
+  Future<List<Post>> getAllPosts(int? skip, int? take, SortData? sortData,
+      List<FilterData>? filterData) async {
+    try {
+      final data = {
+        "skip": skip ?? 0,
+        "take": take ?? 12,
+        "sortData": sortData ?? {},
+        "filterData": filterData ?? [],
+      };
+      final response = await apiProvider.post('/posts/getPosts', data: data);
+      return (response['data'] as List).map((e) => Post.fromJson(e)).toList();
+    } on DioException catch (e) {
+      if (e.response?.data["success"] == false) {
+        throw Exception("Дахии оролдоно уу");
+      } else {
+        throw Exception("Алдаа гарлаа");
+      }
+    }
+  }
+
+  getSavedPosts() async {
+    try {
+      final response = await apiProvider.get(
+        '/posts/getSavedPosts',
+      );
+      return (response as List).map((e) => Post.fromJson(e)).toList();
+    } on DioException catch (e) {
+      if (e.response?.data["success"] == false) {
+        throw Exception("Дахии оролдоно уу");
+      } else {
+        throw Exception("Алдаа гарлаа");
+      }
+    }
+  }
+
+  saveBookmark(int postId) async {
+    try {
+      final data = {"postId": postId};
+      final response =
+          await apiProvider.post('/posts/saveBookmark', data: data);
+      return true;
+    } on DioException catch (e) {
+      if (e.response?.data["success"] == false) {
+        throw Exception("Дахии оролдоно уу");
+      } else {
+        throw Exception("Алдаа гарлаа");
+      }
+    }
+  }
+
+  removeBookmark(int postId) async {
+    try {
+      final response = await apiProvider.delete(
+        '/posts/removeBookmark/$postId',
+      );
+      return true;
+    } on DioException catch (e) {
+      if (e.response?.data["success"] == false) {
+        throw Exception("Дахии оролдоно уу");
+      } else {
+        throw Exception("Алдаа гарлаа");
+      }
+    }
+  }
+
+  Future<void> rentRequest(int postId, String startDate, int duration) async {
+    try {
+      final data = {
+        "postId": postId,
+        "startDate": startDate,
+        "duration": duration,
+      };
+      final response = await apiProvider.post('/posts/rentRequest', data: data);
+      return response;
+    } on DioException catch (e) {
+      throw Exception("Алдаа гарлаа");
+    }
+  }
+
+  getOwnPosts(int? skip, int? take, SortData? sortData,
+      List<FilterData>? filterData) async {
+    try {
+      final data = {
+        "skip": skip ?? 0,
+        "take": take ?? 12,
+        "sortData": sortData ?? {},
+        "filterData": filterData ?? [],
+      };
+      final response = await apiProvider.post('/posts/getOwnPosts', data: data);
+      return (response as List).map((e) => Post.fromJson(e)).toList();
+    } on DioException catch (e) {
+      if (e.response?.data["success"] == false) {
+        throw Exception("Дахии оролдоно уу");
+      } else {
+        throw Exception("Алдаа гарлаа");
+      }
+    }
+  }
+
+// notification
+  Future<Notifications> getAllNotification() async {
+    try {
+      final response = await apiProvider.get('/notification');
+      return Notifications.fromJson(response);
+    } on DioException catch (e) {
+      throw Exception("Алдаа гарлаа");
+    }
+  }
+
+  // users
+  Future<void> changePassword(String password, String newPassword) async {
+    try {
+      final data = {'oldPassword': password, 'password': newPassword};
+      return await apiProvider.put('/user/password', data: data);
+    } on DioException catch (e) {
+      throw Exception("Алдаа гарлаа");
+    }
+  }
 }

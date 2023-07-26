@@ -39,26 +39,25 @@ class MainButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color =
-        loading || disabled ? this.color.withOpacity(0.6) : this.color;
+    Color bgColor = loading || disabled ? color.withOpacity(0.6) : color;
 
     Color contentColor = this.contentColor ?? Colors.white;
 
-    Widget body = GestureDetector(
-      onTap: onPressed,
+    return Material(
+      color: Colors.transparent,
       child: AnimatedContainer(
         width: width,
         height: height,
-        duration: Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(borderRadius),
             border: border,
-            color: color),
+            color: bgColor),
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: prime,
+            backgroundColor: bgColor,
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius),
@@ -83,10 +82,6 @@ class MainButton extends StatelessWidget {
           ),
         ),
       ),
-    );
-    return Material(
-      color: Colors.transparent,
-      child: body,
     );
   }
 }

@@ -20,7 +20,7 @@ class _HomeViewState extends State<BookmarkView> {
             vertical: origin,
           ),
           child: BookmarkCard(
-            data: Apartment(),
+            data: Post(),
           ),
         ),
         itemCount: 10,

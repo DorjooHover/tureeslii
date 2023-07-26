@@ -81,11 +81,11 @@ class SplashController extends GetxController {
   /// CHECKING UPDATE VERSION
 
   _checkAuthStatus() async {
-    await Future.delayed(Duration(milliseconds: 1800));
+    // await Future.delayed(Duration(milliseconds: 1800));
     worker = ever<String?>(
       token,
       (tkn) {
-        if (tkn == null) {
+        if (tkn != null) {
           Get.toNamed(Routes.main);
         } else {
           Get.toNamed(Routes.auth);

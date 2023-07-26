@@ -62,6 +62,34 @@ const String furniture = 'Тавилга';
 const String flatFeature = 'Байрны онцлог';
 const String rentCondition = 'Түрээсийн нөхцөл';
 const String restrictions = 'Хязгаарлалтууд';
+const String electronic = 'Цахилгаан';
+const String flatPrice = 'Байрны мөнгө';
+const String internet = 'Интернет';
+const String sokh = 'СӨХ';
+const String heating = 'Халаалт';
+const String waterSupply = 'Усан хангамж';
+const String toilet = '00-н өрөө';
+const String area = 'Байрны талбай м2';
+const String elevator = 'Цахилгаан шат';
+const String balcony = 'Тагт';
+const String cabelTV = 'Кавелийн ТВ';
+const String oval = 'Зуух';
+const String washing = 'Угаалгын машин';
+const String refrigerator = 'Хөргөгч';
+const String cabinet = 'Шүүгээ';
+const String chair = 'Сандал';
+const String table = 'Ширээ';
+const String sofa = 'Буйдан';
+const String drawer = 'Шургуулга';
+const String kitchen = 'Гал тогооны тавилга';
+const String bed = 'Ор';
+const String whomRent = 'Хэнд түрээслүүлэх';
+const String bailCondition = 'Барьцааны нөхцөл';
+const String pet = 'Тэжээвэр амьтан';
+const String smoke = 'Тамхи татах';
+const String inviteGuest = 'Зочин урих';
+const String isLiveTogether = 'Түрээслүүлэгч цуг амьдрах эсэх';
+
 
 // global
 const String or = 'Эсвэл';

@@ -3,9 +3,37 @@ import 'package:flutter_svg/svg.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/shared/index.dart';
 
-class MoreDetailCard extends StatelessWidget {
-  const MoreDetailCard({super.key, required this.flatDetail});
-  final FlatDetail flatDetail;
+class MoreDetailCard extends StatefulWidget {
+  const MoreDetailCard({super.key, required this.data});
+  final Post data;
+  @override
+  State<MoreDetailCard> createState() => _MoreDetailCardState();
+}
+
+class _MoreDetailCardState extends State<MoreDetailCard>
+    with TickerProviderStateMixin {
+  bool isShowInPrice = true;
+  bool isShowFlatCondition = true;
+  bool isShowFlatFeature = true;
+  bool isShowFurniture = true;
+  bool isShowRentCondition = true;
+  bool isShowRestrictions = true;
+  late final AnimationController _controller = AnimationController(
+    duration: const Duration(milliseconds: 1000),
+    vsync: this,
+  );
+  late final Animation<double> _animation = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeIn,
+  );
+
+  @override
+  void initState() {
+    _controller.forward();
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -28,20 +56,57 @@ class MoreDetailCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                     ),
-                    SvgPicture.asset(iconArrowUp)
+                    TextButton(
+                        onPressed: () {
+                          setState(() {
+                            isShowInPrice = !isShowInPrice;
+                          });
+                          if (isShowInPrice) {
+                            _controller.forward();
+                          } else {
+                            _controller.reverse();
+                          }
+                        },
+                        child: SvgPicture.asset(
+                            isShowInPrice ? iconArrowUp : iconArrowDown))
                   ],
                 ),
               ),
               space16,
-              MoreDetailItem(
-                list: [
-                  flatDetail.inPayment!.payment!,
-                  flatDetail.inPayment!.electronic!,
-                  flatDetail.inPayment!.accommodation!,
-                  flatDetail.inPayment!.internet!,
-                  flatDetail.inPayment!.sokh!,
-                ],
-                color: gray,
+              AnimatedSize(
+                duration: _controller.duration!,
+                child: !isShowInPrice
+                    ? null
+                    : FadeTransition(
+                        opacity: _animation,
+                        child: MoreDetailItem(
+                          list: [
+                            DetailName(
+                              icon: iconIncreasePrice,
+                              value: '${widget.data.price ?? 0}',
+                              type: "",
+                              name: payment
+                            ),
+                            DetailName(
+                              icon: iconIncreasePrice,
+                              value: '${widget.data. ?? 0}',
+                              type: "",
+                              name: electronic
+                            ),
+                            DetailName(
+                              icon: iconIncreasePrice,
+                              value: '${widget.data.price ?? 0}',
+                              type: "",
+                              name: electronic
+                            ),
+                            widget.data.inPayment!.electronic!,
+                            widget.data.inPayment!.accommodation!,
+                            widget.data.inPayment!.internet!,
+                            widget.data.inPayment!.sokh!,
+                          ],
+                          color: gray,
+                        ),
+                      ),
               ),
               space36,
               space4,
@@ -57,18 +122,25 @@ class MoreDetailCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                     ),
-                    SvgPicture.asset(iconArrowUp)
+                    TextButton(
+                        onPressed: () {
+                          setState(() {
+                            isShowFlatCondition = !isShowFlatCondition;
+                          });
+                        },
+                        child: SvgPicture.asset(
+                            isShowFlatCondition ? iconArrowUp : iconArrowDown))
                   ],
                 ),
               ),
               space16,
               MoreDetailItem(
                 list: [
-                  flatDetail.flat!.heating!,
-                  flatDetail.flat!.waterSupply!,
-                  flatDetail.flat!.bathroom!,
-                  flatDetail.flat!.area!,
-                  flatDetail.flat!.floor!,
+                  widget.data.flat!.heating!,
+                  widget.data.flat!.waterSupply!,
+                  widget.data.flat!.bathroom!,
+                  widget.data.flat!.area!,
+                  widget.data.flat!.floor!,
                 ],
                 color: black,
               ),
@@ -86,20 +158,27 @@ class MoreDetailCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                     ),
-                    SvgPicture.asset(iconArrowUp)
+                    TextButton(
+                        onPressed: () {
+                          setState(() {
+                            isShowFlatFeature = !isShowFlatFeature;
+                          });
+                        },
+                        child: SvgPicture.asset(
+                            isShowFlatFeature ? iconArrowUp : iconArrowDown))
                   ],
                 ),
               ),
               space16,
               MoreDetailItem(
                 list: [
-                  flatDetail.feature!.elevator!,
-                  flatDetail.feature!.balcony!,
-                  flatDetail.feature!.net!,
-                  flatDetail.feature!.cabelTV!,
-                  flatDetail.feature!.oven!,
-                  flatDetail.feature!.washing!,
-                  flatDetail.feature!.refrigerator!,
+                  widget.data.feature!.elevator!,
+                  widget.data.feature!.balcony!,
+                  widget.data.feature!.net!,
+                  widget.data.feature!.cabelTV!,
+                  widget.data.feature!.oven!,
+                  widget.data.feature!.washing!,
+                  widget.data.feature!.refrigerator!,
                 ],
                 color: gray,
               ),
@@ -117,20 +196,27 @@ class MoreDetailCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                     ),
-                    SvgPicture.asset(iconArrowUp)
+                    TextButton(
+                        onPressed: () {
+                          setState(() {
+                            isShowFurniture = !isShowFurniture;
+                          });
+                        },
+                        child: SvgPicture.asset(
+                            isShowFurniture ? iconArrowUp : iconArrowDown))
                   ],
                 ),
               ),
               space16,
               MoreDetailItem(
                 list: [
-                  flatDetail.furniture!.cabinet!,
-                  flatDetail.furniture!.chair!,
-                  flatDetail.furniture!.table!,
-                  flatDetail.furniture!.sofa!,
-                  flatDetail.furniture!.drawer!,
-                  flatDetail.furniture!.cabinet!,
-                  flatDetail.furniture!.bed!,
+                  widget.data.furniture!.cabinet!,
+                  widget.data.furniture!.chair!,
+                  widget.data.furniture!.table!,
+                  widget.data.furniture!.sofa!,
+                  widget.data.furniture!.drawer!,
+                  widget.data.furniture!.cabinet!,
+                  widget.data.furniture!.bed!,
                 ],
                 color: black,
               ),
@@ -156,18 +242,25 @@ class MoreDetailCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                     ),
-                    SvgPicture.asset(iconArrowUp)
+                    TextButton(
+                        onPressed: () {
+                          setState(() {
+                            isShowRentCondition = !isShowRentCondition;
+                          });
+                        },
+                        child: SvgPicture.asset(
+                            isShowRentCondition ? iconArrowUp : iconArrowDown))
                   ],
                 ),
               ),
               space16,
               MoreDetailItem(
                 list: [
-                  flatDetail.rentCondition!.whomRent!,
-                  flatDetail.rentCondition!.bailCondition!,
-                  flatDetail.rentCondition!.paymentCondition!,
-                  flatDetail.rentCondition!.cancelCondition!,
-                  flatDetail.rentCondition!.contractCondition!,
+                  widget.data.rentCondition!.whomRent!,
+                  widget.data.rentCondition!.bailCondition!,
+                  widget.data.rentCondition!.paymentCondition!,
+                  widget.data.rentCondition!.cancelCondition!,
+                  widget.data.rentCondition!.contractCondition!,
                 ],
                 color: black,
               ),
@@ -185,18 +278,25 @@ class MoreDetailCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                     ),
-                    SvgPicture.asset(iconArrowUp)
+                    TextButton(
+                        onPressed: () {
+                          setState(() {
+                            isShowRestrictions = !isShowRestrictions;
+                          });
+                        },
+                        child: SvgPicture.asset(
+                            isShowRestrictions ? iconArrowUp : iconArrowDown))
                   ],
                 ),
               ),
               space16,
               MoreDetailItem(
                 list: [
-                  flatDetail.restrictions!.pet!,
-                  flatDetail.restrictions!.smoke!,
-                  flatDetail.restrictions!.invite!,
-                  flatDetail.restrictions!.isLiveTogether!,
-                  flatDetail.restrictions!.whomRent!,
+                  widget.data.restrictions!.pet!,
+                  widget.data.restrictions!.smoke!,
+                  widget.data.restrictions!.invite!,
+                  widget.data.restrictions!.isLiveTogether!,
+                  widget.data.restrictions!.whomRent!,
                 ],
                 color: black,
               ),

@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
-// import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/provider/api_prodiver.dart';
 
 import './splash_controller.dart' show SplashController;
@@ -13,46 +11,44 @@ class AuthController extends GetxController {
   AuthController({required this.apiRepository});
   final prefs = Get.find<SharedPreferences>();
 
+  final username = "".obs;
+  final password = "".obs;
+
   @override
   onInit() {
     super.onInit();
   }
 
-  register(BuildContext context) async {
-    try {
-      // _saveTokens(res);
-      // Get.snackbar(
-      //   'Бүртгэл амжилттай',
-      //   " asdf",
-      //   snackPosition: SnackPosition.TOP,
-      //   backgroundColor: success,
-      //   colorText: Colors.white,
-      // );
-    } on DioError catch (e) {}
+  Future<bool> registerEmail(User data, String password) async {
+    return await apiRepository.register(
+        data.email!, password, data.mobile!, data.firstname!, data.lastname!);
   }
 
-  login(BuildContext context) async {
-    try {} on DioError catch (e) {}
-
-    // forgetPassword(BuildContext context) async {
-    //   AppFocus.unfocus(context);
-    // }
-
-    Future<void> logout() async {
-      final prefs = Get.find<SharedPreferences>();
-      await prefs.remove(StorageKeys.token.name);
-      Get.find<SplashController>().token.value = null;
+  login(String username, String password) async {
+    try {
+      User user = await apiRepository.login(username, password);
+      _saveTokens(user.accessToken!);
+      return user;
+    } catch (e) {
+      return e;
     }
+  }
 
-    @override
-    void dispose() {
-      super.dispose();
-    }
+  Future<void> logout() async {
+    final prefs = Get.find<SharedPreferences>();
+    await prefs.remove(StorageKeys.token.name);
 
-    // _saveTokens(LoginResponse res) async {
-    //   final prefs = Get.find<SharedPreferences>();
-    //   await prefs.setString(StorageKeys.token.name, res.token);
-    //   Get.find<SplashController>().token.value = res.token;
-    // }
+    Get.find<SplashController>().token.value = null;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  _saveTokens(String token) async {
+    final prefs = Get.find<SharedPreferences>();
+    await prefs.setString(StorageKeys.token.name, token);
+    Get.find<SplashController>().token.value = token;
   }
 }

@@ -32,11 +32,11 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: statusBarColor, // <-- SEE HERE
+        statusBarColor: statusBarColor,
         statusBarIconBrightness:
-            Brightness.dark, //<-- For Android SEE HERE (dark icons)
+            Brightness.dark, 
         statusBarBrightness:
-            Brightness.light, //<-- For iOS SEE HERE (dark icons)
+            Brightness.light,
       ),
       leading: const SizedBox(),
       titleSpacing: 0,

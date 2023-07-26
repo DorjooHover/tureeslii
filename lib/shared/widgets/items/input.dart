@@ -9,7 +9,7 @@ class Input extends StatelessWidget {
       this.onSubmitted,
       this.value,
       this.autoFocus = false,
-      this.textInputAction,
+      this.textInputAction = TextInputAction.done,
       this.obscureText = false,
       this.textInputType = TextInputType.text,
       this.suffixIcon,
@@ -22,7 +22,7 @@ class Input extends StatelessWidget {
   final String? value;
   final bool autoFocus;
   final int? maxLine;
-  final TextInputAction? textInputAction;
+  final TextInputAction textInputAction;
   final bool obscureText;
   final TextInputType textInputType;
   final Widget? suffixIcon;
@@ -69,7 +69,7 @@ class Input extends StatelessWidget {
         filled: true,
         fillColor: Colors.white,
         // labelText: labelText,
-        
+
         hintText: labelText,
         errorMaxLines: 2,
         hintStyle:

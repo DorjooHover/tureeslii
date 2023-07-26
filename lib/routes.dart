@@ -20,7 +20,6 @@ class Routes {
   // location
   static String location = '/location';
   static String locationFilter = '$location/filter';
-  static String locationDetail = '$location/detail';
 
   // auth
   static String auth = '/auth';
@@ -82,11 +81,6 @@ class Routes {
     GetPage(
         name: locationFilter,
         page: () => const FilterView(),
-        transition: Transition.fade,
-        transitionDuration: const Duration(milliseconds: 300)),
-    GetPage(
-        name: locationDetail,
-        page: () => const ItemDetailView(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
 
