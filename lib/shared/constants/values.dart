@@ -114,3 +114,78 @@ const navbar = [
     'label': 'Цэс',
   },
 ];
+
+const List<String> priceIncluded = [
+  'electric',
+  // here
+  'accommodation',
+  'internet',
+  'water',
+  // here
+  'sokh',
+];
+const List<String> furnitureIncluded = [
+  'wardrobe',
+  'chair',
+  'table',
+  'sofa',
+  'drawer',
+  'kitchen',
+  'bed'
+];
+
+bool getPriceIncluded(String value, List<String> data) {
+  if (data.contains(value)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool getFurniture(String value, List<String> data) {
+  if (data.contains(value)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+String getHeating(String value) {
+  switch (value) {
+    case 'central':
+      return 'Төвийн';
+    case 'electric':
+      return 'Цахилгаан';
+    case 'pressure':
+      return 'Нам даралт';
+    case 'furnace':
+      return 'Пийшин';
+    default:
+      return '';
+  }
+}
+
+String getWaterSupply(String value) {
+  switch (value) {
+    case 'central':
+      return 'Төвийн';
+    case 'well':
+      return 'Гүний худаг';
+    case 'portable':
+      return 'Зөөврийн';
+    default:
+      return '';
+  }
+}
+String getToilet(String value) {
+  switch (value) {
+    case 'inside':
+      return 'Дотроо';
+    case 'outside':
+      return 'Гаднаа';
+    case 'public':
+      return 'Нийтийн';
+    default:
+      return '';
+  }
+}

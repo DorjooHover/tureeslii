@@ -63,7 +63,34 @@ const detailWaterSupply = '${detail}waterSupply.svg';
 const detailHeating = '${detail}heating.svg';
 
 // feature
-// const detailHeating = '${detail}heating.svg';
+const detailElevator = '${detail}elevator.svg';
+const detailCabel = '${detail}cabelTV.svg';
+const detailNet = '${detail}net.svg';
+const detailOval = '${detail}oval.svg';
+const detailRefrigerator = '${detail}refrigerator.svg';
+const detailWashing = '${detail}washingMachine.svg';
+
+// furniture
+const detailCabinet = '${detail}cabinet.svg';
+const detailChair = '${detail}chair.svg';
+const detailDrawer = '${detail}drawer.svg';
+const detailKitchen = '${detail}kitchen.svg';
+const detailSofa = '${detail}sofa.svg';
+const detailTable = '${detail}table.svg';
+
+// rent condition
+const detailWhomRent = '${detail}whomRent.svg';
+const detailBailCondition = '${detail}bail.svg';
+const detailCancelTerm = '${detail}cancelTerm.svg';
+const detailPaymentCondition = '${detail}paymentCondition.svg';
+const detailSubtractTerm = '${detail}subtractTerm.svg';
+
+// restrictions
+const detailInvite = '${detail}invite.svg';
+const detailPet = '${detail}pet.svg';
+const detailSmoke = '${detail}smoke.svg';
+const detailTogether = '${detail}together.svg';
+const detailWhoRent = '${detail}whoRent.svg';
 
 // navigation bar
 const navLocation = '${nav}marker.svg';

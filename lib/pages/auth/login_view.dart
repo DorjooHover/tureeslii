@@ -67,10 +67,11 @@ class _LoginViewState extends State<LoginView> {
 
   loginFunc() async {
     if (loginKey.currentState!.validate()) {
-      loginKey.currentState!.save();
+      // loginKey.currentState!.save();
       final user = await controller.login(username, passwordValue);
       if (user is User) {
         mainController.getUser(user);
+        Get.toNamed(Routes.main);
       } else {
         Get.snackbar('Алдаа', user.toString());
       }

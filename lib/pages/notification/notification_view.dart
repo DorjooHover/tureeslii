@@ -1,8 +1,40 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+import 'package:tureeslii/model/models.dart';
+import 'package:tureeslii/provider/api_prodiver.dart';
 import 'package:tureeslii/shared/index.dart';
 
-class NotificationView extends StatelessWidget {
+class NotificationView extends StatefulWidget {
   const NotificationView({super.key});
+
+  @override
+  State<NotificationView> createState() => _NotificationViewState();
+}
+
+class _NotificationViewState extends State<NotificationView> {
+  List<Notifications> notifications = [];
+  final api = Get.find<ApiRepository>();
+  @override
+  void initState() {
+    super.initState();
+    getNotification();
+  }
+
+  getNotification() async {
+    List<Notifications> res = await api.getAllNotification();
+    setState(() {
+      notifications = res;
+    });
+    if (mounted) {
+      setState(() {
+        notifications = [];
+      });
+    }
+  }
+
+  dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -10,8 +42,7 @@ class NotificationView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: ListView.builder(
         itemBuilder: (context, index) => Padding(
-          padding:
-              const EdgeInsets.symmetric(vertical: 10, horizontal: origin),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: origin),
           child: NotificationCard(
               dot: index % 4 != 0 ? true : false,
               type: index % 5 == 0
@@ -22,7 +53,7 @@ class NotificationView extends StatelessWidget {
                           ? 'info'
                           : 'danger'),
         ),
-        itemCount: 10,
+        itemCount: notifications.length,
       ),
     );
   }

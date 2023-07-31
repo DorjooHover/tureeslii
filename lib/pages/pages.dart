@@ -1,5 +1,6 @@
 export './auth/login_view.dart';
 export './auth/register_view.dart';
+export './auth/auth_view.dart';
 export './main/main_view.dart';
 export './menu/change_city_view.dart';
 export './menu/edit_view.dart';

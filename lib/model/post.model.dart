@@ -56,7 +56,7 @@ class Post {
   String? state;
   String? long;
   String? lat;
-  int? plot;
+  double? plot;
   List<PostAttachments>? postAttachments;
   User? user;
 
@@ -176,7 +176,7 @@ class Post {
     state = json['state'];
     long = json['long'];
     lat = json['lat'];
-    plot = json['plot'];
+    plot = double.parse(json['plot'].toString());
     if (json['postAttachments'] != null) {
       postAttachments = <PostAttachments>[];
       json['postAttachments'].forEach((v) {

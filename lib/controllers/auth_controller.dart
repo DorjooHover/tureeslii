@@ -10,7 +10,7 @@ class AuthController extends GetxController {
   final ApiRepository apiRepository;
   AuthController({required this.apiRepository});
   final prefs = Get.find<SharedPreferences>();
-
+  final city = "Улаанбаатар".obs;
   final username = "".obs;
   final password = "".obs;
 
@@ -28,6 +28,7 @@ class AuthController extends GetxController {
     try {
       User user = await apiRepository.login(username, password);
       _saveTokens(user.accessToken!);
+
       return user;
     } catch (e) {
       return e;

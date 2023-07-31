@@ -19,13 +19,44 @@ class MainController extends GetxController
   final currentUserType = 'user'.obs;
   final our = false.obs;
   final loading = false.obs;
-
+  final savedPosts = <Post>[].obs;
   User? get user => rxUser.value;
   set user(value) => rxUser.value = value;
 
   getUser(User user) {
     change(user, status: RxStatus.success());
     update();
+    getSavedPost();
+  }
+
+  getSavedPost() async {
+    try {
+      final res = await _apiRepository.getSavedPosts();
+      savedPosts.value = res;
+      return res;
+    } on DioException catch (e) {
+      print(e);
+    }
+  }
+
+  Future<bool> togglePost(int id) async {
+    try {
+      final res;
+      bool result = false;
+      if (savedPosts.where((post) => post.id == id).isNotEmpty) {
+        res = await _apiRepository.removeBookmark(id);
+        result = false;
+      } else {
+        res = await _apiRepository.saveBookmark(id);
+        result = true;
+      }
+      if (res) {
+        getSavedPost();
+      }
+      return result;
+    } on DioException catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> setupApp() async {

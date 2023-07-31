@@ -23,6 +23,7 @@ class Routes {
 
   // auth
   static String auth = '/auth';
+  static String login = '/login';
   static String register = '/register';
   static String registerCustom = '$register/custom';
   static String error = '/error';
@@ -36,7 +37,13 @@ class Routes {
     GetPage(name: main, page: () => const MainView()),
     GetPage(
         name: auth,
-        page: () => LoginView(),
+        page: () =>  AuthView(),
+        binding: AuthBinding(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+    GetPage(
+        name: login,
+        page: () => const LoginView(),
         binding: AuthBinding(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),

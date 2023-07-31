@@ -1,110 +1,139 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/shared/index.dart';
 
-class BookmarkCard extends StatelessWidget {
-  const BookmarkCard({super.key, required this.data});
+class BookmarkCard extends StatefulWidget {
+  const BookmarkCard({super.key, required this.data, required this.onBookmark});
   final Post data;
+  final Function() onBookmark;
+  @override
+  State<BookmarkCard> createState() => _BookmarkCardState();
+}
+
+class _BookmarkCardState extends State<BookmarkCard> {
+  int selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
-    List<int> list = [1, 2, 3, 4, 5];
     CarouselController carouselController = CarouselController();
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CarouselSlider(
-          carouselController: carouselController,
-          options: CarouselOptions(height: 263.0, viewportFraction: 1),
-          items: list.map((item) {
-            final i = list.indexOf(item);
-            return Builder(
-              builder: (BuildContext context) {
-                return Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                          left: 0,
-                          right: 0,
-                          top: 0,
-                          bottom: 15,
-                          child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(origin),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.25),
-                                    blurRadius: 4,
-                                    spreadRadius: 0.25,
-                                    offset:
-                                        const Offset(0, 4), // Shadow position
-                                  ),
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.25),
-                                    blurRadius: 4,
-                                    spreadRadius: 0.25,
-                                    offset: const Offset(0, 0),
-                                  )
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(origin),
-                                child: Image.network(
-                                  'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-                                  fit: BoxFit.cover,
-                                ),
-                              ))),
-                      Positioned(
-                          top: origin,
-                          right: origin,
-                          child: SvgPicture.asset(iconHeartActive)),
-                      Positioned(
-                        bottom: small,
-                        left: 0,
-                        right: 0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: list.map((e) {
-                            final index = list.indexOf(e);
-                            return GestureDetector(
-                                onTap: () =>
-                                    carouselController.animateToPage(i),
-                                child: Container(
-                                  width: 8.0,
-                                  height: 8.0,
-                                  margin: EdgeInsets.symmetric(
-                                      vertical: 8.0, horizontal: 4.0),
+        Stack(
+          children: [
+            CarouselSlider(
+              carouselController: carouselController,
+              options: CarouselOptions(
+                height: 263.0,
+                viewportFraction: 1,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+              ),
+              items: widget.data.postAttachments?.map((item) {
+                final i = widget.data.postAttachments?.indexOf(item);
+                return Builder(
+                  builder: (BuildContext context) {
+                    return SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Stack(
+                        children: [
+                          Positioned(
+                              left: 0,
+                              right: 0,
+                              top: 0,
+                              bottom: 15,
+                              child: Container(
                                   decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.white),
-                                    color: i == index
-                                        ? Colors.white
-                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(origin),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.25),
+                                        blurRadius: 4,
+                                        spreadRadius: 0.25,
+                                        offset: const Offset(
+                                            0, 4), // Shadow position
+                                      ),
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.25),
+                                        blurRadius: 4,
+                                        spreadRadius: 0.25,
+                                        offset: const Offset(0, 0),
+                                      )
+                                    ],
                                   ),
-                                ));
-                          }).toList(),
-                        ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(origin),
+                                    child: Image.network(
+                                      item.fileThumb != null
+                                          ? '$fileUrl${item.fileThumb}'
+                                          : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ))),
+                        ],
                       ),
-                      Positioned(
-                          bottom: 0,
-                          right: origin,
-                          child: Row(
-                            children: [
-                              ItemCard(icon: iconRoom, value: '1'),
-                              space13,
-                              ItemCard(icon: iconBed, value: '1'),
-                              space13,
-                              ItemCard(icon: iconBath, value: '1'),
-                            ],
-                          )),
-                    ],
-                  ),
+                    );
+                  },
                 );
-              },
-            );
-          }).toList(),
+              }).toList(),
+            ),
+            Positioned(
+                top: origin,
+                right: origin,
+                child: GestureDetector(
+                  onTap: widget.onBookmark,
+                  child: SvgPicture.asset(iconHeartActive),
+                )),
+            Positioned(
+              bottom: small,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: widget.data.postAttachments?.map((e) {
+                      final index = widget.data.postAttachments?.indexOf(e);
+                      return GestureDetector(
+                          onTap: () => carouselController.animateToPage(index!),
+                          child: Container(
+                            width: 8.0,
+                            height: 8.0,
+                            margin: EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 4.0),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white),
+                              color: selectedIndex == index
+                                  ? Colors.white
+                                  : Colors.transparent,
+                            ),
+                          ));
+                    }).toList() ??
+                    [],
+              ),
+            ),
+            Positioned(
+                bottom: 0,
+                right: origin,
+                child: Row(
+                  children: [
+                    ItemCard(
+                        icon: iconRoom, value: '${widget.data.roomCount ?? 0}'),
+                    space13,
+                    ItemCard(
+                        icon: iconBed, value: '${widget.data.bedroom ?? 0}'),
+                    space13,
+                    ItemCard(
+                        icon: iconBath, value: '${widget.data.bathroom ?? 0}'),
+                  ],
+                )),
+          ],
         ),
         space16,
         Row(
@@ -113,7 +142,7 @@ class BookmarkCard extends StatelessWidget {
           children: [
             RichText(
               text: TextSpan(
-                text: '${currencyFormat(1250000, false)} ',
+                text: '${currencyFormat(widget.data.price ?? 0.0, false)} ',
                 style: Theme.of(context).textTheme.titleLarge,
                 children: <TextSpan>[
                   TextSpan(
@@ -125,7 +154,9 @@ class BookmarkCard extends StatelessWidget {
                 ],
               ),
             ),
-            Text('2023.01.11',
+            Text(
+                DateFormat('yyyy.MM.dd')
+                    .format(DateTime.parse(widget.data.startDate!)),
                 style: Theme.of(context)
                     .textTheme
                     .labelLarge!
@@ -134,13 +165,14 @@ class BookmarkCard extends StatelessWidget {
         ),
         space8,
         Text(
-          '2 өрөө, гал тогоо тусдаа хуучны дулаахан байрыг баруун европуудад удаан хугацаагаар түрээслүүлнэ ',
+          widget.data.title ?? '',
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context)
               .textTheme
               .bodyMedium!
               .copyWith(color: black, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.left,
         ),
         space16
       ],

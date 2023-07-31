@@ -8,6 +8,15 @@ class ApiRepository {
   final DioProvider apiProvider;
 
   // auth
+  getUser() async {
+    try {
+      final response = await apiProvider.get('/auth/user');
+      return User.fromJson(response['data']);
+    } on DioException catch (e) {
+      print(e);
+    }
+  }
+
   Future<User> login(String username, String password) async {
     try {
       final data = {"username": username, "password": password};
@@ -89,7 +98,7 @@ class ApiRepository {
       final response = await apiProvider.get(
         '/posts/getSavedPosts',
       );
-      return (response as List).map((e) => Post.fromJson(e)).toList();
+      return (response['data'] as List).map((e) => Post.fromJson(e)).toList();
     } on DioException catch (e) {
       if (e.response?.data["success"] == false) {
         throw Exception("Дахии оролдоно уу");
@@ -106,6 +115,7 @@ class ApiRepository {
           await apiProvider.post('/posts/saveBookmark', data: data);
       return true;
     } on DioException catch (e) {
+      print(e.response);
       if (e.response?.data["success"] == false) {
         throw Exception("Дахии оролдоно уу");
       } else {
@@ -164,10 +174,11 @@ class ApiRepository {
   }
 
 // notification
-  Future<Notifications> getAllNotification() async {
+  Future<List<Notifications>> getAllNotification() async {
     try {
       final response = await apiProvider.get('/notification');
-      return Notifications.fromJson(response);
+
+      return (response as List).map((e) => Notifications.fromJson(e)).toList();
     } on DioException catch (e) {
       throw Exception("Алдаа гарлаа");
     }

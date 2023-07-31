@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/shared/index.dart';
 
@@ -10,6 +12,29 @@ class BookmarkView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<BookmarkView> {
+  List<Post> posts = [];
+  @override
+  void initState() {
+    super.initState();
+    getSavedPost();
+  }
+
+  final mainController = Get.put(MainController());
+  getSavedPost() async {
+    List<Post> res = await mainController.getSavedPost();
+
+    if (mounted) {
+      setState(() {
+        posts = res;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -20,10 +45,17 @@ class _HomeViewState extends State<BookmarkView> {
             vertical: origin,
           ),
           child: BookmarkCard(
-            data: Post(),
+            data: posts[index],
+            onBookmark: () {
+              mainController.togglePost(posts[index].id!);
+              getSavedPost();
+              setState(() {
+                posts.removeWhere((post) => post.id == posts[index].id);
+              });
+            },
           ),
         ),
-        itemCount: 10,
+        itemCount: posts.length,
       ),
     );
   }

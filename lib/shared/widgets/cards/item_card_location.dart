@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/shared/index.dart';
 
@@ -10,6 +12,7 @@ class LocationCard extends StatelessWidget {
   final Function()? onTap;
   @override
   Widget build(BuildContext context) {
+    final mainController = Get.put(MainController());
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -74,7 +77,17 @@ class LocationCard extends StatelessWidget {
                   Positioned(
                       top: small,
                       left: small,
-                      child: SvgPicture.asset(iconHeartActive)),
+                      child: GestureDetector(
+                          onTap: () async {
+                            bool res =
+                                await mainController.togglePost(data.id!);
+                          },
+                          child: Obx(() => SvgPicture.asset(mainController
+                                  .savedPosts
+                                  .where((post) => post.id == data.id)
+                                  .isNotEmpty
+                              ? iconHeartActive
+                              : iconHeart)))),
                   Positioned(
                       bottom: small,
                       right: small,

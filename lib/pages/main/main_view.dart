@@ -24,93 +24,84 @@ class _MainViewState extends State<MainView> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MainController());
-    return Scaffold(
-      appBar: MainAppBar(
-        currentIndex: currentIndex,
-        height: currentIndex == 4 ? 246 : 63,
-        bgColor: currentIndex != 4 ? Colors.white : bgGray,
-        statusBarColor: currentIndex != 4 ? Colors.white : bgGray,
-      ),
-      body: views[currentIndex],
-      bottomNavigationBar: MainNavigationBar(
-        currentIndex: currentIndex,
-        changeIndex: (value) {
-          setState(() {
-            currentIndex = value;
-          });
-        },
-      ),
+
+    return GetBuilder<MainController>(
+      init: MainController(),
+      builder: (controller) => controller.obx(
+          onLoading: const SplashView(),
+          onError: (error) => Stack(
+                children: [
+                  const SplashView(),
+                  Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Align(
+                      child: Material(
+                        borderRadius: BorderRadius.circular(30),
+                        borderOnForeground: true,
+                        child: AnimatedContainer(
+                          margin: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(20),
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                          height: 400,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(20),
+                            ),
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 16.0),
+                                  child: Text(
+                                    "Check your internet connection and try again",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                Obx(
+                                  () => ElevatedButton(
+                                    onPressed:
+                                        controller.isLoading.value == true
+                                            ? null
+                                            : () => controller.setupApp(),
+                                    child: const Text("Try again"),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ), (user) {
+        return Scaffold(
+          appBar: MainAppBar(
+            currentIndex: currentIndex,
+            height: currentIndex == 4 ? 246 : 63,
+            bgColor: currentIndex != 4 ? Colors.white : bgGray,
+            statusBarColor: currentIndex != 4 ? Colors.white : bgGray,
+          ),
+          body: views[currentIndex],
+          bottomNavigationBar: MainNavigationBar(
+            currentIndex: currentIndex,
+            changeIndex: (value) {
+              setState(() {
+                currentIndex = value;
+              });
+            },
+          ),
+        );
+      }),
     );
-    // return GetBuilder<MainController>(
-    //   init: MainController(),
-    //   builder: (controller) => controller.obx(
-    //       onLoading: const SplashView(),
-    //       onError: (error) => Stack(
-    //             children: [
-    //               const SplashView(),
-    //               Padding(
-    //                 padding: const EdgeInsets.all(24.0),
-    //                 child: Align(
-    //                   child: Material(
-    //                     borderRadius: BorderRadius.circular(30),
-    //                     borderOnForeground: true,
-    //                     child: AnimatedContainer(
-    //                       margin: const EdgeInsets.all(20),
-    //                       padding: const EdgeInsets.all(20),
-    //                       duration: const Duration(milliseconds: 300),
-    //                       curve: Curves.easeInOut,
-    //                       height: 400,
-    //                       decoration: const BoxDecoration(
-    //                         color: Colors.white,
-    //                         borderRadius: BorderRadius.all(
-    //                           Radius.circular(20),
-    //                         ),
-    //                       ),
-    //                       child: Center(
-    //                         child: Column(
-    //                           mainAxisAlignment: MainAxisAlignment.center,
-    //                           children: [
-    //                             const Padding(
-    //                               padding:
-    //                                   EdgeInsets.symmetric(horizontal: 16.0),
-    //                               child: Text(
-    //                                 "Check your internet connection and try again",
-    //                                 style: TextStyle(
-    //                                   fontSize: 20,
-    //                                 ),
-    //                                 textAlign: TextAlign.center,
-    //                               ),
-    //                             ),
-    //                             const SizedBox(height: 20),
-    //                             Obx(
-    //                               () => ElevatedButton(
-    //                                 onPressed:
-    //                                     controller.isLoading.value == true
-    //                                         ? null
-    //                                         : () => controller.setupApp(),
-    //                                 child: const Text("Try again"),
-    //                               ),
-    //                             ),
-    //                           ],
-    //                         ),
-    //                       ),
-    //                     ),
-    //                   ),
-    //                 ),
-    //               )
-    //             ],
-    //           ), (user) {
-    //     return Scaffold(
-    //       appBar: MainAppBar(),
-    //       body: Obx(() => views[controller.currentIndex.value]),
-    //       bottomNavigationBar: MainNavigationBar(
-    //         currentIndex: controller.currentIndex.value,
-    //         changeIndex: (value) {
-    //           controller.currentIndex.value = value;
-    //         },
-    //       ),
-    //     );
-    //   }),
-    // );
   }
 }

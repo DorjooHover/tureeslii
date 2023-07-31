@@ -82,29 +82,55 @@ class _MoreDetailCardState extends State<MoreDetailCard>
                         child: MoreDetailItem(
                           list: [
                             DetailName(
-                              icon: iconIncreasePrice,
-                              value: '${widget.data.price ?? 0}',
-                              type: "",
-                              name: payment
-                            ),
+                                icon: detailPayment,
+                                value: '${widget.data.price ?? 0}',
+                                type: "price",
+                                name: payment),
                             DetailName(
-                              icon: iconIncreasePrice,
-                              value: '${widget.data. ?? 0}',
-                              type: "",
-                              name: electronic
-                            ),
+                                icon: detailElectronic,
+                                value: getPriceIncluded(priceIncluded[0],
+                                        widget.data.priceIncluded ?? [])
+                                    ? 'Багтсан'
+                                    : 'Багтаагүй',
+                                type: getPriceIncluded(priceIncluded[0],
+                                        widget.data.priceIncluded ?? [])
+                                    ? "true"
+                                    : "",
+                                name: electronic),
                             DetailName(
-                              icon: iconIncreasePrice,
-                              value: '${widget.data.price ?? 0}',
-                              type: "",
-                              name: electronic
-                            ),
-                            widget.data.inPayment!.electronic!,
-                            widget.data.inPayment!.accommodation!,
-                            widget.data.inPayment!.internet!,
-                            widget.data.inPayment!.sokh!,
+                                icon: detailAccommodation,
+                                value: getPriceIncluded(priceIncluded[1],
+                                        widget.data.priceIncluded ?? [])
+                                    ? 'Багтсан'
+                                    : 'Багтаагүй',
+                                type: getPriceIncluded(priceIncluded[1],
+                                        widget.data.priceIncluded ?? [])
+                                    ? "true"
+                                    : "",
+                                name: flatPrice),
+                            DetailName(
+                                icon: detailInternet,
+                                value: getPriceIncluded(priceIncluded[2],
+                                        widget.data.priceIncluded ?? [])
+                                    ? 'Багтсан'
+                                    : 'Багтаагүй',
+                                type: getPriceIncluded(priceIncluded[2],
+                                        widget.data.priceIncluded ?? [])
+                                    ? "true"
+                                    : "",
+                                name: internet),
+                            DetailName(
+                                icon: detailSokh,
+                                value: getPriceIncluded(priceIncluded[3],
+                                        widget.data.priceIncluded ?? [])
+                                    ? 'Багтсан'
+                                    : 'Багтаагүй',
+                                type: getPriceIncluded(priceIncluded[3],
+                                        widget.data.priceIncluded ?? [])
+                                    ? "true"
+                                    : "",
+                                name: sokh),
                           ],
-                          color: gray,
                         ),
                       ),
               ),
@@ -134,15 +160,44 @@ class _MoreDetailCardState extends State<MoreDetailCard>
                 ),
               ),
               space16,
-              MoreDetailItem(
-                list: [
-                  widget.data.flat!.heating!,
-                  widget.data.flat!.waterSupply!,
-                  widget.data.flat!.bathroom!,
-                  widget.data.flat!.area!,
-                  widget.data.flat!.floor!,
-                ],
-                color: black,
+              AnimatedSize(
+                duration: _controller.duration!,
+                child: !isShowFlatCondition
+                    ? null
+                    : FadeTransition(
+                        opacity: _animation,
+                        child: MoreDetailItem(
+                          list: [
+                            DetailName(
+                                icon: detailHeating,
+                                value: getHeating(widget.data.heating ?? ""),
+                                type: "true",
+                                name: heating),
+                            DetailName(
+                                icon: detailWaterSupply,
+                                value: getWaterSupply(
+                                    widget.data.waterSupply ?? ""),
+                                type: "true",
+                                name: waterSupply),
+                            DetailName(
+                                icon: detailBathroom,
+                                value: getToilet(widget.data.restroom ?? ""),
+                                type: "true",
+                                name: toilet),
+                            DetailName(
+                                icon: detailArea,
+                                value: widget.data.plot?.toStringAsFixed(1) ??
+                                    '0.0',
+                                type: "true",
+                                name: area),
+                            DetailName(
+                                icon: detailFloor,
+                                value: widget.data.floor.toString(),
+                                type: "true",
+                                name: floor),
+                          ],
+                        ),
+                      ),
               ),
               space36,
               space4,
@@ -170,17 +225,65 @@ class _MoreDetailCardState extends State<MoreDetailCard>
                 ),
               ),
               space16,
-              MoreDetailItem(
-                list: [
-                  widget.data.feature!.elevator!,
-                  widget.data.feature!.balcony!,
-                  widget.data.feature!.net!,
-                  widget.data.feature!.cabelTV!,
-                  widget.data.feature!.oven!,
-                  widget.data.feature!.washing!,
-                  widget.data.feature!.refrigerator!,
-                ],
-                color: gray,
+              AnimatedSize(
+                duration: _controller.duration!,
+                child: !isShowFlatFeature
+                    ? null
+                    : FadeTransition(
+                        opacity: _animation,
+                        child: MoreDetailItem(
+                          list: [
+                            DetailName(
+                                icon: detailElevator,
+                                value: widget.data.elevator!
+                                    ? 'Багтсан'
+                                    : "Багтаагүй",
+                                type: widget.data.elevator! ? "true" : "",
+                                name: elevator),
+                            DetailName(
+                                icon: detailBailCondition,
+                                value: widget.data.balcony!
+                                    ? 'Багтсан'
+                                    : "Багтаагүй",
+                                type: widget.data.balcony! ? "true" : "",
+                                name: balcony),
+                            DetailName(
+                                icon: detailNet,
+                                value:
+                                    widget.data.wifi! ? 'Багтсан' : "Багтаагүй",
+                                type: widget.data.wifi! ? "true" : "",
+                                name: internet),
+                            DetailName(
+                                icon: detailCabel,
+                                value: widget.data.tvCable!
+                                    ? 'Багтсан'
+                                    : "Багтаагүй",
+                                type: widget.data.tvCable! ? "true" : "",
+                                name: cabelTV),
+                            DetailName(
+                                icon: detailOval,
+                                value: widget.data.stove!
+                                    ? 'Багтсан'
+                                    : "Багтаагүй",
+                                type: widget.data.stove! ? "true" : "",
+                                name: oval),
+                            DetailName(
+                                icon: detailWashing,
+                                value: widget.data.washingMachine!
+                                    ? 'Багтсан'
+                                    : "Багтаагүй",
+                                type: widget.data.washingMachine! ? "true" : "",
+                                name: washing),
+                            DetailName(
+                                icon: detailRefrigerator,
+                                value: widget.data.refrigerator!
+                                    ? 'Багтсан'
+                                    : "Багтаагүй",
+                                type: widget.data.refrigerator! ? "true" : "",
+                                name: refrigerator),
+                          ],
+                        ),
+                      ),
               ),
               space36,
               space4,
@@ -208,18 +311,87 @@ class _MoreDetailCardState extends State<MoreDetailCard>
                 ),
               ),
               space16,
-              MoreDetailItem(
-                list: [
-                  widget.data.furniture!.cabinet!,
-                  widget.data.furniture!.chair!,
-                  widget.data.furniture!.table!,
-                  widget.data.furniture!.sofa!,
-                  widget.data.furniture!.drawer!,
-                  widget.data.furniture!.cabinet!,
-                  widget.data.furniture!.bed!,
-                ],
-                color: black,
-              ),
+              AnimatedSize(
+                duration: _controller.duration!,
+                child: !isShowFurniture
+                    ? null
+                    : FadeTransition(
+                        opacity: _animation,
+                        child: MoreDetailItem(
+                          list: [
+                            DetailName(
+                                icon: detailCabinet,
+                                value: getFurniture(furnitureIncluded[0],
+                                        widget.data.furnitures ?? [])
+                                    ? 'Байгаа'
+                                    : 'Байхгүй',
+                                type: getPriceIncluded(priceIncluded[0],
+                                        widget.data.priceIncluded ?? [])
+                                    ? "true"
+                                    : "",
+                                name: cabinet),
+                            DetailName(
+                                icon: detailChair,
+                                value: getFurniture(furnitureIncluded[1],
+                                        widget.data.furnitures ?? [])
+                                    ? 'Байгаа'
+                                    : 'Байхгүй',
+                                type: getPriceIncluded(priceIncluded[1],
+                                        widget.data.priceIncluded ?? [])
+                                    ? "true"
+                                    : "",
+                                name: chair),
+                            DetailName(
+                                icon: detailTable,
+                                value: getFurniture(furnitureIncluded[2],
+                                        widget.data.furnitures ?? [])
+                                    ? 'Байгаа'
+                                    : 'Байхгүй',
+                                type: getPriceIncluded(priceIncluded[2],
+                                        widget.data.priceIncluded ?? [])
+                                    ? "true"
+                                    : "",
+                                name: table),
+                            DetailName(
+                                icon: detailSofa,
+                                value: getFurniture(furnitureIncluded[3],
+                                        widget.data.furnitures ?? [])
+                                    ? 'Байгаа'
+                                    : 'Байхгүй',
+                                type: getPriceIncluded(priceIncluded[3],
+                                        widget.data.priceIncluded ?? [])
+                                    ? "true"
+                                    : "",
+                                name: sofa),
+                            DetailName(
+                                icon: detailDrawer,
+                                value: getFurniture(furnitureIncluded[4],
+                                        widget.data.furnitures ?? [])
+                                    ? 'Байгаа'
+                                    : 'Байхгүй',
+                                type: getPriceIncluded(priceIncluded[4],
+                                        widget.data.priceIncluded ?? [])
+                                    ? "true"
+                                    : "",
+                                name: drawer),
+                            DetailName(
+                                icon: detailKitchen,
+                                value: widget.data.kitchenFurniture!
+                                    ? 'Байгаа'
+                                    : "Байхгүй",
+                                type: widget.data.refrigerator! ? "true" : "",
+                                name: kitchen),
+                            // DetailName(
+                            //     icon: detailB,
+                            //     value: widget.data.bedCount! > 0
+                            //         ? 'Байгаа'
+                            //         : "Байхгүй",
+                            //     type: widget.data.bedCount! > 0 ? "true" : "",
+                            //     name: bed),
+                          ],
+                        ),
+                      ),
+              )
             ],
           ),
         ),
@@ -254,15 +426,26 @@ class _MoreDetailCardState extends State<MoreDetailCard>
                 ),
               ),
               space16,
-              MoreDetailItem(
-                list: [
-                  widget.data.rentCondition!.whomRent!,
-                  widget.data.rentCondition!.bailCondition!,
-                  widget.data.rentCondition!.paymentCondition!,
-                  widget.data.rentCondition!.cancelCondition!,
-                  widget.data.rentCondition!.contractCondition!,
-                ],
-                color: black,
+              AnimatedSize(
+                duration: _controller.duration!,
+                child: !isShowRentCondition
+                    ? null
+                    : MoreDetailItem(
+                        list: [
+                          DetailName(
+                              icon: detailBailCondition,
+                              value: widget.data.acceptedTenants! > 0
+                                  ? 'Хамаагүй'
+                                  : widget.data.acceptedTenants!.toString(),
+                              type: "true",
+                              name: bailCondition),
+                          // widget.data.rentCondition!.whomRent!,
+                          // widget.data.rentCondition!.bailCondition!,
+                          // widget.data.rentCondition!.paymentCondition!,
+                          // widget.data.rentCondition!.cancelCondition!,
+                          // widget.data.rentCondition!.contractCondition!,
+                        ],
+                      ),
               ),
               space36,
               space4,
@@ -290,16 +473,53 @@ class _MoreDetailCardState extends State<MoreDetailCard>
                 ),
               ),
               space16,
-              MoreDetailItem(
-                list: [
-                  widget.data.restrictions!.pet!,
-                  widget.data.restrictions!.smoke!,
-                  widget.data.restrictions!.invite!,
-                  widget.data.restrictions!.isLiveTogether!,
-                  widget.data.restrictions!.whomRent!,
-                ],
-                color: black,
-              ),
+              AnimatedSize(
+                duration: _controller.duration!,
+                child: !isShowRestrictions
+                    ? null
+                    : FadeTransition(
+                        opacity: _animation,
+                        child: MoreDetailItem(
+                          list: [
+                            DetailName(
+                                icon: detailPet,
+                                value: widget.data.petAllowed!
+                                    ? 'Болно'
+                                    : "Болохгүй",
+                                type: "true",
+                                name: pet),
+                            DetailName(
+                                icon: detailSmoke,
+                                value: widget.data.smokingAllowed!
+                                    ? 'Болно'
+                                    : "Болохгүй",
+                                type: "true",
+                                name: smoke),
+                            DetailName(
+                                icon: detailInvite,
+                                value: widget.data.guestAllowed!
+                                    ? 'Болно'
+                                    : "Болохгүй",
+                                type: "true",
+                                name: inviteGuest),
+                            DetailName(
+                                icon: detailTogether,
+                                value: widget.data.livingProperty!
+                                    ? 'Тийм'
+                                    : "Үгүй",
+                                type: "true",
+                                name: isLiveTogether),
+                            DetailName(
+                                icon: detailWhoRent,
+                                value: widget.data.acceptedTenants! > 0
+                                    ? 'Хамаагүй'
+                                    : widget.data.acceptedTenants!.toString(),
+                                type: "true",
+                                name: whomRent),
+                          ],
+                        ),
+                      ),
+              )
             ],
           ),
         ),
@@ -309,9 +529,12 @@ class _MoreDetailCardState extends State<MoreDetailCard>
 }
 
 class MoreDetailItem extends StatelessWidget {
-  const MoreDetailItem({super.key, required this.list, required this.color});
+  const MoreDetailItem({
+    super.key,
+    required this.list,
+  });
   final List<DetailName> list;
-  final Color color;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -329,24 +552,34 @@ class MoreDetailItem extends StatelessWidget {
                 children: <Widget>[
                   SvgPicture.asset(e.icon!),
                   space16,
-                  Text(e.name!,
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: black,
-                            fontWeight: FontWeight.w400,
-                          ))
+                  FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(e.name!,
+                          style:
+                              Theme.of(context).textTheme.bodySmall!.copyWith(
+                                    color: black,
+                                    fontWeight: FontWeight.w400,
+                                  )))
                 ],
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(
-                    e.type != null
-                        ? '${currencyFormat(double.parse(e.value!), true)}₮'
-                        : e.value!,
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: e.type != null ? prime : color,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      e.type == 'price'
+                          ? '${currencyFormat(double.parse(e.value!), true)}₮'
+                          : e.value!,
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: e.type == 'price'
+                                ? prime
+                                : e.type == 'true'
+                                    ? black
+                                    : gray,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
                   ),
                   space8,
                   if (e.warning != null)

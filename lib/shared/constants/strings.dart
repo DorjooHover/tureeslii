@@ -17,6 +17,7 @@ const String facebookRegister = 'Facebook бүртгэл';
 const String gmailRegister = 'Gmail бүртгэл';
 const String appleRegister = 'Apple ID бүртгэл';
 const String emailRegister = 'Email бүртгэл';
+const String chooseYourCity = 'Та байр түрээслэх хотоо сонгоно уу';
 
 // menu
 const String personInfo = 'Хувийн мэдээлэл';
@@ -63,6 +64,7 @@ const String flatFeature = 'Байрны онцлог';
 const String rentCondition = 'Түрээсийн нөхцөл';
 const String restrictions = 'Хязгаарлалтууд';
 const String electronic = 'Цахилгаан';
+
 const String flatPrice = 'Байрны мөнгө';
 const String internet = 'Интернет';
 const String sokh = 'СӨХ';

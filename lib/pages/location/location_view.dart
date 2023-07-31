@@ -166,7 +166,7 @@ class _LocationViewState extends State<LocationView> {
                 },
               )
             : Center(
-                child: Text('loading...'),
+                child: Text('Түр хүлээнэ үү...'),
               ),
         CustomInfoWindow(
           controller: _customInfoWindowController,
@@ -189,6 +189,9 @@ class _LocationViewState extends State<LocationView> {
                   child: LocationCard(
                     data: posts.firstWhere((Post post) => post.id == selected),
                     onTap: () {
+                      print(posts
+                          .firstWhere((post) => post.id == selected)
+                          .toJson());
                       Get.to(() => ItemDetailView(
                             data:
                                 posts.firstWhere((post) => post.id == selected),
@@ -307,7 +310,10 @@ class _LocationViewState extends State<LocationView> {
                           child: Column(
                             children: <Widget>[
                               ...posts
-                                  .map((Post post) => BookmarkCard(data: post))
+                                  .map((Post post) => BookmarkCard(
+                                        data: post,
+                                        onBookmark: () {},
+                                      ))
                                   .toList()
                             ],
                           ),
