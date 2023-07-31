@@ -20,9 +20,28 @@ class Routes {
   // location
   static String listing = '/list';
   static String location = '$listing/location';
+  static String general = '$listing/general';
+  static String condition = '$listing/condition';
+  static String flatInfo = '$listing/flatInfo';
+  static String flatFeature = '$listing/flatFeature';
+  static String roomInfo = '$listing/roomInfo';
+  static String imageLibrary = '$listing/imageLibrary';
+
+// verification
+  static String verification = '/verification';
+
   static String locationFilter = '$location/filter';
   static String locationDetail = '$location/detail';
 
+// personal
+  static String personal = '/personal';
+
+// my ads
+  static String myAds = '/myAds';
+  static String published = '$myAds/published';
+  static String entered = '$myAds/entered';
+  static String notEnough = '$myAds/notEnough';
+  static String rentRequest = '$published/request';
   // auth
   static String auth = '/auth';
   static String register = '/register';
@@ -59,11 +78,7 @@ class Routes {
         page: () => const MenuView(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
-    GetPage(
-        name: profile,
-        page: () => const ProfileView(),
-        transition: Transition.fade,
-        transitionDuration: const Duration(milliseconds: 300)),
+
     GetPage(
         name: changeCity,
         page: () => const ChangeCityView(),
@@ -71,7 +86,9 @@ class Routes {
         transitionDuration: const Duration(milliseconds: 300)),
     GetPage(
         name: editProfile,
-        page: () => SignInView(),
+        page: () => SignInView(
+              isRegister: false,
+            ),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
     // location
@@ -85,6 +102,76 @@ class Routes {
         page: () => const LocationView(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
+    GetPage(
+        name: general,
+        page: () => const GeneralView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+    GetPage(
+        name: condition,
+        page: () => const ConditionView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+    GetPage(
+        name: flatInfo,
+        page: () => const FlatInfoView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+    GetPage(
+        name: flatFeature,
+        page: () => const FlatFeatureView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+    GetPage(
+        name: roomInfo,
+        page: () => const RoomInfoView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+    GetPage(
+        name: imageLibrary,
+        page: () => const ImageLibraryView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+    // verification
+
+    GetPage(
+        name: verification,
+        page: () => const VerificationView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+    // personal
+    GetPage(
+        name: personal,
+        page: () => const PersonalView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+    // my ads
+    GetPage(
+        name: myAds,
+        page: () => const MyAdsView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+    GetPage(
+        name: published,
+        page: () => const PublishedView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+    GetPage(
+        name: entered,
+        page: () => const EnteredView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+    GetPage(
+        name: notEnough,
+        page: () => const NotEnoughView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+    GetPage(
+        name: rentRequest,
+        page: () => const RentRequestView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+
     GetPage(
         name: locationFilter,
         page: () => const FilterView(),
@@ -114,7 +201,9 @@ class Routes {
         transitionDuration: const Duration(milliseconds: 300)),
     GetPage(
         name: registerCustom,
-        page: () => SignInView(),
+        page: () => SignInView(
+              isRegister: true,
+            ),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
     GetPage(

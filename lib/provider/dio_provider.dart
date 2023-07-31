@@ -9,9 +9,8 @@ class DioProvider extends GetxService {
   var dio = Dio();
   @override
   void onInit() {
-    // dio.options.baseUrl = isProduction
-    // ? 'http://192.168.1.2:5050'
-    // : 'http://192.168.1.2:5050';
+    dio.options.baseUrl =
+        isProduction ? 'https://tureeslii.mn/api' : 'https://tureeslii.mn/api';
 
     dio.interceptors.addAll(
       [
@@ -49,7 +48,7 @@ class DioProvider extends GetxService {
       final response = await dio.post(path, data: data, options: options);
 
       return response.data;
-    } on Exception {
+    } catch (e) {
       rethrow;
     }
   }

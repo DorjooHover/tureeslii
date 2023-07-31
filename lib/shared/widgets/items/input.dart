@@ -48,6 +48,7 @@ class Input extends StatelessWidget {
 
       decoration: InputDecoration(
         isDense: true,
+
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5.0),
           borderSide: const BorderSide(color: red),
@@ -69,7 +70,7 @@ class Input extends StatelessWidget {
         filled: true,
         fillColor: Colors.white,
         // labelText: labelText,
-        
+
         hintText: labelText,
         errorMaxLines: 2,
         hintStyle:

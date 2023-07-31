@@ -2,13 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:landlord/controllers/auth_controller.dart';
+import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
-class LoginView extends StatelessWidget {
-  LoginView({Key? key}) : super(key: key);
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+final loginKey = GlobalKey<FormState>();
+
+class _LoginViewState extends State<LoginView> {
   final AuthController controller = Get.find();
-  final loginKey = GlobalKey<FormState>();
+  final mainController = Get.put(MainController());
+  String username = "";
+  String passwordValue = "";
+  loginFunc() async {
+    print(username);
+    print(passwordValue);
+    await controller.login(username, passwordValue);
+    if (loginKey.currentState!.validate()) {
+      // loginKey.currentState!.save();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,6 +58,11 @@ class LoginView extends StatelessWidget {
                 space8,
                 Input(
                   textInputAction: TextInputAction.next,
+                  onChange: (p0) {
+                    setState(() {
+                      username = p0;
+                    });
+                  },
                 ),
                 space32,
                 space8,
@@ -49,7 +74,18 @@ class LoginView extends StatelessWidget {
                       .copyWith(color: bodyText),
                 ),
                 space8,
-                Input(),
+                Input(
+                  obscureText: true,
+                  maxLine: 1,
+                  onChange: (p0) {
+                    setState(() {
+                      passwordValue = p0;
+                    });
+                  },
+                  onSubmitted: (p0) {
+                    loginFunc();
+                  },
+                ),
                 space16,
                 Align(
                   alignment: Alignment.centerRight,
@@ -66,7 +102,9 @@ class LoginView extends StatelessWidget {
                 ),
                 space24,
                 MainButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    loginFunc();
+                  },
                   text: login,
                   width: double.infinity,
                 ),

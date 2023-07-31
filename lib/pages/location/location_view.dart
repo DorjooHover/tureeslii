@@ -1,13 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:label_marker/label_marker.dart';
-import 'package:landlord/model/apartment.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 import 'package:location/location.dart';
@@ -24,22 +21,15 @@ class _LocationViewState extends State<LocationView> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   LocationData? currentLocation;
-  final Set<Marker> markers = {};
 
-  CustomInfoWindowController _customInfoWindowController =
-      CustomInfoWindowController();
+  final double _headerHeight = 292.0;
 
-  final double _headerHeight = 100.0;
-  final double _maxHeight = 600.0;
-  final double sortMaxHeight = 320.0;
-  final double sortHeaderHeight = 320.0;
   double sortBodyHeight = 0.0;
-  bool _isDragUp = true;
-  double _bodyHeight = 0.0;
+  bool isDrag = false;
+  double bodyHeight = 0.0;
   int selected = -1;
   List<int> list = [0, 1, 2, 3, 4, 5];
   final random = Random();
-  bool isSort = false;
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
@@ -54,43 +44,9 @@ class _LocationViewState extends State<LocationView> {
     });
     moveCurrentLocation();
     addCustomIcon();
-    addMarkers();
   }
 
   final GlobalKey<ScaffoldState> locationKey = GlobalKey<ScaffoldState>();
-  void addMarkers() {
-    for (int e in list) {
-      double lat = 47.9269479 + (random.nextDouble() / 100 * e);
-      double lng = 106.9738868 - (random.nextDouble() / 100 * e);
-      locations.add(LatLng(lat, lng));
-      markers.addLabelMarker(LabelMarker(
-        label: currencyFormat((e + 1) * 400000, true) + '₮',
-        backgroundColor: e == selected ? orange : Colors.white,
-        textStyle: TextStyle(
-            fontSize: 27,
-            color: e != selected ? orange : Colors.white,
-            height: 1.5,
-            fontWeight: FontWeight.w400),
-        markerId: MarkerId('$e'),
-        position: LatLng(lat, lng),
-        onTap: () {
-          setState(() {
-            selected = e;
-          });
-        },
-      ));
-
-      // _customInfoWindowController.addInfoWindow!(
-      //     Container(
-      //         width: 100,
-      //         height: 100,
-      //         color: red,
-      //         child: Text(currencyFormat(e * 400000, true))),
-      //     LatLng(lat, lng));
-    }
-  }
-
-  List<LatLng> locations = [];
 
   @override
   void initState() {
@@ -116,6 +72,7 @@ class _LocationViewState extends State<LocationView> {
 
   List<int> verified = [0];
   bool isDrawer = false;
+  LatLng? selectedLocation;
   @override
   Widget build(BuildContext context) {
     final Size _size = MediaQuery.of(context).size;
@@ -140,7 +97,7 @@ class _LocationViewState extends State<LocationView> {
               child: IconButton(
                 onPressed: () {},
                 icon: SvgPicture.asset(
-                  iconGmail,
+                  iconSave,
                   width: 24,
                   height: 24,
                 ),
@@ -154,94 +111,66 @@ class _LocationViewState extends State<LocationView> {
                         initialCameraPosition: _kGooglePlex,
                         onMapCreated: (GoogleMapController controller) async {
                           _controller.complete(controller);
-                          _customInfoWindowController.googleMapController =
-                              controller;
-                          // addMarkers();
+                        },
+                        onTap: (argument) {
+                          setState(() {
+                            selectedLocation = argument;
+                          });
                         },
                         markers: {
-                          // Marker(
-                          //   markerId: MarkerId("currentLocation"),
-                          //   position: LatLng(currentLocation!.latitude!,
-                          //       currentLocation!.longitude!),
-                          // ),
-                          ...markers
+                          if (selectedLocation != null)
+                            Marker(
+                              markerId: MarkerId("selectedLocation    "),
+                              position: selectedLocation!,
+                            ),
                         },
                       )
-                    : Center(
+                    : const Center(
                         child: Text('loading...'),
                       ),
                 Positioned(
                     left: origin,
-                    right: origin,
-                    bottom: (selected != -1 && !_isDragUp
-                            ? _maxHeight - 160
-                            : _headerHeight) +
-                        26,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 600),
-                      curve: Curves.easeOut,
-                      height: selected != -1 ? 160 : 0,
-                      child: LocationCard(
-                        data: Apartment(),
-                        onTap: () {
-                          Get.toNamed(Routes.locationDetail);
-                        },
+                    top: 15,
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 5, horizontal: 14),
+                      width: 187,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(6),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.black.withOpacity(0.25),
+                              blurRadius: 15,
+                              offset: const Offset(0, 4)),
+                        ],
+                      ),
+                      child: Text(
+                        markInMap,
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            color: black,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w300),
                       ),
                     )),
                 Positioned(
-                  bottom: 0.0,
+                  bottom: MediaQuery.of(context).padding.bottom,
                   child: AnimatedContainer(
                       constraints: BoxConstraints(
-                        maxHeight: _maxHeight,
-                        minHeight: _headerHeight,
+                        maxHeight: MediaQuery.of(context).size.height * 0.6,
                       ),
                       curve: Curves.easeOut,
-                      height: _bodyHeight,
+                      height: !isDrag ? _headerHeight : _size.height * 0.6,
                       duration: const Duration(milliseconds: 600),
-                      child: GestureDetector(
-                        onVerticalDragUpdate: (DragUpdateDetails data) {
-                          double _draggedAmount =
-                              _size.height - data.globalPosition.dy;
-
-                          if (_isDragUp) {
-                            if (_draggedAmount < 10.0)
-                              setState(() {
-                                _bodyHeight = _draggedAmount;
-                              });
-                            if (_draggedAmount > 10.0)
-                              setState(() {
-                                _bodyHeight =
-                                    _maxHeight - (selected != -1 ? 160 : 0);
-                              });
-                          } else {
-                            /// the _draggedAmount cannot be higher than maxHeight b/c maxHeight is _dragged Amount + header Height
-                            double _downDragged = _maxHeight - _draggedAmount;
-                            if (_downDragged < 5.0) {
-                              setState(() {
-                                _bodyHeight =
-                                    _draggedAmount - (selected != -1 ? 160 : 0);
-                              });
-                            }
-                            ;
-                            if (_downDragged > 5.0) {
-                              setState(() {
-                                _bodyHeight = 0.0;
-                              });
-                            }
-                            ;
-                          }
-                        },
-                        onVerticalDragEnd: (DragEndDetails data) {
-                          setState(() {
-                            _isDragUp = !_isDragUp;
-                          });
-                        },
+                      child: SingleChildScrollView(
+                        physics: const NeverScrollableScrollPhysics(),
                         child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 40),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: origin),
                               width: _size.width,
-                              alignment: Alignment.center,
                               decoration: const BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.only(
@@ -249,63 +178,109 @@ class _LocationViewState extends State<LocationView> {
                                   topLeft: Radius.circular(20.0),
                                 ),
                               ),
-                              height: _headerHeight,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  space13,
-                                  Container(
-                                    width: 50,
-                                    height: 4,
-                                    decoration: BoxDecoration(
-                                        color: prime,
-                                        borderRadius:
-                                            BorderRadius.circular(2.5)),
-                                  ),
-                                  space24,
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      MainIconButton(
-                                        onPressed: () {
-                                          Get.toNamed(Routes.locationFilter);
-                                        },
-                                        back: true,
-                                        text: search,
-                                        color: prime,
-                                        child: SvgPicture.asset(iconSearch),
-                                      ),
-                                      MainIconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            isSort = !isSort;
-                                          });
-                                        },
-                                        back: true,
-                                        text: sort,
-                                        child: SvgPicture.asset(iconSort),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                            Expanded(
+                              height: _size.height * 0.6,
                               child: SingleChildScrollView(
-                                child: Container(
-                                  width: _size.width,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: origin, vertical: 12),
-                                  color: Colors.white,
-                                  child: Column(
-                                    children: <Widget>[
-                                      ...list
-                                          .map((e) =>
-                                              BookmarkCard(data: Apartment()))
-                                          .toList()
-                                    ],
-                                  ),
+                                physics: const NeverScrollableScrollPhysics(),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          isDrag = !isDrag;
+                                        });
+                                      },
+                                      onVerticalDragUpdate:
+                                          (DragUpdateDetails data) {
+                                        if (data.localPosition.dy > 0) {
+                                          setState(() {
+                                            isDrag = true;
+                                          });
+                                        } else {
+                                          setState(() {
+                                            isDrag = false;
+                                          });
+                                        }
+                                      },
+                                      onVerticalDragEnd: (DragEndDetails data) {
+                                        setState(() {
+                                          isDrag = !isDrag;
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 100,
+                                        height: 40,
+                                        color: Colors.white,
+                                        alignment: Alignment.center,
+                                        child: Container(
+                                          width: 50,
+                                          height: 4,
+                                          decoration: BoxDecoration(
+                                              color: prime,
+                                              borderRadius:
+                                                  BorderRadius.circular(2.5)),
+                                        ),
+                                      ),
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                            child: AdditionCard(
+                                                title: city,
+                                                child: DropDown(
+                                                  list: cities,
+                                                  onChanged: (value) {},
+                                                  value: cities[0],
+                                                ))),
+                                        space16,
+                                        Expanded(
+                                            child: AdditionCard(
+                                                title: district,
+                                                child: Input())),
+                                      ],
+                                    ),
+                                    space24,
+                                    Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                            child: AdditionCard(
+                                                title: committee,
+                                                child: Input(
+                                                  textInputType:
+                                                      TextInputType.number,
+                                                ))),
+                                        space16,
+                                        Expanded(
+                                            child: AdditionCard(
+                                                title: floor,
+                                                child: Input(
+                                                  textInputType:
+                                                      TextInputType.number,
+                                                ))),
+                                      ],
+                                    ),
+                                    space24,
+                                    Flexible(
+                                      child: Container(
+                                        color: Colors.white,
+                                        padding:
+                                            const EdgeInsets.only(bottom: 13),
+                                        width: _size.width,
+                                        child: AdditionCard(
+                                            title: address,
+                                            child: Input(
+                                              maxLine: 5,
+                                              textInputType:
+                                                  TextInputType.number,
+                                            )),
+                                      ),
+                                    ),
+                                    !isDrag
+                                        ? const SizedBox(
+                                            height: 78,
+                                          )
+                                        : Container(),
+                                  ],
                                 ),
                               ),
                             ),
@@ -314,22 +289,45 @@ class _LocationViewState extends State<LocationView> {
                       )),
                 ),
                 Positioned(
-                  bottom: 0,
-                  child: AnimatedContainer(
-                    height: isSort ? sortMaxHeight : 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.fastOutSlowIn,
-                    child: dragBottomSheet(),
-                  ),
-                ),
+                    bottom: MediaQuery.of(context).padding.bottom,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      color: bgGray,
+                      width: double.infinity,
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.only(top: 18, right: 16, bottom: 32),
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.toNamed(Routes.general);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              next,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            space8,
+                            Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              color: prime,
+                              size: 24,
+                            )
+                          ],
+                        ),
+                      ),
+                    ))
               ],
             ),
             drawerScrimColor: Colors.transparent,
             endDrawer: LocationDrawer(selected: verified),
             onEndDrawerChanged: (isOpened) {
-              setState(() {
-                isDrawer = isOpened;
-              });
+              if (isOpened != isDrawer) {
+                setState(() {
+                  isDrawer = isOpened;
+                });
+              }
             },
           ),
           AnimatedPositioned(
@@ -355,12 +353,15 @@ class _LocationViewState extends State<LocationView> {
               onTap: () {
                 if (isDrawer) {
                   locationKey.currentState!.closeEndDrawer();
+                  setState(() {
+                    isDrawer = false;
+                  });
                 } else {
                   locationKey.currentState!.openEndDrawer();
+                  setState(() {
+                    isDrawer = true;
+                  });
                 }
-                setState(() {
-                  isDrawer = !isDrawer;
-                });
               },
               child: Container(
                 decoration: const BoxDecoration(
@@ -381,87 +382,6 @@ class _LocationViewState extends State<LocationView> {
             ),
           )
         ],
-      ),
-    );
-  }
-
-  Widget dragBottomSheet() {
-    final Size _size = MediaQuery.of(context).size;
-    return GestureDetector(
-      onVerticalDragUpdate: (DragUpdateDetails data) {
-        double draggedAmount = _size.height - data.globalPosition.dy;
-
-        if (draggedAmount > 10.0) {
-          setState(() {
-            isSort = !isSort;
-          });
-        }
-      },
-      onVerticalDragEnd: (DragEndDetails data) {
-        setState(() {
-          isSort = !isSort;
-        });
-      },
-      child: Container(
-        width: _size.width,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(20.0),
-            topLeft: Radius.circular(20.0),
-          ),
-        ),
-        child: SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              space13,
-              Container(
-                width: 50,
-                height: 4,
-                decoration: BoxDecoration(
-                    color: Color(0xffC9C9C9),
-                    borderRadius: BorderRadius.circular(2.5)),
-              ),
-              space24,
-              ...sortValues
-                  .map(
-                    (e) => GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isSort = !isSort;
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 13, horizontal: 40),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(color: Color(0xffEFEFEF)))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(e['text']!,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(
-                                        color: e['is']! == 'true'
-                                            ? orange
-                                            : Colors.black)),
-                            SvgPicture.asset(e['icon']!),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList(),
-              space64
-            ],
-          ),
-        ),
       ),
     );
   }

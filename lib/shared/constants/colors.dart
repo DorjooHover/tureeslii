@@ -28,3 +28,7 @@ const monthTextGray = Color(0xff787878);
 const monthBefore = Color(0xffCFCFCF);
 const purple = Color(0xff440893);
 const drawerGray = Color(0xffE8E8E8);
+const returnedRed = Color(0xffFE0000);
+const checkingBlack = Color(0xff222222);
+
+const active = Color(0xff30CA71);

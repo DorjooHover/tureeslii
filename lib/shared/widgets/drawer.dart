@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -61,7 +63,9 @@ class MainDrawer extends StatelessWidget {
                   ],
                 ),
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.toNamed(Routes.personal);
+                    },
                     icon: const Icon(
                       Icons.arrow_forward_ios,
                       size: 24,
@@ -81,7 +85,9 @@ class MainDrawer extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       vertical: 20, horizontal: origin),
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.toNamed(e['url']!);
+                    },
                     child: Text(
                       e['label']!,
                       style: Theme.of(context)

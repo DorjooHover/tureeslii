@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:landlord/controllers/auth_controller.dart';
 import 'package:landlord/model/models.dart';
 import 'package:landlord/provider/api_prodiver.dart';
 import 'package:landlord/shared/constants/enums.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainController extends GetxController
     with StateMixin<User>, WidgetsBindingObserver {
@@ -23,17 +23,16 @@ class MainController extends GetxController
   User? get user => rxUser.value;
   set user(value) => rxUser.value = value;
 
+  getUser(User user) {
+    change(user, status: RxStatus.success());
+    update();
+  }
+
   Future<void> setupApp() async {
     isLoading.value = true;
     try {
       user = await _apiRepository.getUser();
       change(user, status: RxStatus.success());
-      if (user?.userType == 'lawyer') {
-        currentUserType.value = 'lawyer';
-      }
-      if (user?.userType == 'our') {
-        currentUserType.value = 'our';
-      }
 
       isLoading.value = false;
     } on DioError catch (e) {

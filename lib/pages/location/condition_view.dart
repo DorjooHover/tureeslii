@@ -1,0 +1,331 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:landlord/routes.dart';
+import 'package:landlord/shared/index.dart';
+
+class ConditionView extends StatefulWidget {
+  const ConditionView({super.key});
+
+  @override
+  State<ConditionView> createState() => _ConditionViewState();
+}
+
+class _ConditionViewState extends State<ConditionView> {
+  final GlobalKey<ScaffoldState> conditionKey = GlobalKey<ScaffoldState>();
+  bool isDrawer = false;
+
+  List<int> verified = [0, 1];
+  bool pet = false;
+  bool invite = false;
+  bool smoke = false;
+  bool isLive = false;
+
+  String selectedWhomRent = whomRentValues[0];
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Stack(
+        children: [
+          Scaffold(
+            backgroundColor: bgGray,
+            key: conditionKey,
+            appBar: MainAppBar(
+              back: true,
+              logo: false,
+              center: Text(
+                conditionRestriction,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+              actions: [Container()],
+              bgColor: bgGray,
+              statusBarColor: bgGray,
+              child: IconButton(
+                onPressed: () {},
+                icon: SvgPicture.asset(
+                  iconSave,
+                  width: 24,
+                  height: 24,
+                ),
+              ),
+            ),
+            body: Container(
+              padding: const EdgeInsets.symmetric(horizontal: origin),
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height - 63,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    MenuContainer(
+                        child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        AdditionCard(
+                            title: whomRent,
+                            child: DropDown(
+                              list: whomRentValues,
+                              value: selectedWhomRent,
+                              onChanged: (value) {},
+                            )),
+                        space24,
+                        AdditionCard(
+                            title: personNumber,
+                            child: Input(
+                              textInputType: TextInputType.number,
+                            )),
+                      ],
+                    )),
+                    space40,
+                    MenuContainer(
+                        child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          requiredThings,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(
+                                  color: black, fontWeight: FontWeight.bold),
+                        ),
+                        SwitchListTile.adaptive(
+                          contentPadding: EdgeInsets.zero,
+                          activeColor: Colors.white,
+                          activeTrackColor: active,
+                          title: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SvgPicture.asset(iconPet),
+                              space13,
+                              Text(
+                                petStr,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                      color: black,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          value: pet,
+                          onChanged: (value) {
+                            setState(() {
+                              pet = value;
+                            });
+                          },
+                        ),
+                        SwitchListTile.adaptive(
+                          contentPadding: EdgeInsets.zero,
+                          activeColor: Colors.white,
+                          activeTrackColor: active,
+                          title: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SvgPicture.asset(iconInvite),
+                              space13,
+                              Text(
+                                inviteStr,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                      color: black,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          value: invite,
+                          onChanged: (value) {
+                            setState(() {
+                              invite = value;
+                            });
+                          },
+                        ),
+                        SwitchListTile.adaptive(
+                          contentPadding: EdgeInsets.zero,
+                          activeColor: Colors.white,
+                          activeTrackColor: active,
+                          title: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SvgPicture.asset(iconSmoke),
+                              space13,
+                              Text(
+                                smokeStr,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                      color: black,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          value: smoke,
+                          onChanged: (value) {
+                            setState(() {
+                              smoke = value;
+                            });
+                          },
+                        ),
+                        SwitchListTile.adaptive(
+                          contentPadding: EdgeInsets.zero,
+                          activeColor: Colors.white,
+                          activeTrackColor: active,
+                          title: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SvgPicture.asset(iconIsLive),
+                              space13,
+                              Text(
+                                isLiveStr,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                      color: black,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          value: isLive,
+                          onChanged: (value) {
+                            setState(() {
+                              isLive = value;
+                            });
+                          },
+                        ),
+                      ],
+                    )),
+                    space40,
+                  ],
+                ),
+              ),
+            ),
+            drawerScrimColor: Colors.transparent,
+            endDrawer: LocationDrawer(selected: verified),
+            onEndDrawerChanged: (isOpened) {
+              if (isOpened != isDrawer) {
+                setState(() {
+                  isDrawer = isOpened;
+                });
+              }
+            },
+          ),
+          Positioned(
+              bottom: MediaQuery.of(context).padding.bottom,
+              left: 0,
+              right: 0,
+              child: Container(
+                color: bgGray,
+                width: double.infinity,
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.only(
+                    top: 18, right: 16, left: 16, bottom: 32),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Get.toNamed(Routes.general);
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(
+                            Icons.arrow_back_ios_rounded,
+                            color: prime,
+                            size: 24,
+                          ),
+                          space8,
+                          Text(
+                            prev,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Get.toNamed(Routes.flatFeature);
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            next,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          space8,
+                          Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            color: prime,
+                            size: 24,
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            right: !isDrawer ? 0 : MediaQuery.of(context).size.width * 0.75,
+            curve: Curves.ease,
+            bottom: MediaQuery.of(context).size.height * 0.25,
+            child: GestureDetector(
+              onHorizontalDragUpdate: (details) {
+                if (details.delta.dx > 1) {
+                  conditionKey.currentState!.openEndDrawer();
+                  setState(() {
+                    isDrawer = true;
+                  });
+                } else {
+                  conditionKey.currentState!.closeEndDrawer();
+                  setState(() {
+                    isDrawer = false;
+                  });
+                }
+              },
+              onTap: () {
+                if (isDrawer) {
+                  conditionKey.currentState!.closeEndDrawer();
+                  setState(() {
+                    isDrawer = false;
+                  });
+                } else {
+                  conditionKey.currentState!.openEndDrawer();
+                  setState(() {
+                    isDrawer = true;
+                  });
+                }
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage(imageTriangle), fit: BoxFit.contain)),
+                height: 130,
+                width: 48,
+                padding: const EdgeInsets.only(left: 26),
+                alignment: Alignment.center,
+                child: Text(
+                  '3',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: blue, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}

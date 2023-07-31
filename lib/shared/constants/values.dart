@@ -59,7 +59,19 @@ const filterVerification = ['Баталгаажсан', 'Онцлох'];
 
 const filterFloor = ['1', '2-5', '5+'];
 const paymentConditionValues = ['1 сар', "3 сар", "6 сар"];
+const bailConditionValues = ['Хагас сараар' "3 сар", "6 сар"];
+const contractConditionValues = ['Хагас сараар', "3 сар", "6 сар"];
+const cancelConditionValues = ['Хатуу', "3 сар", "6 сар"];
 const collaterals = ['Барьцаагүй'];
+const whomRentValues = ['Гадаадын иргэн', "3 сар", "6 сар"];
+// flat info
+const heatingValues = ['Төвийн', "3 сар", "6 сар"];
+const waterSupplyValues = ['Төвийн', "3 сар", "6 сар"];
+const toiletValues = ['Нийтийн', "3 сар", "6 сар"];
+// room info
+const typeValues = ['Хажуу өрөө', "3 сар", "6 сар"];
+// verification
+const bankValues = ['Хажуу өрөө', "3 сар", "6 сар"];
 
 const addAdValues = [
   location,
@@ -100,13 +112,13 @@ const navbar = [
   {
     'icon': navLocation,
     'activeIcon': navLocationActive,
-    'url': navLocationActive,
-    'label': verification,
+    'url': 'verification',
+    'label': verificationDrawer,
   },
   {
     'icon': navBookmark,
     'activeIcon': navBookmarkActive,
-    'url': navBookmarkActive,
+    'url': 'myAds',
     'label': myAds,
   },
   {

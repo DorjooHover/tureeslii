@@ -58,7 +58,7 @@ class MainButton extends StatelessWidget {
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: prime,
+            backgroundColor: color,
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius),
@@ -154,23 +154,51 @@ class MainIconButton extends StatelessWidget {
 
 class AdditionCard extends StatelessWidget {
   const AdditionCard(
-      {super.key, this.color = gray, required this.title, required this.child});
+      {super.key,
+      this.mark = false,
+      this.color = gray,
+      required this.title,
+      required this.child});
   final String title;
   final Widget child;
   final Color color;
+  final bool mark;
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        FittedBox(
-          fit: BoxFit.fitWidth,
-          child: Text(
-            title,
-            maxLines: 1,
-            style:
-                Theme.of(context).textTheme.bodySmall!.copyWith(color: color),
-          ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(color: color),
+                ),
+              ),
+            ),
+            space8,
+            if (mark)
+              Container(
+                width: 15,
+                height: 15,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: prime, borderRadius: BorderRadius.circular(100)),
+                child: const Icon(
+                  Icons.question_mark_outlined,
+                  color: Colors.white,
+                  size: 13,
+                ),
+              )
+          ],
         ),
         space4,
         child

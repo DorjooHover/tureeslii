@@ -13,6 +13,7 @@ const imageLogoTextWhite = '${images}logoTextWhite.png';
 const imageLogoMiniYellow = '${images}logo_mini_yellow.png';
 const imageDot = '${images}dot.png';
 const imageTriangle = '${images}triangle.png';
+const imageBalcony = '${images}balcony.png';
 // icons
 const iconHeart = '${icons}heart.svg';
 const iconHeartActive = '${icons}heartRed.svg';
@@ -46,7 +47,28 @@ const iconOldStart = '${icons}oldStart.svg';
 const iconSend = '${icons}send.svg';
 const iconVerifiedWhite = '${icons}verifiedWhite.svg';
 const iconHeartWhite = '${icons}heartWhite.svg';
+const iconSave = '${icons}save.svg';
+// add ad
+const iconPet = '${icons}pet.svg';
+const iconSmoke = '${icons}smoke.svg';
+const iconInvite = '${icons}invite.svg';
+const iconIsLive = '${icons}isLive.svg';
+const iconCabinet = '${icons}cabinet.svg';
+const iconChair = '${icons}chair.svg';
+const iconSofa = '${icons}sofa.svg';
+const iconTable = '${icons}table.svg';
+const iconDrawer = '${icons}drawer.svg';
+const iconKitchen = '${icons}kitchen.svg';
+const iconRefrigerator = '${icons}refrigerator.svg';
+const iconCabel = '${icons}cabel.svg';
+const iconWashing = '${icons}washing.svg';
+const iconOven = '${icons}oven.svg';
+const iconInternet = '${icons}internet.svg';
+const iconBalcony = '${icons}balcony.svg';
+const iconElevator = '${icons}elevator.svg';
 
+// image library
+const iconAddImage = '${icons}addImage.svg';
 
 // detail
 

@@ -10,6 +10,7 @@ export './dialogs/dialogs.dart';
 export './status/order_status.dart';
 export 'button.dart';
 export 'cards/drawer_card.dart';
+export 'cards/my_ads_card.dart';
 export 'containers/shadow_container.dart';
 export 'drawer.dart';
 export 'item.dart';
