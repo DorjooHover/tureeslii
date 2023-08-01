@@ -121,7 +121,10 @@ class _LocationViewState extends State<LocationView> {
   @override
   void initState() {
     super.initState();
+  if(currentLocation == null) {
+
     getCurrentLocation();
+  }
     getPosts().then((value) => addMarkers());
   }
 
