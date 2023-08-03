@@ -6,8 +6,9 @@ import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class BookmarkCard extends StatefulWidget {
-  const BookmarkCard({super.key, required this.data, required this.onBookmark});
+  const BookmarkCard({super.key, required this.data,this.active = false, required this.onBookmark});
   final Post data;
+  final bool active;
   final Function() onBookmark;
   @override
   State<BookmarkCard> createState() => _BookmarkCardState();
@@ -89,7 +90,7 @@ class _BookmarkCardState extends State<BookmarkCard> {
                 right: origin,
                 child: GestureDetector(
                   onTap: widget.onBookmark,
-                  child: SvgPicture.asset(iconHeartActive),
+                  child: SvgPicture.asset(widget.active ? iconHeartActive : iconHeartWhite),
                 )),
             Positioned(
               bottom: small,

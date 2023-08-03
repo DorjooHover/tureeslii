@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class ItemDetailView extends StatelessWidget {
   const ItemDetailView({super.key, required this.data});
   final Post data;
+
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(MainController());
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: const SystemUiOverlayStyle(
@@ -136,7 +140,7 @@ class ItemDetailView extends StatelessWidget {
                                     .textTheme
                                     .labelLarge!
                                     .copyWith(color: black)),
-                            Text('${currencyFormat(1200000, true)}₮',
+                            Text('${currencyFormat(data.price!, true)}₮',
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleLarge!
@@ -149,7 +153,8 @@ class ItemDetailView extends StatelessWidget {
                     )),
                     space32,
                     MainButton(
-                      onPressed: () {
+                      onPressed: () async{
+                        await controller.rentRequest(data.id!, DateTime.now().millisecondsSinceEpoch, 30);
                         Navigator.pop(context);
                       },
                       width: double.infinity,
@@ -173,7 +178,7 @@ class ItemDetailView extends StatelessWidget {
                   offset: const Offset(4, 4), // Shadow position
                 )
               ]),
-          child: SvgPicture.asset(iconHeartActive),
+          child: SvgPicture.asset(iconSend),
           // child: SvgPicture.asset(iconSend),
         ),
       ),

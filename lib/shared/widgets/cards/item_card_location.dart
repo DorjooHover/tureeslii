@@ -78,9 +78,9 @@ class LocationCard extends StatelessWidget {
                       top: small,
                       left: small,
                       child: GestureDetector(
-                          onTap: () async {
-                            bool res =
-                                await mainController.togglePost(data.id!);
+                          onTap: ()  {
+                            
+                                 mainController.togglePost(id:data.id!, post: data);
                           },
                           child: Obx(() => SvgPicture.asset(mainController
                                   .savedPosts

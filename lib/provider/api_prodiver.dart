@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/provider/dio_provider.dart';
 
@@ -34,19 +35,56 @@ class ApiRepository {
     }
   }
 
-  Future<bool> register(String email, String password, String mobile,
-      String firstname, String lastname) async {
+  Future<bool> register(String email, String password, ) async {
     try {
       final data = {
         "password": password,
         "isCreator": false,
-        "mobile": mobile,
-        "firstname": firstname,
-        "lastname": lastname,
+
         "email": email
       };
       await apiProvider.post('/auth/register', data: data);
 
+      return true;
+    } on DioException catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> forgotPassword(String email) async  {
+    try {
+      final res = await apiProvider.post('/auth/forgotpwd', data: {"username": email});
+      print(res);
+      return true;
+    } on DioException catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> verifyForgotPassword(String password, String code, String email) async {
+    try {
+      final data = {
+        "password": password,
+        "password_verify": code,
+        "email_code": email
+
+      };
+await apiProvider.post('/auth/changepwdforgot', data: data);
+return true;
+    } on DioException catch(e) {
+      return false;
+    }
+  }
+  Future<bool> savePersonal(String lastname, String firstname, String email, String phone) async {
+    try {
+      final data = {
+        "lastname": lastname,
+        "firstname": firstname,
+        "email": email,
+        "phone":phone
+      };
+
+      await apiProvider.post('', data: data);
       return true;
     } on DioException catch (e) {
       return false;
@@ -139,7 +177,7 @@ class ApiRepository {
     }
   }
 
-  Future<void> rentRequest(int postId, String startDate, int duration) async {
+  Future<ErrorHandler> rentRequest(int postId, int startDate, int duration) async {
     try {
       final data = {
         "postId": postId,
@@ -147,9 +185,26 @@ class ApiRepository {
         "duration": duration,
       };
       final response = await apiProvider.post('/posts/rentRequest', data: data);
-      return response;
+      print(response);
+      if(response['success']) {
+        return ErrorHandler(
+          success: true,
+          message: 'Ажмилттай'
+        );
+      }
+      if(response['message'] == 'please_confirm_email') {
+        return ErrorHandler(message: 'Имайл хаягаа баталгаажуулна уу.', success: false);
+      }
+      if(response['message'] == 'start date error') {
+        return ErrorHandler(message: 'Эхлэх огноо алдаатай байна.', success: false);
+      } 
+      if(response['message'] == 'Энэ хугацаанд түрээслэх боломжгүй байна') {
+        return ErrorHandler(message: 'Энэ хугацаанд түрээслэх боломжгүй байна.', success: false);
+      } 
+        return ErrorHandler(message: 'Алдаа гарлаа', success: false);
     } on DioException catch (e) {
-      throw Exception("Алдаа гарлаа");
+      throw Exception('Алдаа');
+      
     }
   }
 
@@ -191,6 +246,26 @@ class ApiRepository {
       return await apiProvider.put('/user/password', data: data);
     } on DioException catch (e) {
       throw Exception("Алдаа гарлаа");
+    }
+  }
+
+  Future<bool> updateUser(User user) async {
+    try {
+      final data = {
+        "birthdate": user.birthdate,
+        "gender": user.gender,
+        "rentPersonCount": user.rentPersonCount,
+        "job": user.job,
+        "jobTitle": user.jobTitle,
+        "profession": user.profession,
+        "payType": user.payType,
+        "incomeAmount": user.incomeAmount,
+        "description": user.description,
+      };
+      await apiProvider.put('/user', data: data);
+      return true;
+    } on DioException catch(e) {
+      return false;
     }
   }
 }

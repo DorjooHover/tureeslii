@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:tureeslii/controllers/main_controller.dart';
+import 'package:tureeslii/controllers/splash_controller.dart';
+import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/index.dart';
+import 'package:flutter/services.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -16,6 +20,14 @@ class _ProfileViewState extends State<ProfileView> {
   bool product = false;
   String sex = male;
   String workStatus = working;
+  DateTime birthdate = DateTime(2002, 02, 01);
+  int rentPersonCount = 1;
+  String jobTitle = "";
+  String professionValue = "";
+  String payType = "";
+  double incomeAmount = 0.0;
+  String descriptionValue = "";
+  final controller = Get.put(SplashController());
   @override
   void initState() {
     // TODO: implement initState
@@ -95,7 +107,9 @@ class _ProfileViewState extends State<ProfileView> {
                       MainIconButton(
                         text: logout,
                         color: black,
-                        onPressed: () {},
+                        onPressed: () {
+                          controller.logout();
+                        },
                         back: true,
                         mainAxisAlignment: MainAxisAlignment.start,
                         child: SvgPicture.asset(iconLogout),
@@ -146,7 +160,20 @@ class _ProfileViewState extends State<ProfileView> {
                           list: [male, female],
                         )),
                     space24,
-                    AdditionCard(title: family, child: Input()),
+                    AdditionCard(
+                        title: family,
+                        child: Input(
+                          textInputAction: TextInputAction.next,
+                          textInputType: TextInputType.number,
+                          inputFormatter: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          onChange: (p0) {
+                            setState(() {
+                              rentPersonCount = int.tryParse(p0) ?? 1;
+                            });
+                          },
+                        )),
                     space24,
                     AdditionCard(
                         title: isWork,
@@ -160,9 +187,27 @@ class _ProfileViewState extends State<ProfileView> {
                           list: [working, studying],
                         )),
                     space24,
-                    AdditionCard(title: whereWork, child: Input()),
+                    AdditionCard(
+                        title: whereWork,
+                        child: Input(
+                          textInputAction: TextInputAction.next,
+                          onChange: (p0) {
+                            setState(() {
+                              jobTitle = p0;
+                            });
+                          },
+                        )),
                     space24,
-                    AdditionCard(title: profession, child: Input()),
+                    AdditionCard(
+                        title: profession,
+                        child: Input(
+                          textInputAction: TextInputAction.next,
+                          onChange: (p0) {
+                            setState(() {
+                              professionValue = p0;
+                            });
+                          },
+                        )),
                     space24,
                     AdditionCard(
                         title: howRent,
@@ -171,19 +216,51 @@ class _ProfileViewState extends State<ProfileView> {
                             value: '',
                             onChanged: (String? v) {})),
                     space24,
-                    AdditionCard(title: incomeRent, child: Input()),
+                    AdditionCard(
+                        title: incomeRent,
+                        child: Input(
+                          textInputAction: TextInputAction.next,
+                          inputFormatter: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^(\d+)?\.?\d{0,2}'))
+                          ],
+                          onChange: (p0) {
+                            setState(() {
+                              incomeAmount = double.tryParse(p0) ?? 0.0;
+                            });
+                          },
+                        )),
                     space24,
                     AdditionCard(
                         title: briefInformation,
                         child: Input(
                           maxLine: 3,
+                          textInputAction: TextInputAction.next,
                           textInputType: TextInputType.multiline,
-                          onChange: (p0) {},
+                          onChange: (p0) {
+                            setState(() {
+                              descriptionValue = p0;
+                            });
+                          },
                         )),
                     space24,
                     MainButton(
-                      onPressed: () {
-                        Get.snackbar(
+                      onPressed: ()async {
+                        bool res =await controller.mainController.updateUser(User(
+                          birthdate: birthdate.toString(),
+                          gender: sex,
+                          rentPersonCount: rentPersonCount.toString(),
+job: workStatus,
+jobTitle: jobTitle,
+profession: professionValue,
+// payType: payType,
+incomeAmount: incomeAmount,
+description: descriptionValue
+
+                        ));
+                        if(res)
+                        {
+                          Get.snackbar(
                           '',
                           '',
                           margin: EdgeInsets.zero,
@@ -208,6 +285,7 @@ class _ProfileViewState extends State<ProfileView> {
                             ],
                           ),
                         );
+                        }
                       },
                       padding: const EdgeInsets.symmetric(
                           vertical: small, horizontal: 24),

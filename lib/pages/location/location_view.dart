@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:label_marker/label_marker.dart';
 import 'package:location/location.dart';
+import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/pages/location/item_detail_view.dart';
 import 'package:tureeslii/provider/api_prodiver.dart';
@@ -27,8 +28,9 @@ class _LocationViewState extends State<LocationView> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   LocationData? currentLocation;
+  LatLng? startLocation;
   final Set<Marker> markers = {};
-
+  final mainController = Get.put(MainController());
   CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
   final ApiRepository _apiRepository = Get.find();
@@ -42,7 +44,7 @@ class _LocationViewState extends State<LocationView> {
   int selected = -1;
   final random = Random();
   bool isSort = false;
-
+  List<Post> savedPosts = <Post>[];
   final isLoading = false.obs;
   List<Post> posts = <Post>[];
   bool loading = false;
@@ -74,14 +76,17 @@ class _LocationViewState extends State<LocationView> {
     zoom: 14.4746,
   );
   void getCurrentLocation() async {
-    Location location = Location();
-    location.getLocation().then((location) {
-      setState(() {
-        currentLocation = location;
-      });
-    });
+    
+    // Location location = Location();
+  
+
+      // loc = await location.getLocation();
+   
+    
+    
     moveCurrentLocation();
     addCustomIcon();
+
   }
 
   void addMarkers() {
@@ -106,6 +111,7 @@ class _LocationViewState extends State<LocationView> {
         },
       ));
 
+
       // _customInfoWindowController.addInfoWindow!(
       //     Container(
       //         width: 100,
@@ -114,6 +120,10 @@ class _LocationViewState extends State<LocationView> {
       //         child: Text(currencyFormat(e * 400000, true))),
       //     LatLng(lat, lng));
     }
+    setState(() {
+     
+startLocation = LatLng(double.parse(posts[0].lat ?? "47.9188141,"), double.parse(posts.first.long ?? '106.917484'));
+    });
   }
 
   List<LatLng> locations = [];
@@ -121,17 +131,24 @@ class _LocationViewState extends State<LocationView> {
   @override
   void initState() {
     super.initState();
-  if(currentLocation == null) {
-
-    getCurrentLocation();
-  }
-    getPosts().then((value) => addMarkers());
+   
+ getPosts().then((value) {
+  addMarkers();
+getCurrentLocation();
+ });
+    
+  
+  setState(() {
+    savedPosts = mainController.savedPosts;
+  });
+   
   }
 
   void moveCurrentLocation() async {
+    
     GoogleMapController googleMapController = await _controller.future;
     googleMapController.animateCamera(CameraUpdate.newLatLngZoom(
-        LatLng(currentLocation!.latitude!, currentLocation!.longitude!), 14));
+        startLocation!, 14));
   }
 
   void addCustomIcon() {
@@ -150,7 +167,7 @@ class _LocationViewState extends State<LocationView> {
 
     return Stack(
       children: [
-        currentLocation != null
+        startLocation != null
             ? GoogleMap(
                 mapType: MapType.normal,
                 initialCameraPosition: _kGooglePlex,
@@ -313,10 +330,26 @@ class _LocationViewState extends State<LocationView> {
                           child: Column(
                             children: <Widget>[
                               ...posts
-                                  .map((Post post) => BookmarkCard(
+                                  .map((Post post)   {
+                                    bool active = savedPosts.where((p0) => p0.id == post.id).isNotEmpty;
+                                    return BookmarkCard(
+                                    active: active,
                                         data: post,
-                                        onBookmark: () {},
-                                      ))
+                                        onBookmark: () async  {
+                                          setState(() {
+                                            if(active) {
+                                            savedPosts.removeWhere((element) => element.id == post.id!);
+                                          } else {
+                                            savedPosts.add(post);
+                                          }
+                                          });
+                                          await mainController.togglePost(id: post.id!, post: post);
+                                          setState(() {
+                                            savedPosts = mainController.savedPosts;
+                                          });
+                                        },
+                                      );
+                                  })
                                   .toList()
                             ],
                           ),

@@ -4,7 +4,7 @@ class User {
   String? email;
   int? itemCnt;
   String? birthdate;
-  int? incomeAmount;
+  double? incomeAmount;
   String? firstname;
   String? gender;
   String? lastname;
@@ -66,7 +66,7 @@ class User {
     email = json['email'];
     itemCnt = json['itemCnt'];
     birthdate = json['birthdate'];
-    incomeAmount = json['incomeAmount'];
+    incomeAmount = double.parse(json['incomeAmount'].toString());
     firstname = json['firstname'];
     gender = json['gender'];
     lastname = json['lastname'];

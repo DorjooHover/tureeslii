@@ -71,7 +71,13 @@ class _MenuViewState extends State<MenuView> {
                             padding: const EdgeInsets.only(
                                 left: 85, top: 10, bottom: 10),
                             child: InkWell(
-                              onTap: () => launchUrl(Uri.parse(e['url']!)),
+                              onTap: () {
+                                try {
+                                  launchUrl(Uri.parse(e['url']!));
+                                } catch (e) {
+                                  print(e);
+                                }
+                              },
                               child: Text(e['text']!,
                                   style: Theme.of(context)
                                       .textTheme

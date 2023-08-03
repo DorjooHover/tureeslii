@@ -71,7 +71,8 @@ class AuthView extends StatelessWidget {
                           .map((e) => GestureDetector(
                                 onTap: () {
                                   controller.city.value = e;
-                                  Get.toNamed(Routes.register);
+                         
+                                  Get.toNamed(Routes.login);
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.symmetric(

@@ -19,11 +19,22 @@ class AuthController extends GetxController {
     super.onInit();
   }
 
-  Future<bool> registerEmail(User data, String password) async {
+  Future<bool> registerEmail(String email, String password) async {
     return await apiRepository.register(
-        data.email!, password, data.mobile!, data.firstname!, data.lastname!);
+        email, password);
   }
 
+  Future<bool> savePersonal(String lastname, String firstname, String email, String phone) async {
+    return await apiRepository.savePersonal(lastname, firstname, email, phone);
+  }
+
+  Future<bool> forgotPassword(String email) async{
+    return await apiRepository.forgotPassword(email);
+  }
+
+  Future<bool> forgotPasswordVerify(String password, String code, String email) async {
+    return await apiRepository.verifyForgotPassword(password, code, email);
+  }
   login(String username, String password) async {
     try {
       User user = await apiRepository.login(username, password);

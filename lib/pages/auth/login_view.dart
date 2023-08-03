@@ -2,10 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tureeslii/controllers/auth_controller.dart';
 import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
+import 'package:tureeslii/pages/pages.dart';
 import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/index.dart';
 
@@ -22,43 +23,10 @@ const List<String> scopes = <String>[
   'https://www.googleapis.com/auth/contacts.readonly',
 ];
 
-GoogleSignIn _googleSignIn = GoogleSignIn(
-  // Optional clientId
-  clientId:
-      '76220807252-1bv8ec6lunm0cl3o7ug2nr47qfurlllr.apps.googleusercontent.com',
-  scopes: scopes,
-);
+
 
 class _LoginViewState extends State<LoginView> {
-  GoogleSignInAccount? _currentUser;
-  bool _isAuthorized = false;
-  handleSignIn() async {
-    try {
-      await _googleSignIn.signIn().then((value) => print(value));
-      _googleSignIn.onCurrentUserChanged
-          .listen((GoogleSignInAccount? account) async {
-        // In mobile, being authenticated means being authorized...
-        bool isAuthorized = account != null;
-        // However, in the web...
-        if (kIsWeb && account != null) {
-          isAuthorized = await _googleSignIn.canAccessScopes(scopes);
-        }
-        print(account);
-
-        setState(() {
-          _currentUser = account;
-          _isAuthorized = isAuthorized;
-        });
-        // if (isAuthorized) {
-        //   unawaited(_handleGetContact(account!));
-        // }
-      });
-      _googleSignIn.signInSilently();
-    } catch (error) {
-      print(error);
-    }
-  }
-
+  
   String username = '';
   String passwordValue = '';
 
@@ -140,7 +108,7 @@ class _LoginViewState extends State<LoginView> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      debugPrint('asdf');
+                      Get.to(() => ForgotPasswordView());
                     },
                     child: Text(
                       forgotPassword,
@@ -180,7 +148,6 @@ class _LoginViewState extends State<LoginView> {
                   onPressed: () {
                     debugPrint('asdf');
 
-                    handleSignIn();
                   },
                   child: Social(
                       icon: SvgPicture.asset(

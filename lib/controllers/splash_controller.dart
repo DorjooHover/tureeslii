@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 // import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/routes.dart';
 
 import '../../../shared/index.dart';
@@ -12,7 +13,7 @@ class SplashController extends GetxController {
   final token = Rxn<String?>();
   late Worker worker;
   final storage = Get.find<SharedPreferences>();
-
+  final mainController = Get.put(MainController());
   @override
   void onInit() async {
     try {
@@ -59,6 +60,7 @@ class SplashController extends GetxController {
   logout() async {
     final storage = Get.find<SharedPreferences>();
     await storage.remove(StorageKeys.token.name);
+    mainController.logoutUser();
     token.value = null;
   }
 

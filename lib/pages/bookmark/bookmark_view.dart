@@ -47,7 +47,7 @@ class _HomeViewState extends State<BookmarkView> {
           child: BookmarkCard(
             data: posts[index],
             onBookmark: () {
-              mainController.togglePost(posts[index].id!);
+              mainController.togglePost(id: posts[index].id!);
               getSavedPost();
               setState(() {
                 posts.removeWhere((post) => post.id == posts[index].id);

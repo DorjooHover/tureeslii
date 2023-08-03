@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:tureeslii/controllers/auth_controller.dart';
 import 'package:tureeslii/shared/index.dart';
 
-class SignInView extends StatelessWidget {
-  SignInView({super.key});
+class SignInView extends StatefulWidget {
+  const SignInView({super.key, this.edit = true});
+  final bool edit;
+  @override
+  State<SignInView> createState() => _SignInViewState();
+}
+
+class _SignInViewState extends State<SignInView> {
   final editKey = GlobalKey<FormState>();
+  final controller = Get.put(AuthController(apiRepository: Get.find()));
+  String passwordValue = "", emailValue = "";
+  String lastNamValue = "", firstNameValue = "", phoneValue = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,17 +34,72 @@ class SignInView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AdditionCard(title: name, child: Input()),
+                widget.edit ? Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                AdditionCard(title: name, child: Input(
+                  textInputAction: TextInputAction.next,
+                  onChange: (p0) {
+                    setState(() {
+                      lastNamValue = p0;
+                    });
+                  },
+                )),
                 space24,
-                AdditionCard(title: firstName, child: Input()),
+                AdditionCard(title: firstName, child: Input(
+                  textInputAction: TextInputAction.next,onChange: (p0) {
+                    setState(() {
+                      firstNameValue = p0;
+                    });
+                  },)),
                 space24,
-                AdditionCard(title: email, child: Input()),
+                AdditionCard(title: email, child: Input(textInputAction: TextInputAction.next,onChange: (p0) {
+                    setState(() {
+                      emailValue = p0;
+                    });
+                  },)),
                 space24,
-                AdditionCard(title: phone, child: Input()),
+                AdditionCard(title: phone, child: Input(textInputAction: TextInputAction.done,onChange: (p0) {
+                    setState(() {
+                      phoneValue = p0;
+                    });
+                  },
+                  onSubmitted: (p0) {
+                    controller.savePersonal(lastNamValue, firstNameValue, emailValue, phoneValue);
+                  },
+                  )) 
+                  ],
+                ) : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    AdditionCard(title: email, child: Input(
+                      textInputAction: TextInputAction.next,
+                      onChange: (p0) {
+                    setState(() {
+                      emailValue = p0;
+                    });
+                  },
+                    )),
+                space24,
+                AdditionCard(title: password, child: Input(
+                  onChange: (p0) {
+                    setState(() {
+                      passwordValue = p0;
+                    });
+                  },
+                  onSubmitted: (p0) {
+                    controller.registerEmail(emailValue, passwordValue);
+                  },
+                )),
+            
+                  ],
+                ),
                 space32,
                 MainButton(
-                  onPressed: () {},
-                  text: save,
+                  onPressed: () {
+                    controller.registerEmail(emailValue, passwordValue);
+                  },
+                  text: widget.edit ? save : register,
                   width: double.infinity,
                 )
               ],
