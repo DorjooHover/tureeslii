@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:landlord/controllers/auth_controller.dart';
+import 'package:landlord/pages/pages.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -87,7 +88,12 @@ class RegisterView extends StatelessWidget {
                 MainButton(
                   color: orange,
                   onPressed: () {
-                    Get.toNamed(Routes.registerCustom);
+                  Get.to(
+                        () => SignInView(
+                              edit: false,
+                            ),
+                        transition: Transition.fade,
+                        duration: const Duration(milliseconds: 300));
                   },
                   child: Social(
                       icon: SvgPicture.asset(

@@ -1,39 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:landlord/controllers/auth_controller.dart';
-import 'package:landlord/model/models.dart';
-import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
 class SignInView extends StatefulWidget {
-  const SignInView({super.key, required this.isRegister, this.user});
-  final bool isRegister;
-  final User? user;
+  const SignInView({super.key, this.edit = true});
+  final bool edit;
   @override
   State<SignInView> createState() => _SignInViewState();
 }
 
 class _SignInViewState extends State<SignInView> {
   final editKey = GlobalKey<FormState>();
-
-  String firstnameValue = "";
-  String lastnameValue = "";
-  String emailValue = "";
-  String phoneValue = "";
-  final AuthController controller = Get.find();
-  @override
-  void initState() {
-    super.initState();
-    if (widget.user != null) {
-      setState(() {
-        firstnameValue = widget.user!.firstname!;
-        lastnameValue = widget.user!.lastname!;
-        emailValue = widget.user!.email!;
-        phoneValue = widget.user!.mobile!;
-      });
-    }
-  }
-
+  final controller = Get.put(AuthController(apiRepository: Get.find()));
+  String passwordValue = "", emailValue = "";
+  String lastNamValue = "", firstNameValue = "", phoneValue = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +24,6 @@ class _SignInViewState extends State<SignInView> {
         statusBarColor: bgGray,
         back: true,
         logo: false,
-        actions: [Container()],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -54,56 +34,72 @@ class _SignInViewState extends State<SignInView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AdditionCard(
-                    title: name,
-                    child: Input(
+                widget.edit ? Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                AdditionCard(title: name, child: Input(
+                  textInputAction: TextInputAction.next,
+                  onChange: (p0) {
+                    setState(() {
+                      lastNamValue = p0;
+                    });
+                  },
+                )),
+                space24,
+                AdditionCard(title: firstName, child: Input(
+                  textInputAction: TextInputAction.next,onChange: (p0) {
+                    setState(() {
+                      firstNameValue = p0;
+                    });
+                  },)),
+                space24,
+                AdditionCard(title: email, child: Input(textInputAction: TextInputAction.next,onChange: (p0) {
+                    setState(() {
+                      emailValue = p0;
+                    });
+                  },)),
+                space24,
+                AdditionCard(title: phone, child: Input(textInputAction: TextInputAction.done,onChange: (p0) {
+                    setState(() {
+                      phoneValue = p0;
+                    });
+                  },
+                  onSubmitted: (p0) {
+                    controller.savePersonal(lastNamValue, firstNameValue, emailValue, phoneValue);
+                  },
+                  )) 
+                  ],
+                ) : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    AdditionCard(title: email, child: Input(
+                      textInputAction: TextInputAction.next,
                       onChange: (p0) {
-                        setState(() {
-                          lastnameValue = p0;
-                        });
-                      },
+                    setState(() {
+                      emailValue = p0;
+                    });
+                  },
                     )),
                 space24,
-                AdditionCard(
-                    title: firstName,
-                    child: Input(
-                      onChange: (p0) {
-                        setState(() {
-                          firstnameValue = p0;
-                        });
-                      },
-                    )),
-                space24,
-                AdditionCard(
-                    title: email,
-                    child: Input(
-                      onChange: (p0) {
-                        setState(() {
-                          emailValue = p0;
-                        });
-                      },
-                    )),
-                space24,
-                AdditionCard(
-                    title: phone,
-                    child: Input(
-                      onChange: (p0) {
-                        setState(() {
-                          phoneValue = p0;
-                        });
-                      },
-                    )),
+                AdditionCard(title: password, child: Input(
+                  onChange: (p0) {
+                    setState(() {
+                      passwordValue = p0;
+                    });
+                  },
+                  onSubmitted: (p0) {
+                    controller.registerEmail(emailValue, passwordValue);
+                  },
+                )),
+            
+                  ],
+                ),
                 space32,
                 MainButton(
                   onPressed: () {
-                    if (widget.isRegister) {
-                      controller
-                          .register(emailValue, phoneValue, firstnameValue,
-                              lastnameValue, "")
-                          .then((value) => Get.toNamed(Routes.auth));
-                    } else {}
+                    controller.registerEmail(emailValue, passwordValue);
                   },
-                  text: widget.isRegister ? register : save,
+                  text: widget.edit ? save : register,
                   width: double.infinity,
                 )
               ],

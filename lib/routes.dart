@@ -87,7 +87,7 @@ class Routes {
     GetPage(
         name: editProfile,
         page: () => SignInView(
-              isRegister: false,
+              edit: true,
             ),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
@@ -202,7 +202,7 @@ class Routes {
     GetPage(
         name: registerCustom,
         page: () => SignInView(
-              isRegister: true,
+              edit: false,
             ),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
