@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/controllers/splash_controller.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/index.dart';
-import 'package:flutter/services.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -245,46 +244,46 @@ class _ProfileViewState extends State<ProfileView> {
                         )),
                     space24,
                     MainButton(
-                      onPressed: ()async {
-                        bool res =await controller.mainController.updateUser(User(
-                          birthdate: birthdate.toString(),
-                          gender: sex,
-                          rentPersonCount: rentPersonCount.toString(),
-job: workStatus,
-jobTitle: jobTitle,
-profession: professionValue,
+                      onPressed: () async {
+                        bool res = await controller.mainController.updateUser(
+                            User(
+                                birthdate: birthdate.toString(),
+                                gender: sex,
+                                rentPersonCount: rentPersonCount,
+                                job: workStatus,
+                                jobTitle: jobTitle,
+                                profession: professionValue,
 // payType: payType,
-incomeAmount: incomeAmount,
-description: descriptionValue
-
-                        ));
-                        if(res)
-                        {
+                                incomeAmount:
+                                    int.parse(incomeAmount.toString()),
+                                description: descriptionValue));
+                        if (res) {
                           Get.snackbar(
-                          '',
-                          '',
-                          margin: EdgeInsets.zero,
-                          snackPosition: SnackPosition.BOTTOM,
-                          maxWidth: MediaQuery.of(context).size.width,
-                          backgroundColor: green,
-                          animationDuration: const Duration(milliseconds: 300),
-                          forwardAnimationCurve: Curves.easeOut,
-                          borderRadius: 0,
-                          messageText: Container(),
-                          titleText: Row(
-                            children: <Widget>[
-                              SvgPicture.asset(iconSuccessWhite),
-                              space13,
-                              Text(
-                                successSaved,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(color: Colors.white),
-                              )
-                            ],
-                          ),
-                        );
+                            '',
+                            '',
+                            margin: EdgeInsets.zero,
+                            snackPosition: SnackPosition.BOTTOM,
+                            maxWidth: MediaQuery.of(context).size.width,
+                            backgroundColor: green,
+                            animationDuration:
+                                const Duration(milliseconds: 300),
+                            forwardAnimationCurve: Curves.easeOut,
+                            borderRadius: 0,
+                            messageText: Container(),
+                            titleText: Row(
+                              children: <Widget>[
+                                SvgPicture.asset(iconSuccessWhite),
+                                space13,
+                                Text(
+                                  successSaved,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(color: Colors.white),
+                                )
+                              ],
+                            ),
+                          );
                         }
                       },
                       padding: const EdgeInsets.symmetric(

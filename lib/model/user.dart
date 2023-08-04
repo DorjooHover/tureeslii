@@ -4,14 +4,14 @@ class User {
   String? email;
   int? itemCnt;
   String? birthdate;
-  double? incomeAmount;
+  int? incomeAmount;
   String? firstname;
   String? gender;
   String? lastname;
   String? companyName;
   String? companyRegistry;
   String? mobile;
-  String? rentPersonCount;
+  int? rentPersonCount;
   String? job;
   String? jobTitle;
   String? profession;
@@ -64,9 +64,9 @@ class User {
     accessToken = json['access_token'];
     id = json['id'];
     email = json['email'];
-    itemCnt = json['itemCnt'];
+    itemCnt = json['itemCnt'] ?? 0;
     birthdate = json['birthdate'];
-    incomeAmount = double.parse(json['incomeAmount'].toString());
+    incomeAmount = json['incomeAmount'];
     firstname = json['firstname'];
     gender = json['gender'];
     lastname = json['lastname'];

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:get/get.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/provider/dio_provider.dart';
 
@@ -23,6 +22,7 @@ class ApiRepository {
       final data = {"username": username, "password": password};
 
       final res = await apiProvider.post('/auth/login', data: data);
+      print(res);
       return User.fromJson(res['data']);
     } on DioException catch (e) {
       if (e.response!.statusCode == 401 && e.response?.data['message'] != "") {
@@ -35,14 +35,12 @@ class ApiRepository {
     }
   }
 
-  Future<bool> register(String email, String password, ) async {
+  Future<bool> register(
+    String email,
+    String password,
+  ) async {
     try {
-      final data = {
-        "password": password,
-        "isCreator": false,
-
-        "email": email
-      };
+      final data = {"password": password, "isCreator": false, "email": email};
       await apiProvider.post('/auth/register', data: data);
 
       return true;
@@ -51,9 +49,10 @@ class ApiRepository {
     }
   }
 
-  Future<bool> forgotPassword(String email) async  {
+  Future<bool> forgotPassword(String email) async {
     try {
-      final res = await apiProvider.post('/auth/forgotpwd', data: {"username": email});
+      final res =
+          await apiProvider.post('/auth/forgotpwd', data: {"username": email});
       print(res);
       return true;
     } on DioException catch (e) {
@@ -61,27 +60,29 @@ class ApiRepository {
     }
   }
 
-  Future<bool> verifyForgotPassword(String password, String code, String email) async {
+  Future<bool> verifyForgotPassword(
+      String password, String code, String email) async {
     try {
       final data = {
         "password": password,
         "password_verify": code,
         "email_code": email
-
       };
-await apiProvider.post('/auth/changepwdforgot', data: data);
-return true;
-    } on DioException catch(e) {
+      await apiProvider.post('/auth/changepwdforgot', data: data);
+      return true;
+    } on DioException catch (e) {
       return false;
     }
   }
-  Future<bool> savePersonal(String lastname, String firstname, String email, String phone) async {
+
+  Future<bool> savePersonal(
+      String lastname, String firstname, String email, String phone) async {
     try {
       final data = {
         "lastname": lastname,
         "firstname": firstname,
         "email": email,
-        "phone":phone
+        "phone": phone
       };
 
       await apiProvider.post('', data: data);
@@ -136,6 +137,7 @@ return true;
       final response = await apiProvider.get(
         '/posts/getSavedPosts',
       );
+      print(response);
       return (response['data'] as List).map((e) => Post.fromJson(e)).toList();
     } on DioException catch (e) {
       if (e.response?.data["success"] == false) {
@@ -177,7 +179,8 @@ return true;
     }
   }
 
-  Future<ErrorHandler> rentRequest(int postId, int startDate, int duration) async {
+  Future<ErrorHandler> rentRequest(
+      int postId, int startDate, int duration) async {
     try {
       final data = {
         "postId": postId,
@@ -186,25 +189,25 @@ return true;
       };
       final response = await apiProvider.post('/posts/rentRequest', data: data);
       print(response);
-      if(response['success']) {
+      if (response['success']) {
+        return ErrorHandler(success: true, message: 'Ажмилттай');
+      }
+      if (response['message'] == 'please_confirm_email') {
         return ErrorHandler(
-          success: true,
-          message: 'Ажмилттай'
-        );
+            message: 'Имайл хаягаа баталгаажуулна уу.', success: false);
       }
-      if(response['message'] == 'please_confirm_email') {
-        return ErrorHandler(message: 'Имайл хаягаа баталгаажуулна уу.', success: false);
+      if (response['message'] == 'start date error') {
+        return ErrorHandler(
+            message: 'Эхлэх огноо алдаатай байна.', success: false);
       }
-      if(response['message'] == 'start date error') {
-        return ErrorHandler(message: 'Эхлэх огноо алдаатай байна.', success: false);
-      } 
-      if(response['message'] == 'Энэ хугацаанд түрээслэх боломжгүй байна') {
-        return ErrorHandler(message: 'Энэ хугацаанд түрээслэх боломжгүй байна.', success: false);
-      } 
-        return ErrorHandler(message: 'Алдаа гарлаа', success: false);
+      if (response['message'] == 'Энэ хугацаанд түрээслэх боломжгүй байна') {
+        return ErrorHandler(
+            message: 'Энэ хугацаанд түрээслэх боломжгүй байна.',
+            success: false);
+      }
+      return ErrorHandler(message: 'Алдаа гарлаа', success: false);
     } on DioException catch (e) {
       throw Exception('Алдаа');
-      
     }
   }
 
@@ -232,7 +235,7 @@ return true;
   Future<List<Notifications>> getAllNotification() async {
     try {
       final response = await apiProvider.get('/notification');
-
+      print(response);
       return (response as List).map((e) => Notifications.fromJson(e)).toList();
     } on DioException catch (e) {
       throw Exception("Алдаа гарлаа");
@@ -264,7 +267,7 @@ return true;
       };
       await apiProvider.put('/user', data: data);
       return true;
-    } on DioException catch(e) {
+    } on DioException catch (e) {
       return false;
     }
   }
