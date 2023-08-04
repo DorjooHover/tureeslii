@@ -62,9 +62,8 @@ class _LocationViewState extends State<LocationView> {
         filterData,
       );
 
-      setState(() {
-        posts = res;
-      });
+      posts = res;
+
       isLoading.value = false;
     } on DioException catch (e) {
       isLoading.value = false;
@@ -76,17 +75,12 @@ class _LocationViewState extends State<LocationView> {
     zoom: 14.4746,
   );
   void getCurrentLocation() async {
-    
     // Location location = Location();
-  
 
-      // loc = await location.getLocation();
-   
-    
-    
+    // loc = await location.getLocation();
+
     moveCurrentLocation();
     addCustomIcon();
-
   }
 
   void addMarkers() {
@@ -111,7 +105,6 @@ class _LocationViewState extends State<LocationView> {
         },
       ));
 
-
       // _customInfoWindowController.addInfoWindow!(
       //     Container(
       //         width: 100,
@@ -121,8 +114,8 @@ class _LocationViewState extends State<LocationView> {
       //     LatLng(lat, lng));
     }
     setState(() {
-     
-startLocation = LatLng(double.parse(posts[0].lat ?? "47.9188141,"), double.parse(posts.first.long ?? '106.917484'));
+      startLocation = LatLng(double.parse(posts[0].lat ?? "47.9188141,"),
+          double.parse(posts.first.long ?? '106.917484'));
     });
   }
 
@@ -131,24 +124,21 @@ startLocation = LatLng(double.parse(posts[0].lat ?? "47.9188141,"), double.parse
   @override
   void initState() {
     super.initState();
-   
- getPosts().then((value) {
-  addMarkers();
-getCurrentLocation();
- });
-    
-  
-  setState(() {
-    savedPosts = mainController.savedPosts;
-  });
-   
+
+    getPosts().then((value) {
+      addMarkers();
+      getCurrentLocation();
+    });
+
+    setState(() {
+      savedPosts = mainController.savedPosts;
+    });
   }
 
   void moveCurrentLocation() async {
-    
     GoogleMapController googleMapController = await _controller.future;
-    googleMapController.animateCamera(CameraUpdate.newLatLngZoom(
-        startLocation!, 14));
+    googleMapController
+        .animateCamera(CameraUpdate.newLatLngZoom(startLocation!, 14));
   }
 
   void addCustomIcon() {
@@ -329,28 +319,35 @@ getCurrentLocation();
                           color: Colors.white,
                           child: Column(
                             children: <Widget>[
-                              ...posts
-                                  .map((Post post)   {
-                                    bool active = savedPosts.where((p0) => p0.id == post.id).isNotEmpty;
-                                    return BookmarkCard(
-                                    active: active,
-                                        data: post,
-                                        onBookmark: () async  {
-                                          setState(() {
-                                            if(active) {
-                                            savedPosts.removeWhere((element) => element.id == post.id!);
-                                          } else {
-                                            savedPosts.add(post);
-                                          }
-                                          });
-                                          await mainController.togglePost(id: post.id!, post: post);
-                                          setState(() {
-                                            savedPosts = mainController.savedPosts;
-                                          });
-                                        },
-                                      );
-                                  })
-                                  .toList()
+                              ...posts.map((Post post) {
+                                bool active = savedPosts
+                                    .where((p0) => p0.id == post.id)
+                                    .isNotEmpty;
+                                return BookmarkCard(
+                                  onPress: () {
+                                    Get.to(() => ItemDetailView(
+                                          data: post,
+                                        ));
+                                  },
+                                  active: active,
+                                  data: post,
+                                  onBookmark: () async {
+                                    setState(() {
+                                      if (active) {
+                                        savedPosts.removeWhere((element) =>
+                                            element.id == post.id!);
+                                      } else {
+                                        savedPosts.add(post);
+                                      }
+                                    });
+                                    await mainController.togglePost(
+                                        id: post.id!, post: post);
+                                    setState(() {
+                                      savedPosts = mainController.savedPosts;
+                                    });
+                                  },
+                                );
+                              }).toList()
                             ],
                           ),
                         ),

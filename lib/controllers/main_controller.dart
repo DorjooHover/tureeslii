@@ -33,29 +33,32 @@ class MainController extends GetxController
     change(User(), status: RxStatus.empty());
     update();
   }
+
   getSavedPost() async {
     try {
       final res = await _apiRepository.getSavedPosts();
       savedPosts.value = res;
+
       return res;
     } on DioException catch (e) {
       print(e);
     }
   }
 
-  Future<bool> togglePost({required int id, Post? post }) async {
+  Future<bool> togglePost({required int id, Post? post}) async {
     try {
       final res;
       bool result = false;
-      if (savedPosts.where((post) => post.id == id).isNotEmpty) {
 
+      if (savedPosts.where((post) => post.id == id).isEmpty) {
         res = await _apiRepository.removeBookmark(id);
         result = false;
       } else {
         res = await _apiRepository.saveBookmark(id);
-        
+
         result = true;
       }
+
       if (res) {
         getSavedPost();
       }
@@ -65,23 +68,23 @@ class MainController extends GetxController
     }
   }
 
-  Future<bool> rentRequest(int postId, int startDate, int duration ) async  {
+  Future<bool> rentRequest(int postId, int startDate, int duration) async {
     try {
-      ErrorHandler res =  await _apiRepository.rentRequest(postId, startDate, duration);
-      if(!res.success!) {
+      ErrorHandler res =
+          await _apiRepository.rentRequest(postId, startDate, duration);
+      if (!res.success!) {
         Get.snackbar('Алдаа', res.message ?? '');
       }
       return res.success!;
     } on Exception catch (e) {
-    
       return false;
     }
-
   }
 
   Future<bool> updateUser(User user) async {
     return await _apiRepository.updateUser(user);
   }
+
   Future<void> setupApp() async {
     isLoading.value = true;
     try {

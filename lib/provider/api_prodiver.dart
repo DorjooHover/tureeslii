@@ -137,7 +137,7 @@ class ApiRepository {
       final response = await apiProvider.get(
         '/posts/getSavedPosts',
       );
-      print(response);
+
       return (response['data'] as List).map((e) => Post.fromJson(e)).toList();
     } on DioException catch (e) {
       if (e.response?.data["success"] == false) {
@@ -153,6 +153,7 @@ class ApiRepository {
       final data = {"postId": postId};
       final response =
           await apiProvider.post('/posts/saveBookmark', data: data);
+      print(response);
       return true;
     } on DioException catch (e) {
       print(e.response);

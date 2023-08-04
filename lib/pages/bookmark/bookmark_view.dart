@@ -22,7 +22,7 @@ class _HomeViewState extends State<BookmarkView> {
   final mainController = Get.put(MainController());
   getSavedPost() async {
     List<Post> res = await mainController.getSavedPost();
-
+    print(res);
     if (mounted) {
       setState(() {
         posts = res;
