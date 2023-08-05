@@ -76,16 +76,16 @@ class ApiRepository {
   }
 
   Future<bool> savePersonal(
-      String lastname, String firstname, String email, String phone) async {
+      String lastname, String firstname, String phone) async {
     try {
       final data = {
         "lastname": lastname,
         "firstname": firstname,
-        "email": email,
         "phone": phone
       };
 
-      await apiProvider.post('', data: data);
+      final res = await apiProvider.put('/user', data: data);
+      print(res);
       return true;
     } on DioException catch (e) {
       return false;
@@ -196,6 +196,10 @@ class ApiRepository {
       if (response['message'] == 'please_confirm_email') {
         return ErrorHandler(
             message: 'Имайл хаягаа баталгаажуулна уу.', success: false);
+      }
+      if (response['message'] == 'please_verify_mobile') {
+        return ErrorHandler(
+            message: 'Утасны дугаараа баталгаажуулна уу.', success: false);
       }
       if (response['message'] == 'start date error') {
         return ErrorHandler(

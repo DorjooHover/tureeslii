@@ -44,7 +44,7 @@ class _LocationViewState extends State<LocationView> {
   int selected = -1;
   final random = Random();
   bool isSort = false;
-  List<Post> savedPosts = <Post>[];
+
   final isLoading = false.obs;
   List<Post> posts = <Post>[];
   bool loading = false;
@@ -128,10 +128,6 @@ class _LocationViewState extends State<LocationView> {
     getPosts().then((value) {
       addMarkers();
       getCurrentLocation();
-    });
-
-    setState(() {
-      savedPosts = mainController.savedPosts;
     });
   }
 
@@ -320,32 +316,22 @@ class _LocationViewState extends State<LocationView> {
                           child: Column(
                             children: <Widget>[
                               ...posts.map((Post post) {
-                                bool active = savedPosts
-                                    .where((p0) => p0.id == post.id)
-                                    .isNotEmpty;
-                                return BookmarkCard(
-                                  onPress: () {
-                                    Get.to(() => ItemDetailView(
-                                          data: post,
-                                        ));
-                                  },
-                                  active: active,
-                                  data: post,
-                                  onBookmark: () async {
-                                    setState(() {
-                                      if (active) {
-                                        savedPosts.removeWhere((element) =>
-                                            element.id == post.id!);
-                                      } else {
-                                        savedPosts.add(post);
-                                      }
-                                    });
-                                    await mainController.togglePost(
-                                        id: post.id!, post: post);
-                                    setState(() {
-                                      savedPosts = mainController.savedPosts;
-                                    });
-                                  },
+                                return Obx(
+                                  () => BookmarkCard(
+                                    onPress: () {
+                                      Get.to(() => ItemDetailView(
+                                            data: post,
+                                          ));
+                                    },
+                                    active: mainController.savedPosts
+                                        .where((p0) => p0.id == post.id)
+                                        .isNotEmpty,
+                                    data: post,
+                                    onBookmark: () async {
+                                      await mainController.togglePost(
+                                          id: post.id!, post: post);
+                                    },
+                                  ),
                                 );
                               }).toList()
                             ],

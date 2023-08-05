@@ -36,31 +36,36 @@ class ItemGlassCard extends StatelessWidget {
       this.color = itemCardBlue,
       required this.icon,
       this.row = true,
+      this.onTap,
       required this.value});
   final String icon;
   final String value;
   final Color color;
   final bool row;
+  final Function()? onTap;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white.withOpacity(0.4), width: 2),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.white.withOpacity(0.4), width: 2),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
+        child: row
+            ? Row(
+                children: [
+                  SvgPicture.asset(icon),
+                  const SizedBox(width: 2),
+                  Text(value,
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                          color: Colors.white, fontWeight: FontWeight.bold))
+                ],
+              )
+            : SvgPicture.asset(icon),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
-      child: row
-          ? Row(
-              children: [
-                SvgPicture.asset(icon),
-                const SizedBox(width: 2),
-                Text(value,
-                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                        color: Colors.white, fontWeight: FontWeight.bold))
-              ],
-            )
-          : SvgPicture.asset(icon),
     );
   }
 }

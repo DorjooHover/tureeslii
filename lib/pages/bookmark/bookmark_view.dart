@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
+import 'package:tureeslii/pages/location/item_detail_view.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class BookmarkView extends StatefulWidget {
@@ -45,7 +46,16 @@ class _HomeViewState extends State<BookmarkView> {
             vertical: origin,
           ),
           child: BookmarkCard(
+            onPress: () {
+              Get.to(
+                  () => ItemDetailView(
+                        data: posts[index],
+                      ),
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeIn);
+            },
             data: posts[index],
+            active: true,
             onBookmark: () {
               mainController.togglePost(id: posts[index].id!);
               getSavedPost();

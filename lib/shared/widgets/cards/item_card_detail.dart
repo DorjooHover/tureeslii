@@ -1,5 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/shared/index.dart';
 
@@ -14,7 +16,7 @@ class _ItemDetailCardState extends State<ItemDetailCard> {
   int selectedIndex = 0;
   Widget build(BuildContext context) {
     CarouselController carouselController = CarouselController();
-
+    final controller = Get.put(MainController());
     return Column(
       children: [
         Stack(
@@ -107,10 +109,19 @@ class _ItemDetailCardState extends State<ItemDetailCard> {
                 right: origin,
                 child: Column(
                   children: [
-                    ItemGlassCard(
-                      icon: iconHeartWhite,
-                      value: '',
-                      row: false,
+                    Obx(
+                      () => ItemGlassCard(
+                        icon: controller.savedPosts
+                                .where((p0) => p0.id! == widget.data.id!)
+                                .isEmpty
+                            ? iconHeartWhite
+                            : iconHeartActive,
+                        value: '',
+                        row: false,
+                        onTap: () {
+                          controller.togglePost(id: widget.data.id!);
+                        },
+                      ),
                     ),
                     space10,
                     ItemGlassCard(

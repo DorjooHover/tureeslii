@@ -20,19 +20,17 @@ class MainController extends GetxController
   final our = false.obs;
   final loading = false.obs;
   final savedPosts = <Post>[].obs;
+
+  // change password
+  final oldPassword = "".obs;
+  final newPassword = "".obs;
+  final confirmPassword = "".obs;
+
+  // own posts
+  final ownPosts = <Post>[].obs;
+
   User? get user => rxUser.value;
   set user(value) => rxUser.value = value;
-
-  getUser(User user) {
-    change(user, status: RxStatus.success());
-    update();
-    getSavedPost();
-  }
-
-  logoutUser() {
-    change(User(), status: RxStatus.empty());
-    update();
-  }
 
   getSavedPost() async {
     try {
@@ -45,17 +43,33 @@ class MainController extends GetxController
     }
   }
 
+  Future<bool> changePassword() async {
+    try {
+      if (newPassword.value == confirmPassword.value) {
+        await _apiRepository.changePassword(
+            oldPassword.value, newPassword.value);
+        return true;
+      } else {
+        Get.snackbar('Алдаа', 'Нууц үг таарахгүй байна');
+        return false;
+      }
+    } on DioException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   Future<bool> togglePost({required int id, Post? post}) async {
     try {
       final res;
       bool result = false;
 
-      if (savedPosts.where((post) => post.id == id).isEmpty) {
+      if (savedPosts.where((post) => post.id == id).isNotEmpty) {
+        savedPosts.removeWhere((element) => element.id == id);
         res = await _apiRepository.removeBookmark(id);
-        result = false;
       } else {
+        savedPosts.add(post!);
         res = await _apiRepository.saveBookmark(id);
-
         result = true;
       }
 
@@ -85,19 +99,48 @@ class MainController extends GetxController
     return await _apiRepository.updateUser(user);
   }
 
+  Future<bool> savePersonal(
+      String lastname, String firstname, String phone) async {
+    bool res = await _apiRepository.savePersonal(lastname, firstname, phone);
+    if (res) {
+      refreshUser();
+    }
+    return res;
+  }
+
+  refreshUser() async {
+    user = await _apiRepository.getUser();
+    change(user, status: RxStatus.success());
+  }
+
   Future<void> setupApp() async {
     isLoading.value = true;
     try {
-      // user = await _apiRepository.getUser();
+      user = await _apiRepository.getUser();
       change(user, status: RxStatus.success());
 
       isLoading.value = false;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       isLoading.value = false;
 
       Get.find<SharedPreferences>().remove(StorageKeys.token.name);
+
       update();
     }
+    getSavedPost();
+  }
+
+  Future<void> getOrders() async {
+    try {
+      List<Post> res = await _apiRepository.getOwnPosts(0, 10, SortData(), []);
+      ownPosts.value = res;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> sendEmailVerification() async {
+    await _apiRepository.sendEmailVerifyCode();
   }
 
   @override

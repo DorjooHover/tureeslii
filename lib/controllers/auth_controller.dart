@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/provider/api_prodiver.dart';
 
@@ -23,10 +24,7 @@ class AuthController extends GetxController {
     return await apiRepository.register(email, password);
   }
 
-  Future<bool> savePersonal(
-      String lastname, String firstname, String email, String phone) async {
-    return await apiRepository.savePersonal(lastname, firstname, email, phone);
-  }
+
 
   Future<bool> forgotPassword(String email) async {
     return await apiRepository.forgotPassword(email);
@@ -34,7 +32,9 @@ class AuthController extends GetxController {
 
   Future<bool> forgotPasswordVerify(
       String password, String code, String email) async {
-    return await apiRepository.verifyForgotPassword(password, code, email);
+    final res = await apiRepository.verifyForgotPassword(password, code, email);
+
+    return res;
   }
 
   login(String username, String password) async {

@@ -60,7 +60,7 @@ class SplashController extends GetxController {
   logout() async {
     final storage = Get.find<SharedPreferences>();
     await storage.remove(StorageKeys.token.name);
-    mainController.logoutUser();
+
     token.value = null;
   }
 

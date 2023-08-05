@@ -17,7 +17,7 @@ class _MainViewState extends State<MainView> {
     const LocationView(),
     const BookmarkView(),
     const NotificationView(),
-    const OrderView(),
+     OrderView(),
     const MenuView(),
   ];
   int currentIndex = 1;

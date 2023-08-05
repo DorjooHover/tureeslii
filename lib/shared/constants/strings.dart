@@ -45,6 +45,7 @@ const String howRent = 'Түрээсээ хэрхэн төлөх вэ?';
 const String incomeRent = 'Төлөгчийн орлогын хэмжээ?';
 const String briefInformation = 'Өөрийнхөө талаарх товч мэдээлэл';
 const String otpString = 'Таны утасруу илгээсэн 4 оронтой тоог оруулна уу.';
+const String emailVerificationString = 'Та имайл хаягаа шалгана уу.';
 const String startRentDate = ' Түрээслэж эхлэх огноо';
 const String startEndDate = ' Дуусах огноо';
 
@@ -92,7 +93,6 @@ const String smoke = 'Тамхи татах';
 const String inviteGuest = 'Зочин урих';
 const String isLiveTogether = 'Түрээслүүлэгч цуг амьдрах эсэх';
 
-
 // global
 const String or = 'Эсвэл';
 const String payment = 'Төлбөр';
@@ -112,7 +112,7 @@ const String choose = 'Сонгох';
 const String successSaved = 'Амжилттай хадгаллаа';
 const String studying = 'Сурдаг';
 const String name = 'Нэр';
-const String firstName = 'Овог';
+const String lastname = 'Овог';
 const String oldPassword = 'Хуучин нууц үг';
 const String newPassword = 'Шинэ нууц үг';
 const String edit = 'Засах';
@@ -124,7 +124,6 @@ const String additionInfo = 'Нэмэлт мэдээлэл';
 const String time = 'Хугацаа';
 const String day = 'өдөр';
 const String month = 'сар';
-
 
 const String accepted = 'Зөвшөөрсөн';
 const String city = 'ХОТУУД';

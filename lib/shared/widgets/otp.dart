@@ -7,6 +7,7 @@ class OtpView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Form(
         child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

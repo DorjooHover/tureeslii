@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -23,10 +22,7 @@ const List<String> scopes = <String>[
   'https://www.googleapis.com/auth/contacts.readonly',
 ];
 
-
-
 class _LoginViewState extends State<LoginView> {
-  
   String username = '';
   String passwordValue = '';
 
@@ -38,7 +34,6 @@ class _LoginViewState extends State<LoginView> {
       // loginKey.currentState!.save();
       final user = await controller.login(username, passwordValue);
       if (user is User) {
-        mainController.getUser(user);
         Get.toNamed(Routes.main);
       } else {
         Get.snackbar('Алдаа', user.toString());
@@ -147,7 +142,6 @@ class _LoginViewState extends State<LoginView> {
                   color: Colors.white,
                   onPressed: () {
                     debugPrint('asdf');
-
                   },
                   child: Social(
                       icon: SvgPicture.asset(

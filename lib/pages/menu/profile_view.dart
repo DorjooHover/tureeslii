@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/controllers/splash_controller.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/routes.dart';
@@ -27,9 +28,12 @@ class _ProfileViewState extends State<ProfileView> {
   double incomeAmount = 0.0;
   String descriptionValue = "";
   final controller = Get.put(SplashController());
+  final mainController = Get.put(MainController());
   @override
   void initState() {
     // TODO: implement initState
+    mainController.refreshUser();
+
     super.initState();
   }
 
@@ -49,7 +53,7 @@ class _ProfileViewState extends State<ProfileView> {
                 const EdgeInsets.symmetric(horizontal: origin, vertical: large),
             child: Column(
               children: [
-                _mainContact(context),
+                MainPersonalWidget(),
                 space45,
                 MenuContainer(
                   child: Column(
@@ -327,145 +331,201 @@ successVerified(
       });
 }
 
-_mainContact(BuildContext context) {
-  return MenuContainer(
-      child: Column(
-    children: [
-      ProfileCard(icon: false, value: name, title: 'Булганмөр Шинэцас'),
-      space27,
-      ProfileCard(
-        icon: true,
-        value: phone,
-        title: '99162729',
-        verified: true,
-      ),
-      space27,
-      ProfileCard(
-        icon: true,
-        value: email,
-        title: 'shineeBB8@gmail.com',
-        verified: false,
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertContainer(
-                child: [
-                  Text(
-                    otpString,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: black),
+class MainPersonalWidget extends StatelessWidget {
+  const MainPersonalWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.put(MainController());
+    void changePasswordSnackbar() {
+      Get.snackbar(
+        '',
+        '',
+        margin: EdgeInsets.zero,
+        snackPosition: SnackPosition.BOTTOM,
+        maxWidth: MediaQuery.of(context).size.width,
+        backgroundColor: green,
+        animationDuration: const Duration(milliseconds: 300),
+        forwardAnimationCurve: Curves.easeOut,
+        borderRadius: 0,
+        messageText: Container(),
+        titleText: Row(
+          children: <Widget>[
+            SvgPicture.asset(iconSuccessWhite),
+            space13,
+            Text(
+              successSaved,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Colors.white,
                   ),
-                  space20,
-                  OtpView(),
-                  space36,
-                  MainButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      successVerified(context);
-                    },
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: small, horizontal: 24),
-                    text: verify,
-                  ),
-                  space24,
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        againSend,
+            )
+          ],
+        ),
+      );
+    }
+
+    return MenuContainer(
+        child: Column(
+      children: [
+        Obx(
+          () => ProfileCard(
+              icon: false, value: controller.user!.firstname!, title: name),
+        ),
+        space27,
+        Obx(
+          () => ProfileCard(
+            icon: true,
+            value: controller.user!.mobile ?? '',
+            title: phone,
+            verified: controller.user!.mobileVerified,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertContainer(
+                    child: [
+                      Text(
+                        otpString,
                         style: Theme.of(context)
                             .textTheme
                             .bodySmall!
-                            .copyWith(color: orange),
+                            .copyWith(color: black),
+                      ),
+                      space20,
+                      OtpView(),
+                      space36,
+                      MainButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          successVerified(context);
+                        },
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: small, horizontal: 24),
+                        text: verify,
+                      ),
+                      space24,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            againSend,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall!
+                                .copyWith(color: orange),
+                          ),
+                        ),
+                      ),
+                      space36
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ),
+        space27,
+        ProfileCard(
+          icon: true,
+          value: controller.user!.email!,
+          title: email,
+          verified: controller.user!.emailVerified,
+          onPressed: () {
+            controller.sendEmailVerification();
+            Get.snackbar('Мэдэгдэл', emailVerificationString);
+          },
+        ),
+        space27,
+        ProfileCard(
+          icon: false,
+          value: '**************',
+          title: password,
+          edit: true,
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertContainer(
+                  child: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width - 40,
+                    ),
+                    AdditionCard(
+                        title: oldPassword,
+                        child: Input(
+                          obscureText: true,
+                          maxLine: 1,
+                          onChange: (p0) {
+                            controller.oldPassword.value = p0;
+                          },
+                          textInputAction: TextInputAction.next,
+                        )),
+                    space24,
+                    AdditionCard(
+                        title: newPassword,
+                        child: Input(
+                          obscureText: true,
+                          maxLine: 1,
+                          onChange: (p0) {
+                            controller.newPassword.value = p0;
+                          },
+                          textInputAction: TextInputAction.next,
+                        )),
+                    space24,
+                    AdditionCard(
+                        title: newPassword,
+                        child: Input(
+                          obscureText: true,
+                          maxLine: 1,
+                          onChange: (p0) {
+                            controller.confirmPassword.value = p0;
+                          },
+                          onSubmitted: (p0) async {
+                            bool res = await controller.changePassword();
+                            if (res) {
+                              changePasswordSnackbar();
+                              Navigator.pop(context);
+                            }
+                          },
+                        )),
+                    space24,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: MainButton(
+                        onPressed: () async {
+                          bool res = await controller.changePassword();
+                          if (res) {
+                            changePasswordSnackbar();
+                          }
+                          Navigator.pop(context);
+                        },
+                        padding: const EdgeInsets.symmetric(
+                            vertical: small, horizontal: 24),
+                        text: save,
                       ),
                     ),
-                  ),
-                  space36
-                ],
-              );
-            },
-          );
-        },
-      ),
-      space27,
-      ProfileCard(
-        icon: false,
-        value: password,
-        title: '**************',
-        edit: true,
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertContainer(
-                child: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width - 40,
-                  ),
-                  AdditionCard(title: oldPassword, child: Input()),
-                  space24,
-                  AdditionCard(title: newPassword, child: Input()),
-                  space24,
-                  AdditionCard(title: newPassword, child: Input()),
-                  space24,
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: MainButton(
-                      onPressed: () {
-                        Get.snackbar(
-                          '',
-                          '',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: green,
-                          animationDuration: const Duration(milliseconds: 300),
-                          forwardAnimationCurve: Curves.easeOut,
-                          borderRadius: 0,
-                          messageText: Container(),
-                          titleText: Row(
-                            children: <Widget>[
-                              SvgPicture.asset(iconSuccessWhite),
-                              space13,
-                              Text(
-                                successSaved,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(color: Colors.white),
-                              )
-                            ],
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      padding: const EdgeInsets.symmetric(
-                          vertical: small, horizontal: 24),
-                      text: save,
-                    ),
-                  ),
-                  space16
-                ],
-              );
-            },
-          );
-        },
-      ),
-      space27,
-      Divider(color: divider, height: 1, thickness: 1),
-      space16,
-      MainIconButton(
-        text: edit,
-        onPressed: () {
-          Get.toNamed(Routes.editProfile);
-        },
-        back: true,
-        color: gray,
-        child: SvgPicture.asset(iconEdit),
-      )
-    ],
-  ));
+                    space16
+                  ],
+                );
+              },
+            );
+          },
+        ),
+        space27,
+        Divider(color: divider, height: 1, thickness: 1),
+        space16,
+        MainIconButton(
+          text: edit,
+          onPressed: () {
+            Get.toNamed(Routes.editProfile);
+          },
+          back: true,
+          color: gray,
+          child: SvgPicture.asset(iconEdit),
+        )
+      ],
+    ));
+  }
 }

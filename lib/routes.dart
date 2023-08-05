@@ -37,7 +37,7 @@ class Routes {
     GetPage(name: main, page: () => const MainView()),
     GetPage(
         name: auth,
-        page: () =>  AuthView(),
+        page: () => AuthView(),
         binding: AuthBinding(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
@@ -50,7 +50,7 @@ class Routes {
     // order
     GetPage(
         name: order,
-        page: () => const OrderView(),
+        page: () => OrderView(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
     GetPage(
