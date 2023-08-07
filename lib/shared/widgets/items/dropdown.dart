@@ -25,6 +25,7 @@ class DropDown extends StatelessWidget {
           borderRadius: BorderRadius.circular(5)),
       child: DropdownButton(
           isDense: true,
+          
           icon: icon ?? SvgPicture.asset(iconArrowDown),
           iconEnabledColor: gray,
           isExpanded: true,

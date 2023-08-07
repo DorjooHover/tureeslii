@@ -54,8 +54,8 @@ class Post {
   String? city;
   String? district;
   String? state;
-  String? long;
-  String? lat;
+  double? long;
+  double? lat;
   double? plot;
   List<PostAttachments>? postAttachments;
   User? user;

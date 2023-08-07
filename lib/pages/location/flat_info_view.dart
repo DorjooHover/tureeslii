@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
@@ -14,12 +15,22 @@ class FlatInfoView extends StatefulWidget {
 class _FlatInfoViewState extends State<FlatInfoView> {
   final GlobalKey<ScaffoldState> flatInfoView = GlobalKey<ScaffoldState>();
   bool isDrawer = false;
-
-  List<int> verified = [0, 1, 2, 3];
+  final controller = Get.put(MainController());
 
   String selectedHeating = heatingValues[0];
   String selectedWaterSupply = waterSupplyValues[0];
   String selectedToilet = toiletValues[0];
+  double flatArea = 0.0;
+  nextStep() {
+    if (flatArea > 0) {
+      controller.createPost.value!.plot = flatArea;
+      controller.createPost.value!.heating = selectedHeating;
+      controller.createPost.value!.waterSupply = selectedWaterSupply;
+      controller.createPost.value!.restroom = selectedToilet;
+      controller.nextStep();
+      Get.toNamed(Routes.roomInfo);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +102,14 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                             title: area,
                             child: Input(
                               textInputType: TextInputType.number,
+                              onSubmitted: (p0) {
+                                nextStep();
+                              },
+                              onChange: (p0) {
+                                setState(() {
+                                  flatArea = double.parse(p0);
+                                });
+                              },
                             )),
                       ],
                     )),
@@ -100,7 +119,7 @@ class _FlatInfoViewState extends State<FlatInfoView> {
               ),
             ),
             drawerScrimColor: Colors.transparent,
-            endDrawer: LocationDrawer(selected: verified),
+            endDrawer: LocationDrawer(selected: controller.verified),
             onEndDrawerChanged: (isOpened) {
               if (isOpened != isDrawer) {
                 setState(() {
@@ -144,7 +163,7 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(Routes.roomInfo);
+                        nextStep();
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -207,7 +226,7 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                 padding: const EdgeInsets.only(left: 26),
                 alignment: Alignment.center,
                 child: Text(
-                  '5',
+                  '${controller.currentStep.value + 1}',
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!

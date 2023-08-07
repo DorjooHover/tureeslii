@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
-import 'package:image_picker/image_picker.dart';
+
 class ImageLibraryView extends StatefulWidget {
   const ImageLibraryView({super.key});
 
@@ -12,32 +16,62 @@ class ImageLibraryView extends StatefulWidget {
 }
 
 class _ImageLibraryViewState extends State<ImageLibraryView> {
-  XFile? image;
-
   final ImagePicker picker = ImagePicker();
-  Future getImage(ImageSource media) async {
-    var img = await picker.pickImage(source: media);
-
-    setState(() {
-      image = img;
-    });
+  List<XFile> images = [];
+  void selectImages() async {
+    final List<XFile> selectedImages = await picker.pickMultiImage();
+    if (selectedImages.isNotEmpty) {
+      images.addAll(selectedImages);
+    }
+    setState(() {});
   }
+
   final GlobalKey<ScaffoldState> imageLibraryKey = GlobalKey<ScaffoldState>();
   bool isDrawer = false;
 
-  List<int> verified = [0, 1, 2, 3, 4, 5];
-  bool isDay = false;
-  bool isMonth = false;
-  bool flatPrice = false;
-  bool sokh = false;
-  bool electronic = false;
-  bool internet = false;
-  bool bailMoney = false;
+  final controller = Get.put(MainController());
 
-  String selectedContractCondition = contractConditionValues[0];
-  String selectedPaymentCondition = paymentConditionValues[0];
-  String selectedBailCondition = bailConditionValues[0];
-  String selectedCancelCondition = cancelConditionValues[0];
+  choiceType() {
+    showGeneralDialog(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel:
+            MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        barrierColor: Colors.transparent,
+        transitionDuration: const Duration(milliseconds: 200),
+        pageBuilder: (BuildContext buildContext, Animation animation,
+            Animation secondaryAnimation) {
+          return Center(
+            child: Container(
+              width: MediaQuery.of(context).size.width - 10,
+              padding: EdgeInsets.zero,
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: <Widget>[
+                      PackageCard(
+                          type: '',
+                          onPress: () {
+                            controller.createNewPost(images);
+                            Navigator.of(context).pop();
+                            Get.toNamed(Routes.myAds);
+                          }),
+                      space16,
+                      PackageCard(type: 'promo1', onPress: () {}),
+                      space16,
+                      PackageCard(type: 'promo2', onPress: () {}),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -74,241 +108,107 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
               height: MediaQuery.of(context).size.height - 63,
               child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    MenuContainer(
-                        child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        AdditionCard(title: startRentDate, child: Input()),
-                        space24,
-                        AdditionCard(
-                            mark: true,
-                            title: contractCondition,
-                            child: DropDown(
-                              list: contractConditionValues,
-                              value: selectedContractCondition,
-                              onChanged: (value) {},
-                            )),
-                        space24,
-                        AdditionCard(
-                            mark: true,
-                            title: cancelCondition,
-                            child: DropDown(
-                              list: cancelConditionValues,
-                              value: selectedCancelCondition,
-                              onChanged: (value) {},
-                            )),
-                      ],
-                    )),
                     space40,
                     MenuContainer(
                         child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(
-                            canDay,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                    color: black, fontWeight: FontWeight.bold),
-                          ),
-                          value: isDay,
-                          onChanged: (value) {
-                            setState(() {
-                              isDay = value;
-                            });
-                          },
-                        ),
-                        space24,
-                        AdditionCard(
-                            title: rentPrice,
-                            child: Input(textInputType: TextInputType.number)),
-                        space24,
-                        AdditionCard(
-                            title: minimumRentDay,
-                            child: Input(textInputType: TextInputType.number)),
-                      ],
-                    )),
-                    space40,
-                    MenuContainer(
-                        child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(
-                            canMonth,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                    color: black, fontWeight: FontWeight.bold),
-                          ),
-                          value: isMonth,
-                          onChanged: (value) {
-                            setState(() {
-                              isMonth = value;
-                            });
-                          },
-                        ),
-                        space24,
-                        AdditionCard(
-                            title: rentPrice,
-                            child: Input(textInputType: TextInputType.number)),
-                        space24,
-                        AdditionCard(
-                            title: minimumRentDay,
-                            child: Input(textInputType: TextInputType.number)),
-                      ],
-                    )),
-                    space40,
-                    MenuContainer(
-                        child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          inPayment,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(
-                                  color: black, fontWeight: FontWeight.bold),
-                        ),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
-                          activeTrackColor: active,
-                          title: Text(
-                            flatPriceStr,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  color: black,
+                        GestureDetector(
+                            onTap: () {
+                              selectImages();
+                            },
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                images.isNotEmpty ? space20 : space32,
+                                Icon(
+                                  Icons.upload,
+                                  size: images.isNotEmpty ? 24 : 44,
                                 ),
-                          ),
-                          value: flatPrice,
-                          onChanged: (value) {
-                            setState(() {
-                              flatPrice = value;
-                            });
-                          },
-                        ),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
-                          activeTrackColor: active,
-                          title: Text(
-                            sokhStr,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  color: black,
-                                ),
-                          ),
-                          value: sokh,
-                          onChanged: (value) {
-                            setState(() {
-                              sokh = value;
-                            });
-                          },
-                        ),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
-                          activeTrackColor: active,
-                          title: Text(
-                            eletronicStr,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  color: black,
-                                ),
-                          ),
-                          value: electronic,
-                          onChanged: (value) {
-                            setState(() {
-                              electronic = value;
-                            });
-                          },
-                        ),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
-                          activeTrackColor: active,
-                          title: Text(
-                            internetStr,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  color: black,
-                                ),
-                          ),
-                          value: internet,
-                          onChanged: (value) {
-                            setState(() {
-                              internet = value;
-                            });
-                          },
-                        ),
-                      ],
-                    )),
-                    space40,
-                    MenuContainer(
-                        child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        AdditionCard(
-                            title: paymentCondition,
-                            child: DropDown(
-                              list: paymentConditionValues,
-                              value: selectedPaymentCondition,
-                              onChanged: (value) {},
+                                images.isNotEmpty ? space10 : space16,
+                                Text(
+                                  addImage,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(color: black),
+                                )
+                              ],
                             )),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
-                          activeTrackColor: active,
-                          title: Text(
-                            bailMoneyStr,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  color: black,
-                                ),
+                        if (images.isNotEmpty) space32,
+                        if (images.isNotEmpty)
+                          GridView.count(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            crossAxisCount: 3,
+                            padding: EdgeInsets.zero,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10,
+                            children: images
+                                .map(
+                                  (e) => Stack(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(4),
+                                        width: double.infinity,
+                                        child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            child: Image.file(
+                                              File(e.path),
+                                              fit: BoxFit.cover,
+                                            )),
+                                      ),
+                                      Positioned(
+                                        top: 0,
+                                        right: 0,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              images.remove(e);
+                                            });
+                                          },
+                                          child: Container(
+                                            width: 24,
+                                            height: 24,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                                color: red),
+                                            child: Icon(
+                                              Icons.delete,
+                                              size: 16,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )
+                                .toList(),
                           ),
-                          value: bailMoney,
-                          onChanged: (value) {
-                            setState(() {
-                              bailMoney = value;
-                            });
-                          },
-                        ),
-                        AdditionCard(
-                            title: bailCondition,
-                            child: DropDown(
-                              list: bailConditionValues,
-                              value: selectedBailCondition,
-                              onChanged: (value) {},
-                            )),
                       ],
                     )),
+                    space20,
+                    Text(
+                      '* $imageRequreUnit',
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                    space4,
+                    Text(
+                      '* $imageRequireSize',
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
                   ],
                 ),
               ),
             ),
             drawerScrimColor: Colors.transparent,
-            endDrawer: LocationDrawer(selected: verified),
+            endDrawer: LocationDrawer(selected: controller.verified),
             onEndDrawerChanged: (isOpened) {
               if (isOpened != isDrawer) {
                 setState(() {
@@ -316,6 +216,48 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                 });
               }
             },
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: MediaQuery.of(context).padding.bottom + 80,
+            child: Align(
+                alignment: Alignment.center,
+                child: MainButton(
+                  onPressed: () {
+                    choiceType();
+                  },
+                  borderRadius: 26,
+                  disabled: !images.isNotEmpty,
+                  disabledColor: disableColor,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            color: Colors.white),
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.add,
+                          color: images.isNotEmpty ? prime : disableColor,
+                          size: 20,
+                        ),
+                      ),
+                      space20,
+                      Text(
+                        adAdd,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(color: Colors.white),
+                      )
+                    ],
+                  ),
+                )),
           ),
           Positioned(
               bottom: MediaQuery.of(context).padding.bottom,
@@ -347,26 +289,6 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                             prev,
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
-                        ],
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Get.toNamed(Routes.condition);
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            next,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          space8,
-                          Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            color: prime,
-                            size: 24,
-                          )
                         ],
                       ),
                     ),
@@ -415,7 +337,7 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                 padding: const EdgeInsets.only(left: 26),
                 alignment: Alignment.center,
                 child: Text(
-                  '2',
+                  '${controller.currentStep.value + 1}',
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!

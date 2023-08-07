@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
@@ -14,6 +15,8 @@ class MainDrawer extends StatelessWidget {
   final Function() cancel;
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(MainController());
+
     return Drawer(
       width: MediaQuery.of(context).size.width,
       child: Column(
@@ -49,12 +52,16 @@ class MainDrawer extends StatelessWidget {
                   children: <Widget>[
                     CircleAvatar(
                       radius: 24,
-                      backgroundImage: NetworkImage(
-                          'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'),
+                      backgroundImage: NetworkImage(controller
+                                      .user?.profilePic !=
+                                  "" &&
+                              controller.user?.profilePic != null
+                          ? controller.user!.profilePic!
+                          : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'),
                     ),
                     space16,
                     Text(
-                      'Б.Нэлээн-Уртнэртэйнөхөр',
+                      controller.user?.lastname ?? '',
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium!

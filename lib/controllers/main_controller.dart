@@ -1,11 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:landlord/controllers/auth_controller.dart';
 import 'package:landlord/model/models.dart';
 import 'package:landlord/provider/api_prodiver.dart';
-import 'package:landlord/shared/constants/enums.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MainController extends GetxController
     with StateMixin<User>, WidgetsBindingObserver {
@@ -20,27 +18,64 @@ class MainController extends GetxController
   final our = false.obs;
   final loading = false.obs;
 
+  // add post
+  final verified = <int>[0].obs;
+  final currentStep = 0.obs;
+  final createPost = Rxn<Post>(Post());
   User? get user => rxUser.value;
   set user(value) => rxUser.value = value;
+  refreshUser() async {
+    ErrorHandler res = await _apiRepository.getUser();
 
-  getUser(User user) {
-    change(user, status: RxStatus.success());
-    update();
+    if (res.success!) {
+      user = res.data;
+      change(user, status: RxStatus.success());
+    } else {
+      authController.logout();
+    }
+  }
+
+  // create post
+  nextStep() {
+    if (verified.where((p0) => p0 == (currentStep.value + 1)).isEmpty &&
+        currentStep.value < 6) {
+      verified.add(currentStep.value + 1);
+      currentStep.value = currentStep.value + 1;
+    }
+    print(createPost.value?.toJson());
+  }
+
+  Future<void> createNewPost(List<XFile> images) async {
+    try {
+      List<String> imagesUrl = [];
+      for (final element in images) {
+        imagesUrl.add(await _apiRepository.uploadFile(element));
+      }
+      print(imagesUrl);
+      await _apiRepository.createPost(createPost.value!, imagesUrl);
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> setupApp() async {
-    isLoading.value = true;
-    try {
-      user = await _apiRepository.getUser();
-      change(user, status: RxStatus.success());
+    refreshUser();
+  }
 
-      isLoading.value = false;
-    } on DioError catch (e) {
-      isLoading.value = false;
-
-      Get.find<SharedPreferences>().remove(StorageKeys.token.name);
-      update();
+  Future<bool> savePersonal(User u) async {
+    bool res = await _apiRepository.savePersonal(User(
+        lastname: u.lastname ?? user!.lastname,
+        firstname: u.firstname ?? user!.firstname,
+        mobile: u.mobile ?? user!.mobile!,
+        companyName: u.companyName ?? user!.companyName,
+        companyRegistry: u.companyRegistry ?? user!.companyRegistry,
+        orderNotification: u.orderNotification ?? user!.orderNotification,
+        productAdsNotification:
+            u.productAdsNotification ?? user!.productAdsNotification));
+    if (res) {
+      refreshUser();
     }
+    return res;
   }
 
   // changeOrderStatus(String id, String status) {

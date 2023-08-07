@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
@@ -14,10 +16,32 @@ class RoomInfoView extends StatefulWidget {
 class _RoomInfoViewState extends State<RoomInfoView> {
   final GlobalKey<ScaffoldState> roomInfoView = GlobalKey<ScaffoldState>();
   bool isDrawer = false;
-
-  List<int> verified = [0, 1, 2, 3, 4];
+  final controller = Get.put(MainController());
 
   String selectedType = typeValues[0];
+  String titleValue = "";
+  int kitchenValue = 0;
+  int bathRoomValue = 0;
+  int livingRoomValue = 0;
+  int bedRoomValue = 0;
+  int bedOneValue = 0;
+  int bedTwoValue = 0;
+  nextStep() {
+    if (titleValue != '') {
+      controller.createPost.value!.title = titleValue;
+      controller.createPost.value!.kitchen = kitchenValue;
+      controller.createPost.value!.bathroom = bathRoomValue;
+      controller.createPost.value!.livingRoom = livingRoomValue;
+      controller.createPost.value!.bedroom = bedRoomValue;
+      controller.createPost.value!.singleBed = bedOneValue;
+      controller.createPost.value!.doubleBed = bedTwoValue;
+      controller.createPost.value!.roomCount = bedOneValue + bedTwoValue;
+      controller.createPost.value!.description = selectedType;
+      controller.nextStep();
+      Get.toNamed(Routes.imageLibrary);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -60,24 +84,46 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                         child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        AdditionCard(title: title, child: Input()),
+                        AdditionCard(
+                            title: title,
+                            child: Input(
+                              textInputAction: TextInputAction.next,
+                              onChange: (p0) {
+                                titleValue = p0;
+                              },
+                            )),
                         space24,
                         AdditionCard(
-                            title: type,
+                            title: typeStr,
                             child: DropDown(
                               list: typeValues,
                               value: selectedType,
-                              onChanged: (value) {},
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    selectedType = value;
+                                  });
+                                }
+                              },
                             )),
                         space24,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const <Widget>[
+                          children: [
                             Expanded(
                               child: AdditionCard(
                                   title: kitchenRoom,
                                   child: Input(
                                     textInputType: TextInputType.number,
+                                    textInputAction: TextInputAction.next,
+                                    inputFormatter: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    onChange: (p0) {
+                                      setState(() {
+                                        kitchenValue = int.parse(p0);
+                                      });
+                                    },
                                   )),
                             ),
                             space16,
@@ -86,6 +132,15 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                   title: bathRoom,
                                   child: Input(
                                     textInputType: TextInputType.number,
+                                    textInputAction: TextInputAction.next,
+                                    inputFormatter: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    onChange: (p0) {
+                                      setState(() {
+                                        bathRoomValue = int.parse(p0);
+                                      });
+                                    },
                                   )),
                             ),
                           ],
@@ -93,12 +148,21 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                         space24,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const <Widget>[
+                          children: [
                             Expanded(
                               child: AdditionCard(
                                   title: livingRoom,
                                   child: Input(
                                     textInputType: TextInputType.number,
+                                    textInputAction: TextInputAction.next,
+                                    inputFormatter: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    onChange: (p0) {
+                                      setState(() {
+                                        livingRoomValue = int.parse(p0);
+                                      });
+                                    },
                                   )),
                             ),
                             space16,
@@ -107,6 +171,15 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                   title: bedRoom,
                                   child: Input(
                                     textInputType: TextInputType.number,
+                                    textInputAction: TextInputAction.next,
+                                    inputFormatter: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    onChange: (p0) {
+                                      setState(() {
+                                        bedRoomValue = int.parse(p0);
+                                      });
+                                    },
                                   )),
                             ),
                           ],
@@ -114,12 +187,21 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                         space24,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const <Widget>[
+                          children: [
                             Expanded(
                               child: AdditionCard(
                                   title: bedOne,
                                   child: Input(
                                     textInputType: TextInputType.number,
+                                    textInputAction: TextInputAction.next,
+                                    inputFormatter: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    onChange: (p0) {
+                                      setState(() {
+                                        bedOneValue = int.parse(p0);
+                                      });
+                                    },
                                   )),
                             ),
                             space16,
@@ -128,6 +210,17 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                   title: bedTwo,
                                   child: Input(
                                     textInputType: TextInputType.number,
+                                    inputFormatter: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    onChange: (p0) {
+                                      setState(() {
+                                        bedTwoValue = int.parse(p0);
+                                      });
+                                    },
+                                    onSubmitted: ((p0) {
+                                      nextStep();
+                                    }),
                                   )),
                             ),
                           ],
@@ -140,7 +233,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
               ),
             ),
             drawerScrimColor: Colors.transparent,
-            endDrawer: LocationDrawer(selected: verified),
+            endDrawer: LocationDrawer(selected: controller.verified),
             onEndDrawerChanged: (isOpened) {
               if (isOpened != isDrawer) {
                 setState(() {
@@ -184,7 +277,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(Routes.imageLibrary);
+                        nextStep();
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -212,7 +305,6 @@ class _RoomInfoViewState extends State<RoomInfoView> {
             bottom: MediaQuery.of(context).size.height * 0.25,
             child: GestureDetector(
               onHorizontalDragUpdate: (details) {
-                print(details.delta.dx);
                 if (details.delta.dx > 1) {
                   roomInfoView.currentState!.openEndDrawer();
                   setState(() {
@@ -247,7 +339,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                 padding: const EdgeInsets.only(left: 26),
                 alignment: Alignment.center,
                 child: Text(
-                  '6',
+                  '${controller.currentStep.value + 1}',
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!

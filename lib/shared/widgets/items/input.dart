@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:landlord/shared/constants/colors.dart';
 
 class Input extends StatelessWidget {
@@ -9,12 +10,13 @@ class Input extends StatelessWidget {
       this.onSubmitted,
       this.value,
       this.autoFocus = false,
-      this.textInputAction,
+      this.textInputAction = TextInputAction.done,
       this.obscureText = false,
       this.textInputType = TextInputType.text,
       this.suffixIcon,
       this.labelText,
       this.validator,
+      this.inputFormatter,
       this.borderSide = const BorderSide(color: divider),
       this.onChange});
   final TextEditingController? controller;
@@ -22,7 +24,7 @@ class Input extends StatelessWidget {
   final String? value;
   final bool autoFocus;
   final int? maxLine;
-  final TextInputAction? textInputAction;
+  final TextInputAction textInputAction;
   final bool obscureText;
   final TextInputType textInputType;
   final Widget? suffixIcon;
@@ -30,6 +32,7 @@ class Input extends StatelessWidget {
   final String? Function(String?)? validator;
   final Function(String)? onChange;
   final BorderSide borderSide;
+  final List<TextInputFormatter>? inputFormatter;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -45,10 +48,9 @@ class Input extends StatelessWidget {
 
       keyboardType: textInputType,
       style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: gray),
-
+      inputFormatters: inputFormatter,
       decoration: InputDecoration(
         isDense: true,
-
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5.0),
           borderSide: const BorderSide(color: red),

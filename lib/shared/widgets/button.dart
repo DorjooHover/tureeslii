@@ -39,8 +39,7 @@ class MainButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color =
-        loading || disabled ? this.color.withOpacity(0.6) : this.color;
+    Color color = loading || disabled ? disabledColor : this.color;
 
     Color contentColor = this.contentColor ?? Colors.white;
 

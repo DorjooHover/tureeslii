@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/shared/constants/assets.dart';
 import 'package:landlord/shared/constants/colors.dart';
 import 'package:landlord/shared/constants/spacing.dart';
@@ -36,6 +38,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return AppBar(
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: isDrawer ? bgGray : statusBarColor, // <-- SEE HERE

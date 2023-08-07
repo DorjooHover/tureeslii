@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:landlord/controllers/main_controller.dart';
+import 'package:landlord/model/models.dart';
 import 'package:landlord/shared/index.dart';
 
 class PersonalView extends StatefulWidget {
@@ -12,6 +15,26 @@ class PersonalView extends StatefulWidget {
 class _PersonalViewState extends State<PersonalView> {
   bool info = true;
   bool product = true;
+  final controller = Get.put(MainController());
+  String lastNameValue = "",
+      firstNameValue = "",
+      phoneValue = "",
+      companyNameValue = "",
+      registerNumberValue = "";
+  bool passwordVisible = false;
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      info = controller.user!.orderNotification ?? false;
+      product = controller.user!.productAdsNotification ?? false;
+      lastNameValue = controller.user!.lastname ?? '';
+      firstNameValue = controller.user!.firstname ?? '';
+      phoneValue = controller.user!.mobile ?? '';
+      companyNameValue = controller.user!.companyName ?? '';
+      registerNumberValue = controller.user!.companyRegistry ?? '';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,17 +66,45 @@ class _PersonalViewState extends State<PersonalView> {
               ),
               space36,
               space20,
-              AdditionCard(title: firstName, child: Input()),
+              AdditionCard(
+                  title: firstName,
+                  child: Input(
+                    value: lastNameValue,
+                    onChange: (p0) {
+                      setState(() {
+                        lastNameValue = p0;
+                      });
+                    },
+                    textInputAction: TextInputAction.next,
+                  )),
               space24,
-              AdditionCard(title: name, child: Input()),
+              AdditionCard(
+                  title: name,
+                  child: Input(
+                    value: firstNameValue,
+                    onChange: (p0) {
+                      setState(() {
+                        firstNameValue = p0;
+                      });
+                    },
+                    textInputAction: TextInputAction.next,
+                  )),
               space24,
               AdditionCard(
                   title: email,
                   child: Input(
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.all(13),
-                        child: SvgPicture.asset(
-                          iconVerified,
+                      value: controller.user!.email!,
+                      suffixIcon: GestureDetector(
+                        onTap: () {},
+                        child: Padding(
+                          padding: const EdgeInsets.all(13),
+                          child: Obx(
+                            () => SvgPicture.asset(
+                              controller.user!.emailVerified!
+                                  ? iconVerified
+                                  : iconNotVerified,
+                            ),
+                          ),
                         ),
                       ),
                       borderSide: BorderSide(
@@ -63,25 +114,65 @@ class _PersonalViewState extends State<PersonalView> {
               AdditionCard(
                   title: phone,
                   child: Input(
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.all(13),
-                        child: SvgPicture.asset(
-                          iconVerified,
+                      value: phoneValue,
+                      suffixIcon: GestureDetector(
+                        onTap: () {},
+                        child: Padding(
+                          padding: const EdgeInsets.all(13),
+                          child: Obx(
+                            () => SvgPicture.asset(
+                              controller.user!.mobileVerified!
+                                  ? iconVerified
+                                  : iconNotVerified,
+                            ),
+                          ),
                         ),
                       ),
                       borderSide: BorderSide(
                         color: active,
                       ))),
               space24,
-              AdditionCard(title: companyName, child: Input()),
-              space24,
-              AdditionCard(title: registerNumber, child: Input()),
+              AdditionCard(
+                  title: companyName,
+                  child: Input(
+                    value: companyNameValue,
+                    onChange: (p0) {
+                      setState(() {
+                        companyNameValue = p0;
+                      });
+                    },
+                    textInputAction: TextInputAction.next,
+                  )),
               space24,
               AdditionCard(
-                  title: password,
+                  title: registerNumber,
                   child: Input(
-                    suffixIcon: Icon(Icons.draw),
+                    value: registerNumberValue,
+                    onChange: (p0) {
+                      setState(() {
+                        registerNumberValue = p0;
+                      });
+                    },
+                    textInputAction: TextInputAction.next,
                   )),
+              space24,
+              AdditionCard(
+                title: password,
+                child: Input(
+                  suffixIcon: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        passwordVisible = !passwordVisible;
+                      });
+                    },
+                    child: passwordVisible
+                        ? Icon(Icons.draw)
+                        : Icon(Icons.draw_rounded),
+                  ),
+                  maxLine: 1,
+                  obscureText: passwordVisible,
+                ),
+              ),
               space24,
               SwitchListTile.adaptive(
                 contentPadding: EdgeInsets.zero,
@@ -119,7 +210,16 @@ class _PersonalViewState extends State<PersonalView> {
               ),
               space36,
               MainButton(
-                onPressed: () {},
+                onPressed: () {
+                  controller.savePersonal(User(
+                      firstname: firstNameValue,
+                      lastname: lastNameValue,
+                      mobile: phoneValue,
+                      companyRegistry: registerNumberValue,
+                      companyName: companyNameValue,
+                      orderNotification: info,
+                      productAdsNotification: product));
+                },
                 text: request,
                 width: double.infinity,
               ),

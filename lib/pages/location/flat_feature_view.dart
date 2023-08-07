@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
@@ -14,8 +15,8 @@ class FlatFeatureView extends StatefulWidget {
 class _FlatFeatureViewState extends State<FlatFeatureView> {
   final GlobalKey<ScaffoldState> flatFeatureKey = GlobalKey<ScaffoldState>();
   bool isDrawer = false;
+  final controller = Get.put(MainController());
 
-  List<int> verified = [0, 1, 2];
   bool elevator = false;
   bool balcony = false;
   bool internet = false;
@@ -29,6 +30,33 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
   bool chair = false;
   bool sofa = false;
   bool cabinet = false;
+  nextStep() {
+    controller.createPost.value!.elevator = elevator;
+    controller.createPost.value!.balcony = balcony;
+    controller.createPost.value!.wifi = internet;
+    controller.createPost.value!.stove = oven;
+    controller.createPost.value!.washingMachine = washing;
+    controller.createPost.value!.tvCable = cabel;
+    controller.createPost.value!.refrigerator = refrigerator;
+    controller.createPost.value!.kitchenFurniture = kitchen;
+    if (drawer) {
+      controller.createPost.value!.furnitures?.add('drawer');
+    }
+    if (table) {
+      controller.createPost.value!.furnitures?.add('table');
+    }
+    if (sofa) {
+      controller.createPost.value!.furnitures?.add('sofa');
+    }
+    if (chair) {
+      controller.createPost.value!.furnitures?.add('chair');
+    }
+    if (cabinet) {
+      controller.createPost.value!.furnitures?.add('wardrobe');
+    }
+    controller.nextStep();
+    Get.toNamed(Routes.flatInfo);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +90,8 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
             ),
             body: Container(
               padding: const EdgeInsets.symmetric(horizontal: origin),
+              margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom),
               width: double.infinity,
               height: MediaQuery.of(context).size.height - 63,
               child: SingleChildScrollView(
@@ -445,7 +475,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
               ),
             ),
             drawerScrimColor: Colors.transparent,
-            endDrawer: LocationDrawer(selected: verified),
+            endDrawer: LocationDrawer(selected: controller.verified),
             onEndDrawerChanged: (isOpened) {
               if (isOpened != isDrawer) {
                 setState(() {
@@ -489,7 +519,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(Routes.flatInfo);
+                        nextStep();
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -552,7 +582,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                 padding: const EdgeInsets.only(left: 26),
                 alignment: Alignment.center,
                 child: Text(
-                  '4',
+                  '${controller.currentStep.value + 1}',
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!

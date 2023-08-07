@@ -30,5 +30,6 @@ const purple = Color(0xff440893);
 const drawerGray = Color(0xffE8E8E8);
 const returnedRed = Color(0xffFE0000);
 const checkingBlack = Color(0xff222222);
+const disableColor = Color(0xffD0D0D0);
 
 const active = Color(0xff30CA71);

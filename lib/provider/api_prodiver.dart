@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:landlord/model/models.dart';
 import 'package:landlord/provider/dio_provider.dart';
 
@@ -9,12 +9,89 @@ class ApiRepository {
   final DioProvider apiProvider;
 
   // auth
-  getUser() async {
+  Future<ErrorHandler> getUser() async {
     try {
       final response = await apiProvider.get('/auth/user');
-      return User.fromJson(response['data']);
+      return ErrorHandler(success: true, data: User.fromJson(response['data']));
+    } on DioException catch (e) {
+      return ErrorHandler(success: false, message: e.response?.data['message']);
+    }
+  }
+
+  Future<String> uploadFile(image) async {
+    try {
+      final request = http.MultipartRequest(
+          'POST', Uri.parse('https://tureeslii.mn/api/upload'));
+      request.files
+          .add(await http.MultipartFile.fromPath('image', image!.path));
+
+      final res = await request.send();
+      // print(res);
+      String resStr = await res.stream.bytesToString();
+
+      return resStr;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'Алдаа гарлаа');
+    }
+  }
+
+  Future<bool> createPost(Post post, List<String> images) async {
+    try {
+      final data = {
+        "postDate": post.postDate,
+        "bedRoom": post.bedroom,
+        "livingRoom": post.livingRoom,
+        "kitchen": post.kitchen,
+        "singleBed": post.singleBed,
+        "doubleBed": post.doubleBed,
+        "priceTerm": "MONTH",
+        "price": post.price,
+        "description": post.description,
+        "plot": post.plot,
+        "heating": post.heating,
+        "waterSupply": post.waterSupply,
+        "restroom": post.restroom,
+        "images": images,
+        "address": post.address,
+        "lat": post.lat,
+        "long": post.long,
+        "city": post.city,
+        "district": post.district,
+        "state": post.state,
+        "acceptedGender": post.acceptedGender,
+        "acceptedTenants": post.acceptedTenants,
+        "petAllowed": post.petAllowed,
+        "petAllowed": post.smokingAllowed,
+        "guestAllowed": post.guestAllowed,
+        "balcony": post.balcony,
+        "cancelTerm": post.cancelTerm,
+        "dailyRent": post.dailyRent,
+        "depositRequired": post.depositRequired,
+        "depositTerm": post.depositTerm,
+        "elevator": post.elevator,
+        "floor": post.floor,
+        "furnitures": post.furnitures,
+        "hasFurniture": post.hasFurniture,
+        "kitchenFurniture": post.kitchenFurniture,
+        "livingProperty": post.livingProperty,
+        "minDurationDaily": post.minDurationDaily,
+        "minDurationMonthly": post.minDurationMonthly,
+        "monthlyRent": post.monthlyRent,
+        "postAttachments": images,
+        "refrigerator": post.refrigerator,
+        "stove": post.stove,
+        "tvCable": post.tvCable,
+        "washingMachine": post.washingMachine,
+        "waterSupply": post.waterSupply,
+        "wifi": post.wifi,
+        "title": post.title,
+      };
+      final res = await apiProvider.post('/posts', data: data);
+      print(res);
+      return true;
     } on DioException catch (e) {
       print(e);
+      return false;
     }
   }
 
@@ -35,14 +112,12 @@ class ApiRepository {
     }
   }
 
-  Future<bool> register(String email, String password, ) async {
+  Future<bool> register(
+    String email,
+    String password,
+  ) async {
     try {
-      final data = {
-        "password": password,
-        "isCreator": false,
-
-        "email": email
-      };
+      final data = {"password": password, "isCreator": false, "email": email};
       await apiProvider.post('/auth/register', data: data);
 
       return true;
@@ -51,9 +126,10 @@ class ApiRepository {
     }
   }
 
-  Future<bool> forgotPassword(String email) async  {
+  Future<bool> forgotPassword(String email) async {
     try {
-      final res = await apiProvider.post('/auth/forgotpwd', data: {"username": email});
+      final res =
+          await apiProvider.post('/auth/forgotpwd', data: {"username": email});
       print(res);
       return true;
     } on DioException catch (e) {
@@ -61,30 +137,35 @@ class ApiRepository {
     }
   }
 
-  Future<bool> verifyForgotPassword(String password, String code, String email) async {
+  Future<bool> verifyForgotPassword(
+      String password, String code, String email) async {
     try {
       final data = {
         "password": password,
         "password_verify": code,
         "email_code": email
-
       };
-await apiProvider.post('/auth/changepwdforgot', data: data);
-return true;
-    } on DioException catch(e) {
+      await apiProvider.post('/auth/changepwdforgot', data: data);
+      return true;
+    } on DioException catch (e) {
       return false;
     }
   }
-  Future<bool> savePersonal(String lastname, String firstname, String email, String phone) async {
+
+  Future<bool> savePersonal(User user) async {
     try {
       final data = {
-        "lastname": lastname,
-        "firstname": firstname,
-        "email": email,
-        "phone":phone
+        "lastname": user.lastname,
+        "firstname": user.firstname,
+        "mobile": user.mobile,
+        "companyName": user.companyName,
+        "companyRegistry": user.companyRegistry,
+        "order_notification": user.orderNotification,
+        "product_ads_notification": user.productAdsNotification,
+        // "password": password
       };
 
-      await apiProvider.post('', data: data);
+      final res = await apiProvider.put('/user', data: data);
       return true;
     } on DioException catch (e) {
       return false;
@@ -177,7 +258,8 @@ return true;
     }
   }
 
-  Future<ErrorHandler> rentRequest(int postId, int startDate, int duration) async {
+  Future<ErrorHandler> rentRequest(
+      int postId, int startDate, int duration) async {
     try {
       final data = {
         "postId": postId,
@@ -186,25 +268,25 @@ return true;
       };
       final response = await apiProvider.post('/posts/rentRequest', data: data);
       print(response);
-      if(response['success']) {
+      if (response['success']) {
+        return ErrorHandler(success: true, message: 'Ажмилттай');
+      }
+      if (response['message'] == 'please_confirm_email') {
         return ErrorHandler(
-          success: true,
-          message: 'Ажмилттай'
-        );
+            message: 'Имайл хаягаа баталгаажуулна уу.', success: false);
       }
-      if(response['message'] == 'please_confirm_email') {
-        return ErrorHandler(message: 'Имайл хаягаа баталгаажуулна уу.', success: false);
+      if (response['message'] == 'start date error') {
+        return ErrorHandler(
+            message: 'Эхлэх огноо алдаатай байна.', success: false);
       }
-      if(response['message'] == 'start date error') {
-        return ErrorHandler(message: 'Эхлэх огноо алдаатай байна.', success: false);
-      } 
-      if(response['message'] == 'Энэ хугацаанд түрээслэх боломжгүй байна') {
-        return ErrorHandler(message: 'Энэ хугацаанд түрээслэх боломжгүй байна.', success: false);
-      } 
-        return ErrorHandler(message: 'Алдаа гарлаа', success: false);
+      if (response['message'] == 'Энэ хугацаанд түрээслэх боломжгүй байна') {
+        return ErrorHandler(
+            message: 'Энэ хугацаанд түрээслэх боломжгүй байна.',
+            success: false);
+      }
+      return ErrorHandler(message: 'Алдаа гарлаа', success: false);
     } on DioException catch (e) {
       throw Exception('Алдаа');
-      
     }
   }
 
@@ -264,7 +346,7 @@ return true;
       };
       await apiProvider.put('/user', data: data);
       return true;
-    } on DioException catch(e) {
+    } on DioException catch (e) {
       return false;
     }
   }

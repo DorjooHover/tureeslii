@@ -91,7 +91,7 @@ const String area = 'Байрны талбай м2';
 
 // room info
 const String title = 'Гарчиг';
-const String type = 'Төрөл';
+
 const String kitchenRoom = 'Гал тогооны өрөө';
 const String bathRoom = 'Угаалгын өрөө';
 const String livingRoom = 'Зочны өрөө';
@@ -103,6 +103,7 @@ const String bedTwo = '2 хүний ор';
 const String addImage = 'Зураг оруулах';
 const String imageRequreUnit = 'Багадаа 3 зураг байршуулна';
 const String imageRequireSize = 'Багадаа 620x480 хэмжээтэй байх ёстой';
+const String haveDaySpecial = 'хоног онцгой зар болгох ';
 // listing
 const String adAdd = 'Зар нэмэх';
 
@@ -153,9 +154,8 @@ const String inPrice = 'Төлбөрт багтсан';
 const String flatCondition = 'Байрны нөхцөл';
 const String furniture = 'Тавилга';
 
-// rent request 
+// rent request
 const String rentRequestStr = 'Түрээслэх хүсэлт';
-
 
 const String rentCondition = 'Түрээсийн нөхцөл';
 const String restrictions = 'Хязгаарлалтууд';
@@ -207,7 +207,6 @@ const String mn = 'MN';
 const String hello = 'Сайн байна уу.';
 const String agree = 'Зөвшөөрөх';
 const String decline = 'Татгалзах';
-
 
 const String slogan = 'Ая тухтай байдлыг амар хялбараар';
 

@@ -59,7 +59,7 @@ const filterVerification = ['Баталгаажсан', 'Онцлох'];
 
 const filterFloor = ['1', '2-5', '5+'];
 const paymentConditionValues = ['1 сар', "3 сар", "6 сар"];
-const bailConditionValues = ['Хагас сараар' "3 сар", "6 сар"];
+const bailConditionValues = ['Хагас сараар' ,"3 сар", "6 сар"];
 const contractConditionValues = ['Хагас сараар', "3 сар", "6 сар"];
 const cancelConditionValues = ['Хатуу', "3 сар", "6 сар"];
 const collaterals = ['Барьцаагүй'];

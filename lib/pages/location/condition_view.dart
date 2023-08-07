@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
@@ -14,14 +16,29 @@ class ConditionView extends StatefulWidget {
 class _ConditionViewState extends State<ConditionView> {
   final GlobalKey<ScaffoldState> conditionKey = GlobalKey<ScaffoldState>();
   bool isDrawer = false;
+  final controller = Get.put(MainController());
 
-  List<int> verified = [0, 1];
   bool pet = false;
   bool invite = false;
   bool smoke = false;
   bool isLive = false;
 
   String selectedWhomRent = whomRentValues[0];
+  int personCount = 1;
+
+  nextStep() {
+    if (personCount > 0) {
+      controller.createPost.value!.acceptedTenants = personCount;
+      controller.createPost.value!.acceptedGender = selectedWhomRent;
+      controller.createPost.value!.petAllowed = pet;
+      controller.createPost.value!.guestAllowed = invite;
+      controller.createPost.value!.smokingAllowed = smoke;
+      controller.createPost.value!.livingProperty = isLive;
+      controller.nextStep();
+      Get.toNamed(Routes.flatFeature);
+    } else {}
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -69,13 +86,27 @@ class _ConditionViewState extends State<ConditionView> {
                             child: DropDown(
                               list: whomRentValues,
                               value: selectedWhomRent,
-                              onChanged: (value) {},
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    selectedWhomRent = value;
+                                  });
+                                }
+                              },
                             )),
                         space24,
                         AdditionCard(
                             title: personNumber,
                             child: Input(
                               textInputType: TextInputType.number,
+                              inputFormatter: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              onChange: (p0) {
+                                setState(() {
+                                  personCount = int.parse(p0);
+                                });
+                              },
                             )),
                       ],
                     )),
@@ -209,7 +240,7 @@ class _ConditionViewState extends State<ConditionView> {
               ),
             ),
             drawerScrimColor: Colors.transparent,
-            endDrawer: LocationDrawer(selected: verified),
+            endDrawer: LocationDrawer(selected: controller.verified),
             onEndDrawerChanged: (isOpened) {
               if (isOpened != isDrawer) {
                 setState(() {
@@ -253,7 +284,7 @@ class _ConditionViewState extends State<ConditionView> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(Routes.flatFeature);
+                        nextStep();
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -315,7 +346,7 @@ class _ConditionViewState extends State<ConditionView> {
                 padding: const EdgeInsets.only(left: 26),
                 alignment: Alignment.center,
                 child: Text(
-                  '3',
+                  '${controller.currentStep.value + 1}',
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!

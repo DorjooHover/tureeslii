@@ -19,6 +19,7 @@ class AlertContainer extends StatelessWidget {
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       insetPadding: padding,
+      
       content: Container(
         padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: 15),
         child: Column(

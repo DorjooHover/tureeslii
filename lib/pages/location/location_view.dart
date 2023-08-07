@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 import 'package:location/location.dart';
@@ -51,7 +53,9 @@ class _LocationViewState extends State<LocationView> {
   @override
   void initState() {
     super.initState();
-    getCurrentLocation();
+    if (currentLocation == null) {
+      getCurrentLocation();
+    }
   }
 
   void moveCurrentLocation() async {
@@ -70,12 +74,37 @@ class _LocationViewState extends State<LocationView> {
     );
   }
 
-  List<int> verified = [0];
   bool isDrawer = false;
   LatLng? selectedLocation;
+  String cityValue = cities[0];
+  String stateValue = '';
+  String districtValue = "";
+  int floorValue = 1;
+  String addressValue = '';
+  final controller = Get.put(MainController());
+  void nextStep() {
+    if (addressValue != '' &&
+        cityValue != '' &&
+        stateValue != '' &&
+        districtValue != '' &&
+        floorValue != -1 &&
+        selectedLocation != null) {
+      controller.createPost.value!.address = addressValue;
+      controller.createPost.value!.city = cityValue;
+      controller.createPost.value!.state = stateValue;
+      controller.createPost.value!.district = districtValue;
+      controller.createPost.value!.floor = floorValue;
+      controller.createPost.value!.long = selectedLocation!.longitude;
+      controller.createPost.value!.lat = selectedLocation!.latitude;
+      controller.nextStep();
+      Get.toNamed(Routes.general);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size _size = MediaQuery.of(context).size;
+
     return Material(
       child: Stack(
         children: [
@@ -229,14 +258,30 @@ class _LocationViewState extends State<LocationView> {
                                                 title: city,
                                                 child: DropDown(
                                                   list: cities,
-                                                  onChanged: (value) {},
+                                                  onChanged: (value) {
+                                                    if (value != null) {
+                                                      setState(() {
+                                                        cityValue = value;
+                                                        isDrag = true;
+                                                      });
+                                                    }
+                                                  },
                                                   value: cities[0],
                                                 ))),
                                         space16,
                                         Expanded(
                                             child: AdditionCard(
                                                 title: district,
-                                                child: Input())),
+                                                child: Input(
+                                                  textInputAction:
+                                                      TextInputAction.next,
+                                                  onChange: (p0) {
+                                                    setState(() {
+                                                      stateValue = p0;
+                                                      isDrag = true;
+                                                    });
+                                                  },
+                                                ))),
                                       ],
                                     ),
                                     space24,
@@ -246,17 +291,40 @@ class _LocationViewState extends State<LocationView> {
                                             child: AdditionCard(
                                                 title: committee,
                                                 child: Input(
-                                                  textInputType:
-                                                      TextInputType.number,
-                                                ))),
+                                                    textInputType:
+                                                        TextInputType.number,
+                                                    inputFormatter: [
+                                                      FilteringTextInputFormatter
+                                                          .digitsOnly
+                                                    ],
+                                                    textInputAction:
+                                                        TextInputAction.next,
+                                                    onChange: (p0) {
+                                                      setState(() {
+                                                        districtValue = p0;
+                                                        isDrag = true;
+                                                      });
+                                                    }))),
                                         space16,
                                         Expanded(
                                             child: AdditionCard(
                                                 title: floor,
                                                 child: Input(
-                                                  textInputType:
-                                                      TextInputType.number,
-                                                ))),
+                                                    textInputType:
+                                                        TextInputType.number,
+                                                    inputFormatter: [
+                                                      FilteringTextInputFormatter
+                                                          .digitsOnly
+                                                    ],
+                                                    textInputAction:
+                                                        TextInputAction.next,
+                                                    onChange: (p0) {
+                                                      setState(() {
+                                                        isDrag = true;
+                                                        floorValue =
+                                                            int.parse(p0);
+                                                      });
+                                                    }))),
                                       ],
                                     ),
                                     space24,
@@ -270,8 +338,15 @@ class _LocationViewState extends State<LocationView> {
                                             title: address,
                                             child: Input(
                                               maxLine: 5,
-                                              textInputType:
-                                                  TextInputType.number,
+                                              onChange: (p0) {
+                                                setState(() {
+                                                  isDrag = true;
+                                                  addressValue = p0;
+                                                });
+                                              },
+                                              onSubmitted: (p0) {
+                                                nextStep();
+                                              },
                                             )),
                                       ),
                                     ),
@@ -299,7 +374,7 @@ class _LocationViewState extends State<LocationView> {
                       padding: EdgeInsets.only(top: 18, right: 16, bottom: 32),
                       child: GestureDetector(
                         onTap: () {
-                          Get.toNamed(Routes.general);
+                          nextStep();
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -321,7 +396,7 @@ class _LocationViewState extends State<LocationView> {
               ],
             ),
             drawerScrimColor: Colors.transparent,
-            endDrawer: LocationDrawer(selected: verified),
+            endDrawer: LocationDrawer(selected: controller.verified),
             onEndDrawerChanged: (isOpened) {
               if (isOpened != isDrawer) {
                 setState(() {
@@ -372,7 +447,7 @@ class _LocationViewState extends State<LocationView> {
                 padding: const EdgeInsets.only(left: 26),
                 alignment: Alignment.center,
                 child: Text(
-                  '1',
+                  '${controller.currentStep.value + 1}',
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!

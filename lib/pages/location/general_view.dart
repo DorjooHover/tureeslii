@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
@@ -14,20 +15,55 @@ class GeneralView extends StatefulWidget {
 class _GeneralViewState extends State<GeneralView> {
   final GlobalKey<ScaffoldState> generalKey = GlobalKey<ScaffoldState>();
   bool isDrawer = false;
+  final controller = Get.put(MainController());
 
-  List<int> verified = [0];
-  bool isDay = false;
-  bool isMonth = false;
-  bool flatPrice = false;
-  bool sokh = false;
-  bool electronic = false;
-  bool internet = false;
-  bool bailMoney = false;
+  bool isDay = false,
+      isMonth = false,
+      flatPrice = false,
+      sokh = false,
+      electronic = false,
+      internet = false,
+      bailMoney = false;
 
-  String selectedContractCondition = contractConditionValues[0];
-  String selectedPaymentCondition = paymentConditionValues[0];
-  String selectedBailCondition = bailConditionValues[0];
-  String selectedCancelCondition = cancelConditionValues[0];
+  String startRentDateValue = "2023/08/12";
+  double rentPriceValue = 0.0, minimumRentDayValue = 0.0;
+
+  String selectedContractCondition = contractConditionValues[0],
+      selectedPaymentCondition = paymentConditionValues[0],
+      selectedBailCondition = bailConditionValues[0],
+      selectedCancelCondition = cancelConditionValues[0];
+  void nextStep() {
+    if (startRentDate != '' &&
+        rentPriceValue > 0 &&
+        minimumRentDayValue > 0 &&
+        selectedBailCondition != '' &&
+        selectedPaymentCondition != '' &&
+        selectedContractCondition != '' &&
+        selectedCancelCondition != '') {
+      controller.createPost.value!.startDate = startRentDateValue;
+      controller.createPost.value!.priceTerm = selectedContractCondition;
+      controller.createPost.value!.cancelTerm = selectedCancelCondition;
+      controller.createPost.value!.dailyRent = isDay;
+      controller.createPost.value!.price = rentPriceValue;
+      controller.createPost.value!.priceDaily = minimumRentDayValue;
+      controller.createPost.value!.monthlyRent = isMonth;
+      controller.createPost.value!.depositRequired = flatPrice;
+      // controller.createPost.value!.depositRequired = sokh;
+      if (electronic) {
+        controller.createPost.value!.priceIncluded?.add('electric');
+      }
+      if (internet) {
+        controller.createPost.value!.priceIncluded?.add('internet');
+      }
+      controller.createPost.value!.paymentTerm = selectedPaymentCondition;
+      // controller.createPost.value!. = selectedPaymentCondition ;
+      controller.createPost.value!.depositTerm = selectedPaymentCondition;
+      // controller.createPost.value!.depositRequired = sokh;
+      controller.nextStep();
+      Get.toNamed(Routes.condition);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -60,6 +96,8 @@ class _GeneralViewState extends State<GeneralView> {
             ),
             body: Container(
               padding: const EdgeInsets.symmetric(horizontal: origin),
+              margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom + 80),
               width: double.infinity,
               height: MediaQuery.of(context).size.height - 63,
               child: SingleChildScrollView(
@@ -78,7 +116,13 @@ class _GeneralViewState extends State<GeneralView> {
                             child: DropDown(
                               list: contractConditionValues,
                               value: selectedContractCondition,
-                              onChanged: (value) {},
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    selectedContractCondition = value;
+                                  });
+                                }
+                              },
                             )),
                         space24,
                         AdditionCard(
@@ -87,7 +131,13 @@ class _GeneralViewState extends State<GeneralView> {
                             child: DropDown(
                               list: cancelConditionValues,
                               value: selectedCancelCondition,
-                              onChanged: (value) {},
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    selectedCancelCondition = value;
+                                  });
+                                }
+                              },
                             )),
                       ],
                     )),
@@ -116,11 +166,27 @@ class _GeneralViewState extends State<GeneralView> {
                         space24,
                         AdditionCard(
                             title: rentPrice,
-                            child: Input(textInputType: TextInputType.number)),
+                            child: Input(
+                              textInputType: TextInputType.number,
+                              textInputAction: TextInputAction.next,
+                              onChange: (p0) {
+                                setState(() {
+                                  rentPriceValue = double.parse(p0);
+                                });
+                              },
+                            )),
                         space24,
                         AdditionCard(
                             title: minimumRentDay,
-                            child: Input(textInputType: TextInputType.number)),
+                            child: Input(
+                              textInputType: TextInputType.number,
+                              textInputAction: TextInputAction.next,
+                              onChange: (p0) {
+                                setState(() {
+                                  rentPriceValue = double.parse(p0);
+                                });
+                              },
+                            )),
                       ],
                     )),
                     space40,
@@ -148,11 +214,27 @@ class _GeneralViewState extends State<GeneralView> {
                         space24,
                         AdditionCard(
                             title: rentPrice,
-                            child: Input(textInputType: TextInputType.number)),
+                            child: Input(
+                              textInputType: TextInputType.number,
+                              textInputAction: TextInputAction.next,
+                              onChange: (p0) {
+                                setState(() {
+                                  rentPriceValue = double.parse(p0);
+                                });
+                              },
+                            )),
                         space24,
                         AdditionCard(
                             title: minimumRentDay,
-                            child: Input(textInputType: TextInputType.number)),
+                            child: Input(
+                              textInputType: TextInputType.number,
+                              textInputAction: TextInputAction.next,
+                              onChange: (p0) {
+                                setState(() {
+                                  minimumRentDayValue = double.parse(p0);
+                                });
+                              },
+                            )),
                       ],
                     )),
                     space40,
@@ -262,7 +344,13 @@ class _GeneralViewState extends State<GeneralView> {
                             child: DropDown(
                               list: paymentConditionValues,
                               value: selectedPaymentCondition,
-                              onChanged: (value) {},
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    selectedPaymentCondition = value;
+                                  });
+                                }
+                              },
                             )),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
@@ -289,7 +377,13 @@ class _GeneralViewState extends State<GeneralView> {
                             child: DropDown(
                               list: bailConditionValues,
                               value: selectedBailCondition,
-                              onChanged: (value) {},
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    selectedBailCondition = value;
+                                  });
+                                }
+                              },
                             )),
                       ],
                     )),
@@ -298,7 +392,7 @@ class _GeneralViewState extends State<GeneralView> {
               ),
             ),
             drawerScrimColor: Colors.transparent,
-            endDrawer: LocationDrawer(selected: verified),
+            endDrawer: LocationDrawer(selected: controller.verified),
             onEndDrawerChanged: (isOpened) {
               if (isOpened != isDrawer) {
                 setState(() {
@@ -342,7 +436,7 @@ class _GeneralViewState extends State<GeneralView> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(Routes.condition);
+                        nextStep();
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -404,7 +498,7 @@ class _GeneralViewState extends State<GeneralView> {
                 padding: const EdgeInsets.only(left: 26),
                 alignment: Alignment.center,
                 child: Text(
-                  '2',
+                  (controller.currentStep.value + 1).toString(),
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!

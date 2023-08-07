@@ -22,9 +22,7 @@ class AuthController extends GetxController {
   }
 
   
-  Future<bool> savePersonal(String lastname, String firstname, String email, String phone) async {
-    return await apiRepository.savePersonal(lastname, firstname, email, phone);
-  }
+  
 
   Future<bool> forgotPassword(String email) async{
     return await apiRepository.forgotPassword(email);
