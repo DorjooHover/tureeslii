@@ -21,17 +21,51 @@ class MainController extends GetxController
   final loading = false.obs;
   final savedPosts = <Post>[].obs;
 
+  // otp
+  final otp = "------".obs;
+
   // change password
   final oldPassword = "".obs;
   final newPassword = "".obs;
   final confirmPassword = "".obs;
 
+  // posts
+  final allPosts = <Post>[].obs;
   // own posts
   final ownPosts = <Post>[].obs;
 
   User? get user => rxUser.value;
   set user(value) => rxUser.value = value;
+// orders
+  Future<void> getOrders() async {
+    try {
+      List<Post> res = await _apiRepository.getOwnPosts(0, 10, SortData(), []);
+      ownPosts.value = res;
+    } catch (e) {
+      print(e);
+    }
+  }
 
+  // posts
+
+  getAllPosts(int page, int limit, SortData sortData,
+      List<FilterData> filterData) async {
+    try {
+      final res = await _apiRepository.getAllPosts(
+        page,
+        limit,
+        sortData,
+        filterData,
+      );
+      allPosts.value = res;
+
+      return res;
+    } on DioException catch (e) {
+      print(e);
+    }
+  }
+
+  // saved posts
   getSavedPost() async {
     try {
       final res = await _apiRepository.getSavedPosts();
@@ -40,22 +74,6 @@ class MainController extends GetxController
       return res;
     } on DioException catch (e) {
       print(e);
-    }
-  }
-
-  Future<bool> changePassword() async {
-    try {
-      if (newPassword.value == confirmPassword.value) {
-        await _apiRepository.changePassword(
-            oldPassword.value, newPassword.value);
-        return true;
-      } else {
-        Get.snackbar('Алдаа', 'Нууц үг таарахгүй байна');
-        return false;
-      }
-    } on DioException catch (e) {
-      print(e);
-      return false;
     }
   }
 
@@ -95,6 +113,23 @@ class MainController extends GetxController
     }
   }
 
+// profile
+  Future<bool> changePassword() async {
+    try {
+      if (newPassword.value == confirmPassword.value) {
+        await _apiRepository.changePassword(
+            oldPassword.value, newPassword.value);
+        return true;
+      } else {
+        Get.snackbar('Алдаа', 'Нууц үг таарахгүй байна');
+        return false;
+      }
+    } on DioException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   Future<bool> updateUser(User user) async {
     return await _apiRepository.updateUser(user);
   }
@@ -130,17 +165,16 @@ class MainController extends GetxController
     getSavedPost();
   }
 
-  Future<void> getOrders() async {
-    try {
-      List<Post> res = await _apiRepository.getOwnPosts(0, 10, SortData(), []);
-      ownPosts.value = res;
-    } catch (e) {
-      print(e);
-    }
-  }
-
   Future<void> sendEmailVerification() async {
     await _apiRepository.sendEmailVerifyCode();
+  }
+
+  Future<bool> getMobileVerification() async {
+    return _apiRepository.getMobileVerifyCode();
+  }
+
+  Future<bool> sendMobileVerification() async {
+    return _apiRepository.sendMobileVerifyCode(otp.value);
   }
 
   @override

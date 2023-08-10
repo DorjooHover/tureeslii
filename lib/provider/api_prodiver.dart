@@ -111,6 +111,27 @@ class ApiRepository {
     }
   }
 
+  Future<bool> getMobileVerifyCode() async {
+    try {
+      final res = await apiProvider.get(
+        '/auth/requestVerifyCodeMobile',
+      );
+      return res['success'];
+    } on DioException catch (e) {
+      throw Exception("Алдаа гарлаа");
+    }
+  }
+
+  Future<bool> sendMobileVerifyCode(String code) async {
+    final data = {'code': code};
+    try {
+      final res = await apiProvider.post('/auth/verifyMobile', data: data);
+      return res['success'];
+    } on DioException catch (e) {
+      throw Exception("Алдаа гарлаа");
+    }
+  }
+
   // posts
   Future<List<Post>> getAllPosts(int? skip, int? take, SortData? sortData,
       List<FilterData>? filterData) async {

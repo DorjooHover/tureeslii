@@ -12,7 +12,6 @@ import 'package:location/location.dart';
 import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/pages/location/item_detail_view.dart';
-import 'package:tureeslii/provider/api_prodiver.dart';
 import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/index.dart';
 
@@ -25,15 +24,15 @@ class LocationView extends StatefulWidget {
 
 class _LocationViewState extends State<LocationView> {
   BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
+
+  final mainController = Get.put(MainController());
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   LocationData? currentLocation;
   LatLng? startLocation;
   final Set<Marker> markers = {};
-  final mainController = Get.put(MainController());
   CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
-  final ApiRepository _apiRepository = Get.find();
   final double _headerHeight = 100.0;
   final double _maxHeight = 600.0;
   final double sortMaxHeight = 320.0;
@@ -55,7 +54,7 @@ class _LocationViewState extends State<LocationView> {
   Future<void> getPosts() async {
     isLoading.value = true;
     try {
-      List<Post> res = await _apiRepository.getAllPosts(
+      List<Post> res = await mainController.getAllPosts(
         page,
         limit,
         sortData,

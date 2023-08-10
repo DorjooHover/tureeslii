@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tureeslii/controllers/main_controller.dart';
+import 'package:tureeslii/controllers/notification_controller.dart';
 import 'package:tureeslii/pages/menu/menu_view.dart';
 import 'package:tureeslii/pages/pages.dart';
 import 'package:tureeslii/shared/index.dart';
@@ -17,14 +18,14 @@ class _MainViewState extends State<MainView> {
     const LocationView(),
     const BookmarkView(),
     const NotificationView(),
-     OrderView(),
+    OrderView(),
     const MenuView(),
   ];
   int currentIndex = 1;
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MainController());
-
+    final notificationController = Get.put(NotificationController());
     return GetBuilder<MainController>(
       init: MainController(),
       builder: (controller) => controller.obx(
@@ -84,21 +85,39 @@ class _MainViewState extends State<MainView> {
                   )
                 ],
               ), (user) {
-        return Scaffold(
-          appBar: MainAppBar(
-            currentIndex: currentIndex,
-            height: currentIndex == 4 ? 246 : 63,
-            bgColor: currentIndex != 4 ? Colors.white : bgGray,
-            statusBarColor: currentIndex != 4 ? Colors.white : bgGray,
-          ),
-          body: views[currentIndex],
-          bottomNavigationBar: MainNavigationBar(
-            currentIndex: currentIndex,
-            changeIndex: (value) {
-              setState(() {
-                currentIndex = value;
-              });
-            },
+        return RefreshIndicator(
+          displacement: 250,
+          backgroundColor: prime,
+          color: second,
+          strokeWidth: 3,
+          triggerMode: RefreshIndicatorTriggerMode.onEdge,
+          onRefresh: () async {
+            if (currentIndex == 1) {
+              await controller.getSavedPost();
+            }
+            if (currentIndex == 2) {
+              await notificationController.getNotification();
+            }
+            if (currentIndex == 3) {
+              await controller.getOrders();
+            }
+          },
+          child: Scaffold(
+            appBar: MainAppBar(
+              currentIndex: currentIndex,
+              height: currentIndex == 4 ? 246 : 63,
+              bgColor: currentIndex != 4 ? Colors.white : bgGray,
+              statusBarColor: currentIndex != 4 ? Colors.white : bgGray,
+            ),
+            body: views[currentIndex],
+            bottomNavigationBar: MainNavigationBar(
+              currentIndex: currentIndex,
+              changeIndex: (value) {
+                setState(() {
+                  currentIndex = value;
+                });
+              },
+            ),
           ),
         );
       }),
