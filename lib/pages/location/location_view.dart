@@ -62,7 +62,7 @@ class _LocationViewState extends State<LocationView> {
       );
 
       posts = res;
-
+      addMarkers();
       isLoading.value = false;
     } on DioException catch (e) {
       isLoading.value = false;
@@ -125,7 +125,6 @@ class _LocationViewState extends State<LocationView> {
     super.initState();
 
     getPosts().then((value) {
-      addMarkers();
       getCurrentLocation();
     });
   }

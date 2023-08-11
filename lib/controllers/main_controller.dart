@@ -155,6 +155,9 @@ class MainController extends GetxController
       change(user, status: RxStatus.success());
 
       isLoading.value = false;
+      if (user != null) {
+        getSavedPost();
+      }
     } on DioException catch (e) {
       isLoading.value = false;
 
@@ -162,7 +165,6 @@ class MainController extends GetxController
 
       update();
     }
-    getSavedPost();
   }
 
   Future<void> sendEmailVerification() async {
