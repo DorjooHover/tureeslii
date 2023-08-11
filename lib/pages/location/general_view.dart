@@ -13,7 +13,7 @@ class GeneralView extends StatefulWidget {
 }
 
 class _GeneralViewState extends State<GeneralView> {
-  final GlobalKey<ScaffoldState> generalKey = GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> generalKey = GlobalKey<ScaffoldState>();
   bool isDrawer = false;
   final controller = Get.put(MainController());
 
@@ -416,6 +416,7 @@ class _GeneralViewState extends State<GeneralView> {
                   children: [
                     GestureDetector(
                       onTap: () {
+                        controller.prevStep();
                         Get.toNamed(Routes.location);
                       },
                       child: Row(

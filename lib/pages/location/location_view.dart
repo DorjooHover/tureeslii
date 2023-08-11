@@ -18,7 +18,8 @@ class LocationView extends StatefulWidget {
   State<LocationView> createState() => _LocationViewState();
 }
 
-class _LocationViewState extends State<LocationView> {
+class _LocationViewState extends State<LocationView>
+    with AutomaticKeepAliveClientMixin {
   BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
@@ -48,11 +49,12 @@ class _LocationViewState extends State<LocationView> {
     addCustomIcon();
   }
 
-  final GlobalKey<ScaffoldState> locationKey = GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> locationKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    print(currentLocation);
     if (currentLocation == null) {
       getCurrentLocation();
     }
@@ -102,7 +104,11 @@ class _LocationViewState extends State<LocationView> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final Size _size = MediaQuery.of(context).size;
 
     return Material(

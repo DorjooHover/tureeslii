@@ -16,6 +16,7 @@ class ImageLibraryView extends StatefulWidget {
 }
 
 class _ImageLibraryViewState extends State<ImageLibraryView> {
+  GlobalKey<ScaffoldState> imageLibraryKey = GlobalKey<ScaffoldState>();
   final ImagePicker picker = ImagePicker();
   List<XFile> images = [];
   void selectImages() async {
@@ -26,7 +27,6 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
     setState(() {});
   }
 
-  final GlobalKey<ScaffoldState> imageLibraryKey = GlobalKey<ScaffoldState>();
   bool isDrawer = false;
 
   final controller = Get.put(MainController());

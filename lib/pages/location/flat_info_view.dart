@@ -13,7 +13,7 @@ class FlatInfoView extends StatefulWidget {
 }
 
 class _FlatInfoViewState extends State<FlatInfoView> {
-  final GlobalKey<ScaffoldState> flatInfoView = GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> flatInfoView = GlobalKey<ScaffoldState>();
   bool isDrawer = false;
   final controller = Get.put(MainController());
 

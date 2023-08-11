@@ -21,8 +21,6 @@ class _LoginViewState extends State<LoginView> {
   String username = "";
   String passwordValue = "";
   loginFunc() async {
-    print(username);
-    print(passwordValue);
     await controller.login(username, passwordValue);
     if (loginKey.currentState!.validate()) {
       // loginKey.currentState!.save();

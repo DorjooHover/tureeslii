@@ -45,6 +45,12 @@ class MainController extends GetxController
     print(createPost.value?.toJson());
   }
 
+  prevStep() {
+    if (currentStep.value > 0) {
+      currentStep.value = currentStep.value - 1;
+    }
+  }
+
   Future<void> createNewPost(List<XFile> images) async {
     try {
       List<String> imagesUrl = [];

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:landlord/model/user.dart';
 import 'package:landlord/provider/api_prodiver.dart';
+import 'package:landlord/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import './splash_controller.dart' show SplashController;
@@ -16,26 +17,24 @@ class AuthController extends GetxController {
     super.onInit();
   }
 
-   Future<bool> registerEmail(String email, String password) async {
-    return await apiRepository.register(
-        email, password);
+  Future<bool> registerEmail(String email, String password) async {
+    return await apiRepository.register(email, password);
   }
 
-  
-  
-
-  Future<bool> forgotPassword(String email) async{
+  Future<bool> forgotPassword(String email) async {
     return await apiRepository.forgotPassword(email);
   }
 
-  Future<bool> forgotPasswordVerify(String password, String code, String email) async {
+  Future<bool> forgotPasswordVerify(
+      String password, String code, String email) async {
     return await apiRepository.verifyForgotPassword(password, code, email);
   }
+
   login(String username, String password) async {
     try {
       User user = await apiRepository.login(username, password);
-      _saveTokens(user.accessToken!);
-
+      await _saveTokens(user.accessToken!)
+          .then((value) => Get.toNamed(Routes.main));
       return user;
     } catch (e) {
       return e;
@@ -54,7 +53,7 @@ class AuthController extends GetxController {
     super.dispose();
   }
 
-  _saveTokens(String token) async {
+  Future<void> _saveTokens(String token) async {
     final prefs = Get.find<SharedPreferences>();
     await prefs.setString(StorageKeys.token.name, token);
     Get.find<SplashController>().token.value = token;

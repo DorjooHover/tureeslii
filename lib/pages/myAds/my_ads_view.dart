@@ -9,7 +9,7 @@ class MyAdsView extends StatefulWidget {
   State<MyAdsView> createState() => _MyAdsViewState();
 }
 
-final GlobalKey<ScaffoldState> mainKey = GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> myAdsKey = GlobalKey<ScaffoldState>();
 bool isDrawer = false;
 
 class _MyAdsViewState extends State<MyAdsView> {
@@ -20,7 +20,7 @@ class _MyAdsViewState extends State<MyAdsView> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        key: mainKey,
+        key: myAdsKey,
         backgroundColor: Colors.white,
         appBar: MyAdsAppBar(
           height: MediaQuery.of(context).padding.top + 220,
@@ -116,7 +116,7 @@ class _MyAdsViewState extends State<MyAdsView> {
         endDrawer: MainDrawer(
             onTap: (int index) {},
             cancel: () {
-              mainKey.currentState!.closeEndDrawer();
+              myAdsKey.currentState!.closeEndDrawer();
             },
             selectedIndex: 0),
       ),

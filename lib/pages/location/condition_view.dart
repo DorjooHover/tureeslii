@@ -14,7 +14,7 @@ class ConditionView extends StatefulWidget {
 }
 
 class _ConditionViewState extends State<ConditionView> {
-  final GlobalKey<ScaffoldState> conditionKey = GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> conditionKey = GlobalKey<ScaffoldState>();
   bool isDrawer = false;
   final controller = Get.put(MainController());
 

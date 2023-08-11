@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:landlord/controllers/auth_controller.dart';
 import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
@@ -16,7 +17,7 @@ class MainDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MainController());
-
+    final authController = Get.put(AuthController(apiRepository: Get.find()));
     return Drawer(
       width: MediaQuery.of(context).size.width,
       child: Column(
@@ -86,26 +87,29 @@ class MainDrawer extends StatelessWidget {
             height: 2,
           ),
           space20,
-          ...navbar
-              .map(
-                (e) => Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 20, horizontal: origin),
-                  child: TextButton(
-                    onPressed: () {
-                      Get.toNamed(e['url']!);
-                    },
-                    child: Text(
-                      e['label']!,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: black, fontWeight: FontWeight.w700),
-                    ),
-                  ),
+          ...navbar.map((e) {
+            final i = navbar.indexOf(e);
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 20, horizontal: origin),
+              child: TextButton(
+                onPressed: () {
+                  if (i == 4) {
+                    authController.logout();
+                  } else {
+                    Get.toNamed(e['url']!);
+                  }
+                },
+                child: Text(
+                  e['label']!,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: black, fontWeight: FontWeight.w700),
                 ),
-              )
-              .toList(),
+              ),
+            );
+          }).toList(),
           space20,
           const Divider(
             color: navGray,

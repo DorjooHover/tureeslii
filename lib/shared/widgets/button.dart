@@ -57,6 +57,7 @@ class MainButton extends StatelessWidget {
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
+            minimumSize: Size.zero,
             backgroundColor: color,
             elevation: 0,
             shape: RoundedRectangleBorder(

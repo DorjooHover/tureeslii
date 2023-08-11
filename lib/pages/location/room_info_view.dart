@@ -14,7 +14,7 @@ class RoomInfoView extends StatefulWidget {
 }
 
 class _RoomInfoViewState extends State<RoomInfoView> {
-  final GlobalKey<ScaffoldState> roomInfoView = GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> roomInfoView = GlobalKey<ScaffoldState>();
   bool isDrawer = false;
   final controller = Get.put(MainController());
 

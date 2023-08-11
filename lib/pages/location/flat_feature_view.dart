@@ -13,7 +13,7 @@ class FlatFeatureView extends StatefulWidget {
 }
 
 class _FlatFeatureViewState extends State<FlatFeatureView> {
-  final GlobalKey<ScaffoldState> flatFeatureKey = GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> flatFeatureKey = GlobalKey<ScaffoldState>();
   bool isDrawer = false;
   final controller = Get.put(MainController());
 
