@@ -13,7 +13,7 @@ class ApiRepository {
       final response = await apiProvider.get('/auth/user');
       return User.fromJson(response['data']);
     } on DioException catch (e) {
-      print(e);
+      rethrow;
     }
   }
 
@@ -22,7 +22,6 @@ class ApiRepository {
       final data = {"username": username, "password": password};
 
       final res = await apiProvider.post('/auth/login', data: data);
-      print(res);
       return User.fromJson(res['data']);
     } on DioException catch (e) {
       if (e.response!.statusCode == 401 && e.response?.data['message'] != "") {
@@ -202,15 +201,15 @@ class ApiRepository {
   }
 
   Future<ErrorHandler> rentRequest(
-      int postId, int startDate, int duration) async {
+      int postId, int startDate, int duration, String type) async {
     try {
       final data = {
         "postId": postId,
         "startDate": startDate,
         "duration": duration,
+        "type": type
       };
       final response = await apiProvider.post('/posts/rentRequest', data: data);
-      print(response);
       if (response['success']) {
         return ErrorHandler(success: true, message: 'Ажмилттай');
       }
@@ -230,6 +229,10 @@ class ApiRepository {
         return ErrorHandler(
             message: 'Энэ хугацаанд түрээслэх боломжгүй байна.',
             success: false);
+      }
+      if (response['message'] == 'please_fill_additional_infos') {
+        return ErrorHandler(
+            message: 'Таны мэдээлэл дутуу байна.', success: false);
       }
       return ErrorHandler(message: 'Алдаа гарлаа', success: false);
     } on DioException catch (e) {
@@ -251,6 +254,30 @@ class ApiRepository {
     } on DioException catch (e) {
       if (e.response?.data["success"] == false) {
         throw Exception("Дахии оролдоно уу");
+      } else {
+        throw Exception("Алдаа гарлаа");
+      }
+    }
+  }
+
+  // rent request
+  Future<List<RentRequest>> getMyRentRequest(int? skip, int? take,
+      SortData? sortData, List<FilterData>? filterData) async {
+    try {
+      final data = {
+        "skip": skip ?? 0,
+        "take": take ?? 10,
+        "sortData": sortData ?? {},
+        "filterData": filterData ?? [],
+      };
+      final response =
+          await apiProvider.post('/rentreq/myRentRequest', data: data);
+      return (response['data'] as List)
+          .map((e) => RentRequest.fromJson(e))
+          .toList();
+    } on DioException catch (e) {
+      if (e.response?.data["success"] == false) {
+        throw Exception("Дахин оролдоно уу");
       } else {
         throw Exception("Алдаа гарлаа");
       }

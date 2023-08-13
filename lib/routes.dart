@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:tureeslii/bindings/bindings.dart';
+import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/pages/menu/menu_view.dart';
 import 'package:tureeslii/pages/pages.dart';
 
@@ -55,7 +56,10 @@ class Routes {
         transitionDuration: const Duration(milliseconds: 300)),
     GetPage(
         name: acceptedOrder,
-        page: () => const OrderAcceptedView(),
+        page: () {
+          RentRequest res = Get.arguments;
+          return OrderAcceptedView(data: res);
+        },
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
     // menu

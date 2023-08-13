@@ -24,17 +24,33 @@ class _ProfileViewState extends State<ProfileView> {
   int rentPersonCount = 1;
   String jobTitle = "";
   String professionValue = "";
-  String payType = "";
+  String payType = payTypesValues[0];
   double incomeAmount = 0.0;
   String descriptionValue = "";
   final controller = Get.put(SplashController());
   final mainController = Get.put(MainController());
   @override
   void initState() {
-    // TODO: implement initState
     mainController.refreshUser();
 
+    updateData();
     super.initState();
+  }
+
+  updateData() {
+    if (mainController.user != null) {
+      sex = mainController.user!.gender ?? male;
+      payType = mainController.user!.payType ?? payTypesValues[0];
+      jobTitle = mainController.user!.jobTitle ?? '';
+      descriptionValue = mainController.user!.description ?? '';
+      professionValue = mainController.user!.profession ?? '';
+      rentPersonCount = mainController.user!.rentPersonCount ?? 1;
+      product = mainController.user!.productAdsNotification ?? false;
+      info = mainController.user!.orderNotification ?? false;
+      workStatus = mainController.user!.job ?? working;
+      incomeAmount = mainController.user!.incomeAmount?.toDouble() ?? 0.0;
+      setState(() {});
+    }
   }
 
   @override
@@ -161,7 +177,11 @@ class _ProfileViewState extends State<ProfileView> {
                         ],
                       ),
                       space13,
-                      AdditionCard(title: birthday, child: Input()),
+                      AdditionCard(
+                          title: birthday,
+                          child: Input(
+                            labelText: mainController.user?.birthdate ?? '',
+                          )),
                       space24,
                       AdditionCard(
                           title: gender,
@@ -180,6 +200,7 @@ class _ProfileViewState extends State<ProfileView> {
                           child: Input(
                             textInputAction: TextInputAction.next,
                             textInputType: TextInputType.number,
+                            labelText: rentPersonCount.toString(),
                             inputFormatter: [
                               FilteringTextInputFormatter.digitsOnly
                             ],
@@ -205,6 +226,7 @@ class _ProfileViewState extends State<ProfileView> {
                       AdditionCard(
                           title: whereWork,
                           child: Input(
+                            labelText: jobTitle,
                             textInputAction: TextInputAction.next,
                             onChange: (p0) {
                               setState(() {
@@ -216,6 +238,7 @@ class _ProfileViewState extends State<ProfileView> {
                       AdditionCard(
                           title: profession,
                           child: Input(
+                            labelText: professionValue,
                             textInputAction: TextInputAction.next,
                             onChange: (p0) {
                               setState(() {
@@ -227,9 +250,17 @@ class _ProfileViewState extends State<ProfileView> {
                       AdditionCard(
                           title: howRent,
                           child: DropDown(
-                              list: ['exp1', 'exp2'],
-                              value: '',
-                              onChanged: (String? v) {})),
+                              list: payTypesMn,
+                              value:
+                                  payTypesMn[payTypesValues.indexOf(payType)],
+                              onChanged: (String? v) {
+                                if (v != null) {
+                                  int i = payTypesMn.indexOf(v);
+                                  setState(() {
+                                    payType = payTypesValues[i];
+                                  });
+                                }
+                              })),
                       space24,
                       AdditionCard(
                           title: incomeRent,
@@ -239,6 +270,7 @@ class _ProfileViewState extends State<ProfileView> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^(\d+)?\.?\d{0,2}'))
                             ],
+                            labelText: incomeAmount.toString(),
                             onChange: (p0) {
                               setState(() {
                                 incomeAmount = double.tryParse(p0) ?? 0.0;
@@ -250,6 +282,7 @@ class _ProfileViewState extends State<ProfileView> {
                           title: briefInformation,
                           child: Input(
                             maxLine: 3,
+                            labelText: descriptionValue,
                             textInputAction: TextInputAction.next,
                             textInputType: TextInputType.multiline,
                             onChange: (p0) {
@@ -269,11 +302,11 @@ class _ProfileViewState extends State<ProfileView> {
                                   job: workStatus,
                                   jobTitle: jobTitle,
                                   profession: professionValue,
-                                  // payType: payType,
-                                  incomeAmount:
-                                      int.parse(incomeAmount.toString()),
+                                  payType: payType,
+                                  incomeAmount: incomeAmount.toInt(),
                                   description: descriptionValue));
                           if (res) {
+                            updateData();
                             Get.snackbar(
                               '',
                               '',

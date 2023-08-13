@@ -1,27 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tureeslii/model/models.dart';
-import 'package:tureeslii/pages/location/item_detail_view.dart';
+import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class OrderCard extends StatelessWidget {
-  const OrderCard({super.key, required this.data, required this.type});
-  final String type;
-  final Post data;
+  const OrderCard({
+    super.key,
+    required this.data,
+  });
+
+  final RentRequest data;
   @override
   Widget build(BuildContext context) {
     Color color = Colors.white;
 
     bool arrow = false;
-    switch (type) {
+    switch (data.status) {
       case 'success':
         color = green;
 
         arrow = true;
         break;
-      case 'warning':
+      case 'UNPAID':
         color = warning;
-
+        arrow = true;
         break;
       case 'danger':
         color = red;
@@ -32,8 +35,9 @@ class OrderCard extends StatelessWidget {
     }
     return GestureDetector(
       onTap: () {
-        Get.to(() => ItemDetailView(data: data),
-            duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+        if (arrow) {
+          Get.toNamed(Routes.acceptedOrder, arguments: data);
+        }
       },
       child: Container(
         decoration: BoxDecoration(
@@ -85,9 +89,10 @@ class OrderCard extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(origin),
                         child: Image.network(
-                          data.postAttachments != null &&
-                                  data.postAttachments?[0].fileThumb != null
-                              ? '$fileUrl${data.postAttachments![0].fileThumb}'
+                          data.post!.postAttachments != null &&
+                                  data.post!.postAttachments?[0].fileThumb !=
+                                      null
+                              ? '$fileUrl${data.post!.postAttachments![0].fileThumb}'
                               : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
                           fit: BoxFit.cover,
                         ),
@@ -107,7 +112,7 @@ class OrderCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    data.title ?? '',
+                    data.post!.title ?? '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context)
@@ -118,7 +123,8 @@ class OrderCard extends StatelessWidget {
                   space4,
                   RichText(
                     text: TextSpan(
-                      text: '${currencyFormat(data.price ?? 0, false)} ',
+                      text:
+                          '${currencyFormat(data.totalPrice?.toDouble() ?? 0, false)} ',
                       style: Theme.of(context).textTheme.titleLarge,
                       children: <TextSpan>[
                         TextSpan(
@@ -133,7 +139,7 @@ class OrderCard extends StatelessWidget {
                   ),
                   space8,
                   OrderStatus(
-                    type: type,
+                    type: data.status!,
                   )
                 ],
               ),

@@ -18,6 +18,8 @@ const cities = [
   'Эрдэнэт',
 ];
 
+const payTypesValues = ['income', 'tetgeleg', 'parents', 'husband_wife'];
+const payTypesMn = ['Цалин/Орлого', 'Тэтгэлэг', 'эцэг/эх', 'эхнэр/нөхөр'];
 const filterType = [
   'Орон сууц',
   'Хажуу өрөө',
@@ -177,6 +179,7 @@ String getWaterSupply(String value) {
       return '';
   }
 }
+
 String getToilet(String value) {
   switch (value) {
     case 'inside':

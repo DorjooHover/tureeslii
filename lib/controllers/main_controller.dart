@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tureeslii/controllers/auth_controller.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/provider/api_prodiver.dart';
+import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/constants/enums.dart';
 
 class MainController extends GetxController
@@ -32,15 +33,16 @@ class MainController extends GetxController
   // posts
   final allPosts = <Post>[].obs;
   // own posts
-  final ownPosts = <Post>[].obs;
+  final myRentRequest = <RentRequest>[].obs;
 
   User? get user => rxUser.value;
   set user(value) => rxUser.value = value;
 // orders
   Future<void> getOrders() async {
     try {
-      List<Post> res = await _apiRepository.getOwnPosts(0, 10, SortData(), []);
-      ownPosts.value = res;
+      List<RentRequest> res =
+          await _apiRepository.getMyRentRequest(0, 10, SortData(), []);
+      myRentRequest.value = res;
     } catch (e) {
       print(e);
     }
@@ -100,10 +102,11 @@ class MainController extends GetxController
     }
   }
 
-  Future<bool> rentRequest(int postId, int startDate, int duration) async {
+  Future<bool> rentRequest(
+      int postId, int startDate, int duration, String type) async {
     try {
       ErrorHandler res =
-          await _apiRepository.rentRequest(postId, startDate, duration);
+          await _apiRepository.rentRequest(postId, startDate, duration, type);
       if (!res.success!) {
         Get.snackbar('Алдаа', res.message ?? '');
       }
@@ -151,19 +154,22 @@ class MainController extends GetxController
   Future<void> setupApp() async {
     isLoading.value = true;
     try {
-      user = await _apiRepository.getUser();
-      change(user, status: RxStatus.success());
+      final res = await _apiRepository.getUser();
+      if (res != null) {
+        user = res;
+        change(user, status: RxStatus.success());
+        if (user != null) {
+          getSavedPost();
+        }
+      }
 
       isLoading.value = false;
-      if (user != null) {
-        getSavedPost();
-      }
     } on DioException catch (e) {
       isLoading.value = false;
 
       Get.find<SharedPreferences>().remove(StorageKeys.token.name);
-
       update();
+      Get.toNamed(Routes.auth);
     }
   }
 

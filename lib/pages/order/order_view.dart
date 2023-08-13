@@ -14,6 +14,11 @@ class OrderView extends StatefulWidget {
 class _OrderViewState extends State<OrderView> {
   final controller = Get.put(MainController());
 
+  void initState() {
+    super.initState();
+    controller.getOrders();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,10 +36,10 @@ class _OrderViewState extends State<OrderView> {
                   vertical: 10,
                 ),
                 child: OrderCard(
-                    data: controller.ownPosts[index],
-                    type: index == 0 ? 'success' : 'warning')),
+                  data: controller.myRentRequest[index],
+                )),
           ),
-          itemCount: controller.ownPosts.length,
+          itemCount: controller.myRentRequest.length,
         ),
       ),
     );

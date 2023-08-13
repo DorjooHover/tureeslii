@@ -14,8 +14,8 @@ class ItemDetailCard extends StatefulWidget {
 
 class _ItemDetailCardState extends State<ItemDetailCard> {
   int selectedIndex = 0;
+  final CarouselController carouselController = CarouselController();
   Widget build(BuildContext context) {
-    CarouselController carouselController = CarouselController();
     final controller = Get.put(MainController());
     return Column(
       children: [
@@ -35,42 +35,55 @@ class _ItemDetailCardState extends State<ItemDetailCard> {
               items: widget.data.postAttachments?.map((PostAttachments item) {
                 return Builder(
                   builder: (BuildContext context) {
-                    return SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Stack(
-                        children: [
-                          Positioned(
-                              left: 0,
-                              right: 0,
-                              top: 0,
-                              bottom: 15,
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(origin),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.25),
-                                        blurRadius: 4,
-                                        spreadRadius: 0.25,
-                                        offset: const Offset(
-                                            0, 4), // Shadow position
-                                      ),
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.25),
-                                        blurRadius: 4,
-                                        spreadRadius: 0.25,
-                                        offset: const Offset(0, 0),
-                                      )
-                                    ],
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(origin),
-                                    child: Image.network(
-                                      '$fileUrl${item.fileThumb}',
-                                      fit: BoxFit.cover,
+                    return GestureDetector(
+                      onTap: () async {
+                        await showDialog(
+                            barrierDismissible: false,
+                            barrierColor: Colors.white.withOpacity(0.9),
+                            context: context,
+                            builder: (context) => ImageDialogWidget(
+                                  path: '$fileUrl${item.fileThumb}',
+                                ));
+                      },
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Stack(
+                          children: [
+                            Positioned(
+                                left: 0,
+                                right: 0,
+                                top: 0,
+                                bottom: 15,
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(origin),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.25),
+                                          blurRadius: 4,
+                                          spreadRadius: 0.25,
+                                          offset: const Offset(
+                                              0, 4), // Shadow position
+                                        ),
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.25),
+                                          blurRadius: 4,
+                                          spreadRadius: 0.25,
+                                          offset: const Offset(0, 0),
+                                        )
+                                      ],
                                     ),
-                                  ))),
-                        ],
+                                    child: ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.circular(origin),
+                                      child: Image.network(
+                                        '$fileUrl${item.fileThumb}',
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ))),
+                          ],
+                        ),
                       ),
                     );
                   },

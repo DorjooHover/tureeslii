@@ -16,7 +16,7 @@ class Input extends StatelessWidget {
       this.suffixIcon,
       this.labelText,
       this.validator,
-      this.inputFormatter ,
+      this.inputFormatter,
       this.borderSide = const BorderSide(color: divider),
       this.onChange});
   final TextEditingController? controller;
@@ -50,7 +50,6 @@ class Input extends StatelessWidget {
       style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: gray),
       inputFormatters: inputFormatter,
       decoration: InputDecoration(
-        
         isDense: true,
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5.0),
@@ -77,7 +76,7 @@ class Input extends StatelessWidget {
         hintText: labelText,
         errorMaxLines: 2,
         hintStyle:
-            Theme.of(context).textTheme.displayMedium!.copyWith(color: gray),
+            Theme.of(context).textTheme.bodyMedium!.copyWith(color: gray),
       ),
       controller: controller ?? controller,
       validator: validator ?? validator,

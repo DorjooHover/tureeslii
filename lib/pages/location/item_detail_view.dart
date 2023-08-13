@@ -43,9 +43,7 @@ class ItemDetailView extends StatelessWidget {
                   const MenuContainer(child: CalendarCard()),
                   space36,
                   space4,
-                  MoreDetailCard(
-                    data:data            
-                  ),
+                  MoreDetailCard(data: data),
                   space20
                 ],
               ),
@@ -153,8 +151,12 @@ class ItemDetailView extends StatelessWidget {
                     )),
                     space32,
                     MainButton(
-                      onPressed: () async{
-                        await controller.rentRequest(data.id!, DateTime.now().millisecondsSinceEpoch, 30);
+                      onPressed: () async {
+                        await controller.rentRequest(
+                            data.id!,
+                            DateTime.now().millisecondsSinceEpoch,
+                            30,
+                            'monthly');
                         Navigator.pop(context);
                       },
                       width: double.infinity,
