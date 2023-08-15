@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tureeslii/controllers/main_controller.dart';
-import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/pages/location/item_detail_view.dart';
 import 'package:tureeslii/shared/index.dart';
 
@@ -13,7 +12,6 @@ class BookmarkView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<BookmarkView> {
-  List<Post> posts = [];
   @override
   void initState() {
     super.initState();
@@ -22,13 +20,7 @@ class _HomeViewState extends State<BookmarkView> {
 
   final mainController = Get.put(MainController());
   getSavedPost() async {
-    List<Post> res = await mainController.getSavedPost();
-    print(res);
-    if (mounted) {
-      setState(() {
-        posts = res;
-      });
-    }
+    await mainController.getSavedPost();
   }
 
   @override
@@ -39,34 +31,35 @@ class _HomeViewState extends State<BookmarkView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: origin, vertical: 24),
-      child: ListView.builder(
-        itemBuilder: (context, index) => Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: origin,
-          ),
-          child: BookmarkCard(
-            onPress: () {
-              Get.to(
-                  () => ItemDetailView(
-                        data: posts[index],
-                      ),
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeIn);
-            },
-            data: posts[index],
-            active: true,
-            onBookmark: () {
-              mainController.togglePost(id: posts[index].id!);
-              getSavedPost();
-              setState(() {
-                posts.removeWhere((post) => post.id == posts[index].id);
-              });
-            },
-          ),
-        ),
-        itemCount: posts.length,
-      ),
-    );
+        padding: const EdgeInsets.symmetric(horizontal: origin, vertical: 24),
+        child: Obx(
+          () => mainController.savedPosts.isNotEmpty
+              ? ListView.builder(
+                  itemBuilder: (context, index) => Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: origin,
+                    ),
+                    child: BookmarkCard(
+                      onPress: () {
+                        Get.to(
+                            () => ItemDetailView(
+                                  data: mainController.savedPosts[index],
+                                ),
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeIn);
+                      },
+                      data: mainController.savedPosts[index],
+                      active: true,
+                      onBookmark: () {
+                        mainController.togglePost(
+                            id: mainController.savedPosts[index].id!);
+                        getSavedPost();
+                      },
+                    ),
+                  ),
+                  itemCount: mainController.savedPosts.length,
+                )
+              : const Center(child: Text("Хадгалсан зар олдсонгүй")),
+        ));
   }
 }

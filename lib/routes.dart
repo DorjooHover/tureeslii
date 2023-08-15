@@ -75,7 +75,7 @@ class Routes {
         transitionDuration: const Duration(milliseconds: 300)),
     GetPage(
         name: changeCity,
-        page: () => const ChangeCityView(),
+        page: () => ChangeCityView(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
     GetPage(
@@ -89,11 +89,11 @@ class Routes {
         page: () => const LocationView(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
-    GetPage(
-        name: locationFilter,
-        page: () => const FilterView(),
-        transition: Transition.fade,
-        transitionDuration: const Duration(milliseconds: 300)),
+    // GetPage(
+    //     name: locationFilter,
+    //     page: () => const FilterView(),
+    //     transition: Transition.fade,
+    //     transitionDuration: const Duration(milliseconds: 300)),
 
     // notification
     GetPage(

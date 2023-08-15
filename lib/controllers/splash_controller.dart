@@ -19,22 +19,7 @@ class SplashController extends GetxController {
     try {
       final isCurrent = await _isCurrentVersion();
       if (isCurrent == null) {
-        Get.bottomSheet(
-          Container(
-            height: 100,
-            color: Colors.red,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Center(
-                  child: Text('Check your internet connection and try again'),
-                ),
-                GestureDetector(
-                    onTap: _isCurrentVersion, child: const Text('Try again')),
-              ],
-            ),
-          ),
-        );
+       
       } else {
         if (isCurrent) {
           _checkAuthStatus();
@@ -44,15 +29,7 @@ class SplashController extends GetxController {
       }
     } on Exception catch (e) {
       print(e);
-      Get.bottomSheet(
-        Container(
-          height: 100,
-          color: Colors.red,
-          child: Center(
-            child: Text(e.toString()),
-          ),
-        ),
-      );
+      
     }
     super.onInit();
   }

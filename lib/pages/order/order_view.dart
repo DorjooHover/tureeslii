@@ -24,23 +24,27 @@ class _OrderViewState extends State<OrderView> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: origin),
       child: Obx(
-        () => ListView.builder(
-          itemBuilder: (context, index) => GestureDetector(
-            onTap: () {
-              if (index == 0) {
-                Get.toNamed(Routes.acceptedOrder);
-              }
-            },
-            child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 10,
+        () => controller.myRentRequest.isNotEmpty
+            ? ListView.builder(
+                itemBuilder: (context, index) => GestureDetector(
+                  onTap: () {
+                    if (index == 0) {
+                      Get.toNamed(Routes.acceptedOrder);
+                    }
+                  },
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                      ),
+                      child: OrderCard(
+                        data: controller.myRentRequest[index],
+                      )),
                 ),
-                child: OrderCard(
-                  data: controller.myRentRequest[index],
-                )),
-          ),
-          itemCount: controller.myRentRequest.length,
-        ),
+                itemCount: controller.myRentRequest.length,
+              )
+            : const Center(
+                child: Text('Танд хүсэлт байхгүй байна'),
+              ),
       ),
     );
   }

@@ -7,6 +7,8 @@ import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/provider/api_prodiver.dart';
 import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/constants/enums.dart';
+import 'package:tureeslii/shared/constants/strings.dart';
+import 'package:tureeslii/shared/constants/values.dart';
 
 class MainController extends GetxController
     with StateMixin<User>, WidgetsBindingObserver {
@@ -21,6 +23,8 @@ class MainController extends GetxController
   final our = false.obs;
   final loading = false.obs;
   final savedPosts = <Post>[].obs;
+  final city = cities[0].obs;
+  final timeType = byMonth.obs;
 
   // otp
   final otp = "------".obs;
@@ -29,7 +33,8 @@ class MainController extends GetxController
   final oldPassword = "".obs;
   final newPassword = "".obs;
   final confirmPassword = "".obs;
-
+// category
+  final allCategory = <Category>[].obs;
   // posts
   final allPosts = <Post>[].obs;
   // own posts
@@ -67,6 +72,10 @@ class MainController extends GetxController
     }
   }
 
+  getPostPriceRange(FilterData filterData) async {
+    return await _apiRepository.getPriceRange(filterData);
+  }
+
   // saved posts
   getSavedPost() async {
     try {
@@ -81,21 +90,21 @@ class MainController extends GetxController
 
   Future<bool> togglePost({required int id, Post? post}) async {
     try {
-      final res;
       bool result = false;
 
       if (savedPosts.where((post) => post.id == id).isNotEmpty) {
         savedPosts.removeWhere((element) => element.id == id);
-        res = await _apiRepository.removeBookmark(id);
+        await _apiRepository.removeBookmark(id);
+        getSavedPost();
       } else {
-        savedPosts.add(post!);
-        res = await _apiRepository.saveBookmark(id);
-        result = true;
+        if (post != null && post.id != null) {
+          savedPosts.add(post);
+          await _apiRepository.saveBookmark(id);
+          result = true;
+          getSavedPost();
+        }
       }
 
-      if (res) {
-        getSavedPost();
-      }
       return result;
     } on DioException catch (e) {
       rethrow;
@@ -134,7 +143,11 @@ class MainController extends GetxController
   }
 
   Future<bool> updateUser(User user) async {
-    return await _apiRepository.updateUser(user);
+    final res = await _apiRepository.updateUser(user);
+    if (res) {
+      await refreshUser();
+    }
+    return res;
   }
 
   Future<bool> savePersonal(
@@ -159,6 +172,7 @@ class MainController extends GetxController
         user = res;
         change(user, status: RxStatus.success());
         if (user != null) {
+          allCategory.value = await _apiRepository.getCategories();
           getSavedPost();
         }
       }

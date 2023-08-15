@@ -17,6 +17,8 @@ class Input extends StatelessWidget {
       this.labelText,
       this.validator,
       this.inputFormatter,
+      this.enabled = true,
+      this.color = gray,
       this.borderSide = const BorderSide(color: divider),
       this.onChange});
   final TextEditingController? controller;
@@ -29,15 +31,17 @@ class Input extends StatelessWidget {
   final TextInputType textInputType;
   final Widget? suffixIcon;
   final String? labelText;
+  final bool enabled;
   final String? Function(String?)? validator;
   final Function(String)? onChange;
   final BorderSide borderSide;
   final List<TextInputFormatter>? inputFormatter;
+  final Color color;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       initialValue: value,
-
+      enabled: enabled,
       onFieldSubmitted: onSubmitted,
       autofocus: autoFocus,
       textInputAction: textInputAction,
@@ -47,7 +51,7 @@ class Input extends StatelessWidget {
       obscureText: obscureText,
 
       keyboardType: textInputType,
-      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: gray),
+      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: color),
       inputFormatters: inputFormatter,
       decoration: InputDecoration(
         isDense: true,
@@ -76,7 +80,7 @@ class Input extends StatelessWidget {
         hintText: labelText,
         errorMaxLines: 2,
         hintStyle:
-            Theme.of(context).textTheme.bodyMedium!.copyWith(color: gray),
+            Theme.of(context).textTheme.bodyMedium!.copyWith(color: color),
       ),
       controller: controller ?? controller,
       validator: validator ?? validator,

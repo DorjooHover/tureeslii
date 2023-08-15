@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/shared/constants/assets.dart';
 import 'package:tureeslii/shared/constants/colors.dart';
 import 'package:tureeslii/shared/constants/spacing.dart';
 import 'package:tureeslii/shared/constants/strings.dart';
 import 'package:tureeslii/shared/constants/values.dart';
 
-class ChangeCityView extends StatefulWidget {
-  const ChangeCityView({super.key});
-
-  @override
-  State<ChangeCityView> createState() => _ChangeCityViewState();
-}
-
-class _ChangeCityViewState extends State<ChangeCityView> {
+class ChangeCityView extends StatelessWidget {
+  ChangeCityView({super.key});
+  final controller = Get.put(MainController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,37 +61,42 @@ class _ChangeCityViewState extends State<ChangeCityView> {
                   ),
                   space16,
                   Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    margin: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.height * 0.1,
-                        left: 30,
-                        right: 30),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 13),
-                    child: DropdownButton(
-                        icon: const Icon(Icons.search),
-                        iconEnabledColor: gray,
-                        isExpanded: true,
-                        dropdownColor: Colors.white,
-                        value: cities[1],
-                        underline: const SizedBox(),
-                        items: cities.map((e) {
-                          return DropdownMenuItem(
-                            value: e,
-                            child: Text(
-                              e,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(color: black),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (value) {}),
-                  ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      margin: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height * 0.1,
+                          left: 30,
+                          right: 30),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 13),
+                      child: Obx(
+                        () => DropdownButton(
+                            icon: const Icon(Icons.search),
+                            iconEnabledColor: gray,
+                            isExpanded: true,
+                            dropdownColor: Colors.white,
+                            value: controller.city.value,
+                            underline: const SizedBox(),
+                            items: cities.map((e) {
+                              return DropdownMenuItem(
+                                value: e,
+                                child: Text(
+                                  e,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(color: black),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                controller.city.value = value;
+                              }
+                            }),
+                      )),
                 ],
               ),
               Container(

@@ -31,14 +31,16 @@ class ErrorHandler {
 class FilterData {
   String? field;
   String? op;
-  String? qry;
+  dynamic qry;
+  String? name;
 
-  FilterData({this.field, this.op, this.qry});
+  FilterData({this.field, this.op, this.qry, this.name});
 
   FilterData.fromJson(Map<String, dynamic> json) {
     field = json['field'];
     op = json['op'];
     qry = json['qry'];
+    name = json['name'];
   }
 
   Map<String, dynamic> toJson() {
@@ -46,6 +48,7 @@ class FilterData {
     data['field'] = this.field;
     data['op'] = this.op;
     data['qry'] = this.qry;
+    data['name'] = name;
     return data;
   }
 }
@@ -53,21 +56,29 @@ class FilterData {
 class SortData {
   String? field;
   String? dir;
+  String? icon;
+  String? name;
 
   SortData({
     this.field,
     this.dir,
+    this.icon,
+    this.name,
   });
 
   SortData.fromJson(Map<String, dynamic> json) {
     field = json['field'];
     dir = json['dir'];
+    icon = json['icon'];
+    name = json['name'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['field'] = this.field;
     data['dir'] = this.dir;
+    data['icon'] = this.icon;
+    data['name'] = this.name;
 
     return data;
   }

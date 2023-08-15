@@ -30,6 +30,7 @@ class DropDown extends StatelessWidget {
           isExpanded: true,
           dropdownColor: Colors.white,
           value: value == '' ? null : value,
+          menuMaxHeight: 200,
           hint: Text(choose,
               style: Theme.of(context)
                   .textTheme

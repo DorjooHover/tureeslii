@@ -1,26 +1,155 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:tureeslii/controllers/main_controller.dart';
+import 'package:tureeslii/model/error_handler.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class FilterView extends StatefulWidget {
-  const FilterView({super.key});
-
+  const FilterView(
+      {super.key, required this.func, });
+  final Function(List<FilterData>) func;
+ 
   @override
   State<FilterView> createState() => _FilterViewState();
 }
 
 class _FilterViewState extends State<FilterView> {
-  @override
-  String date = byMonth;
   bool collateral = false;
-  List<String> type = [];
-  List<String> includedFee = [];
-  List<String> others = [];
-  List<String> verificationValue = [];
 
-  String paymentConditionValue = paymentConditionValues[0];
+  List<FilterData> filterData = [];
+  List<int> type = [];
+  List<FilterData> includedFee = [];
+  List<FilterData> others = [];
+  List<bool> verificationValue = [];
+
+  FilterData paymentConditionValue = paymentConditionValues[0];
   String floorValue = filterFloor[0];
   double startPaymentValue = 200000;
   double endPaymentValue = 4500000;
+  double sliderMax = 4500000;
+  String timeType = byMonth;
+  final loading = false.obs;
+  String duration = '1';
+  String startDate = '';
+  final controller = Get.put(MainController());
+
+  reset() async {
+    setState(() {
+      collateral = false;
+      type = [];
+      includedFee = [];
+      others = [];
+      verificationValue = [];
+
+      paymentConditionValue = paymentConditionValues[0];
+      floorValue = filterFloor[0];
+
+      timeType = byMonth;
+      filterData = [];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    start();
+  }
+
+  search() async {
+    loading.value = true;
+
+    // timeType
+    filterData.add(
+      FilterData(
+          field: timeType == byMonth ? "monthlyRent" : 'dailyRent',
+          op: "=",
+          qry: true),
+    );
+    // start date
+    if (startDate != '') {
+      filterData.add(FilterData(field: "startDate", op: "<=", qry: startDate));
+    }
+    // duration
+
+    filterData.add(FilterData(field: "rentDuration", op: "=", qry: duration));
+
+    // category fix
+    if (type.isNotEmpty) {
+      filterData.add(FilterData(field: "categoryId", op: "IN", qry: type));
+    }
+    // deposit
+    if (collateral) {
+      filterData
+          .add(FilterData(field: "depositRequired", op: "=", qry: collateral));
+    }
+    // payment term
+    if (paymentConditionValue.name != 'Бүгд') {
+      filterData.add(FilterData(
+          field: "paymentTerm", op: "=", qry: paymentConditionValue));
+    }
+    if (timeType == byMonth) {
+      // price
+      filterData
+          .add(FilterData(field: "price", op: ">=", qry: startPaymentValue));
+      filterData
+          .add(FilterData(field: "price", op: "<=", qry: endPaymentValue));
+    } else {
+      // price daily
+      filterData.add(
+          FilterData(field: "priceDaily", op: ">=", qry: startPaymentValue));
+      filterData
+          .add(FilterData(field: "priceDaily", op: ">=", qry: endPaymentValue));
+    }
+    // price included
+    if (includedFee.isNotEmpty) {
+      filterData.addAll(includedFee);
+    }
+    // floor
+
+    if (floorValue == filterFloor[0]) {
+      filterData.add(FilterData(field: "floor", op: ">=", qry: 1));
+    } else if (floorValue == filterFloor[1]) {
+      filterData.add(FilterData(field: "floor", op: ">=", qry: 2));
+      filterData.add(FilterData(field: "floor", op: "=<", qry: 5));
+    } else if (floorValue == filterFloor[2]) {
+      filterData.add(FilterData(field: "floor", op: ">", qry: 5));
+    }
+    // other
+    if (others.isNotEmpty) {
+      filterData.addAll(others);
+    }
+    // verification
+    if (verificationValue.isNotEmpty) {
+      filterData.add(
+          FilterData(field: "special", op: "=", qry: verificationValue.first));
+    }
+
+    await controller.getAllPosts(0, 10, SortData(), filterData);
+    for (int i = 0; i < filterData.length; i++) {
+      print(filterData[i]);
+    }
+    print(controller.allPosts);
+    
+    widget.func(filterData);
+    loading.value = false;
+  }
+
+  start() async {
+    reset();
+    List<dynamic> res = await controller.getPostPriceRange(FilterData());
+    if (res.length > 1) {
+      setState(() {
+        startPaymentValue = double.parse(res.first['price'].toString());
+        endPaymentValue = double.parse(res.last['price'].toString());
+        sliderMax = endPaymentValue;
+      });
+    }
+    setState(() {
+      timeType = controller.timeType.value;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgGray,
@@ -30,7 +159,9 @@ class _FilterViewState extends State<FilterView> {
         back: true,
         logo: false,
         child: TextButton(
-            onPressed: () {},
+            onPressed: () {
+              reset();
+            },
             child: Text(
               startAgain,
               style: Theme.of(context)
@@ -53,20 +184,18 @@ class _FilterViewState extends State<FilterView> {
                     space16,
                     RowRadio(
                       border: const Border(),
-                      groupValue: date,
+                      groupValue: timeType,
                       onChanged: (value) {
-                        setState(() {
-                          date = value!;
-                        });
+                        if (value != null) {
+                          setState(() {
+                            timeType = value;
+                          });
+                        }
                       },
-                      list: [byMonth, byDay],
+                      list: const [byMonth, byDay],
                     ),
                     space24,
                     RowFlex(
-                      child: AdditionCard(
-                          title: startRentDate,
-                          color: black,
-                          child: ShadowContainer(child: Input())),
                       child1: AdditionCard(
                           title: time,
                           color: black,
@@ -84,12 +213,107 @@ class _FilterViewState extends State<FilterView> {
                                 '9',
                                 '10',
                                 '11',
-                                '12'
+                                '12',
+                                '12+'
                               ],
-                              onChanged: (value) {},
-                              value: '1',
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    duration = value;
+                                  });
+                                }
+                              },
+                              value: duration,
                             ),
                           )),
+                      child: AdditionCard(
+                          title: startRentDate,
+                          color: black,
+                          child: ShadowContainer(
+                              child: GestureDetector(
+                                  onTap: () async {
+                                    final DateTime now = DateTime.now();
+                                    final DateTime? selectedDate =
+                                        await showDatePicker(
+                                            context: context,
+                                            initialDate: now,
+                                            firstDate: DateTime(
+                                                now.year, now.month, now.day),
+                                            lastDate: DateTime(now.year + 10),
+                                            builder: (context, child) {
+                                              return Theme(
+                                                data: ThemeData.dark().copyWith(
+                                                    colorScheme: const ColorScheme
+                                                            .dark(
+                                                        onPrimary:
+                                                            prime, // selected text color
+                                                        onSurface:
+                                                            second, // default text color
+                                                        primary:
+                                                            orange // circle color
+                                                        ),
+                                                    dialogBackgroundColor:
+                                                        Colors.black54,
+                                                    textButtonTheme:
+                                                        TextButtonThemeData(
+                                                            style: TextButton
+                                                                .styleFrom(
+                                                                    textStyle: const TextStyle(
+                                                                        color: Colors
+                                                                            .amber,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .normal,
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontFamily:
+                                                                            'Quicksand'),
+                                                                    primary: Colors
+                                                                        .amber, // color of button's letters
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .black54, // Background color
+                                                                    shape: RoundedRectangleBorder(
+                                                                        side: const BorderSide(
+                                                                            color: Colors
+                                                                                .transparent,
+                                                                            width:
+                                                                                1,
+                                                                            style: BorderStyle
+                                                                                .solid),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(50))))),
+                                                child: child!,
+                                              );
+                                            });
+                                    if (selectedDate != null) {
+                                      setState(() {
+                                        startDate = selectedDate.toString();
+                                      });
+                                    }
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 50,
+                                    alignment: Alignment.centerLeft,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 13),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5),
+                                      border:
+                                          Border.all(color: black, width: 1),
+                                    ),
+                                    child: Text(
+                                      startDate != ""
+                                          ? startDate.substring(0, 11)
+                                          : startDate,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(color: black),
+                                    ),
+                                  )))),
                     ),
                     space36,
                     space4,
@@ -110,19 +334,19 @@ class _FilterViewState extends State<FilterView> {
                       crossAxisSpacing: origin,
                       childAspectRatio: 171 / 46,
                       controller: ScrollController(keepScrollOffset: false),
-                      children: filterType
+                      children: controller.allCategory
                           .map((e) => RowCheckBox(
                                 onChanged: (bool? value) {
                                   if (value == true) {
-                                    type.add(e);
+                                    type.add(e.id!);
                                   } else {
-                                    type.remove(e);
+                                    type.remove(e.id!);
                                   }
                                   setState(() {});
                                 },
-                                text: e,
+                                text: e.name!,
                                 value: type
-                                    .where((element) => element == e)
+                                    .where((element) => element == e.id!)
                                     .isNotEmpty,
                               ))
                           .toList(),
@@ -171,12 +395,10 @@ class _FilterViewState extends State<FilterView> {
                             RangeSlider(
                               inactiveColor: sliderGray,
                               activeColor: orange,
-                              min: 150000,
-                              max: 5000000,
+                              max: sliderMax,
                               values: RangeValues(
                                   startPaymentValue, endPaymentValue),
                               onChanged: (values) {
-                                print(startPaymentValue);
                                 setState(() {
                                   startPaymentValue = values.start;
                                   endPaymentValue = values.end;
@@ -216,13 +438,18 @@ class _FilterViewState extends State<FilterView> {
                           title: paymentCondition,
                           child: RowRadio(
                             border: const Border(),
-                            groupValue: paymentConditionValue,
+                            groupValue: paymentConditionValue.name!,
                             onChanged: (value) {
+                              FilterData data =
+                                  paymentConditionValues.firstWhere((element) =>
+                                      element.name == value.toString());
                               setState(() {
-                                paymentConditionValue = value!;
+                                paymentConditionValue = data;
                               });
                             },
-                            list: paymentConditionValues,
+                            list: paymentConditionValues
+                                .map((e) => e.name!)
+                                .toList(),
                           )),
                     ),
                     space36,
@@ -254,7 +481,7 @@ class _FilterViewState extends State<FilterView> {
                                   }
                                   setState(() {});
                                 },
-                                text: e,
+                                text: e.name!,
                                 value: includedFee
                                     .where((element) => element == e)
                                     .isNotEmpty,
@@ -287,10 +514,10 @@ class _FilterViewState extends State<FilterView> {
                             )
                           ]),
                       child: AdditionCard(
-                          title: paymentCondition,
+                          title: floor,
                           child: RowRadio(
                             border: const Border(),
-                            groupValue: floor,
+                            groupValue: floorValue,
                             onChanged: (value) {
                               setState(() {
                                 floorValue = value!;
@@ -318,7 +545,7 @@ class _FilterViewState extends State<FilterView> {
                                   }
                                   setState(() {});
                                 },
-                                text: e,
+                                text: e.name!,
                                 value: others
                                     .where((element) => element == e)
                                     .isNotEmpty,
@@ -349,16 +576,32 @@ class _FilterViewState extends State<FilterView> {
                           .map((e) => RowCheckBox(
                                 onChanged: (bool? value) {
                                   if (value == true) {
-                                    verificationValue.add(e);
+                                    if (verificationValue.isNotEmpty) {
+                                      verificationValue = [];
+                                    } else {
+                                      if (e == 'Баталгаажсан') {
+                                        verificationValue.add(false);
+                                      } else {
+                                        verificationValue.add(true);
+                                      }
+                                    }
                                   } else {
-                                    verificationValue.remove(e);
+                                    if (e == 'Баталгаажсан') {
+                                      verificationValue.remove(false);
+                                    } else {
+                                      verificationValue.remove(true);
+                                    }
                                   }
+
                                   setState(() {});
                                 },
                                 text: e,
-                                value: verificationValue
-                                    .where((element) => element == e)
-                                    .isNotEmpty,
+                                value: (verificationValue.isNotEmpty &&
+                                        verificationValue.first == false &&
+                                        e == 'Баталгаажсан') ||
+                                    (verificationValue.isNotEmpty &&
+                                        verificationValue.first == true &&
+                                        e == 'Онцлох'),
                               ))
                           .toList(),
                     ),
@@ -372,8 +615,11 @@ class _FilterViewState extends State<FilterView> {
                   left: 0,
                   right: 0,
                   child: MainButton(
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.pop(context);
+                      if (!loading.value) {
+                        await search();
+                      }
                     },
                     padding: const EdgeInsets.symmetric(
                         vertical: small, horizontal: 24),
@@ -401,3 +647,30 @@ class RowFlex extends StatelessWidget {
     );
   }
 }
+
+
+
+/*
+startdate
+{
+            "field": "startDate",
+            "op": "<=",
+            "qry": "2023-08-16"
+
+        }
+
+duration
+ {
+            "field": "rentDuration",
+            "op": "=",
+            "qry": "5000"
+
+        }
+
+    
+     
+   
+
+
+
+        */

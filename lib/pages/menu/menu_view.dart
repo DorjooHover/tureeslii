@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/index.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -15,7 +16,7 @@ class MenuView extends StatefulWidget {
 class _MenuViewState extends State<MenuView> {
   @override
   bool view = true;
-
+  final controller = Get.put(MainController());
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
@@ -26,24 +27,22 @@ class _MenuViewState extends State<MenuView> {
               MenuCard(
                 icon: iconPerson,
                 text: personInfo,
-                child: InkWell(
-                  onTap: () => Get.toNamed(Routes.profile),
-                  child: Text(
-                    login,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: gray),
-                  ),
+                onTap: () => Get.toNamed(Routes.profile),
+                child: Text(
+                  login,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(color: gray),
                 ),
               ),
               MenuCard(
+                  onTap: () => Get.toNamed(Routes.changeCity),
                   icon: iconLocation,
                   text: changeCity,
-                  child: InkWell(
-                    onTap: () => Get.toNamed(Routes.changeCity),
-                    child: Text(
-                      'Дархан',
+                  child: Obx(
+                    () => Text(
+                      controller.city.value,
                       style: Theme.of(context)
                           .textTheme
                           .bodySmall!
@@ -92,53 +91,54 @@ class _MenuViewState extends State<MenuView> {
                         Container(
                           decoration: BoxDecoration(
                               border: Border(
-                                  bottom: BorderSide(color: line, width: 1))),
+                                  bottom: BorderSide(
+                                      color: Colors.white, width: 1))),
                         ),
-                        space8,
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 85, top: 10, bottom: 10),
-                          child: InkWell(
-                            onTap: () => Get.toNamed(Routes.error),
-                            child: Text('Error page',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(
-                                        color: black,
-                                        fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                        space4,
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 85, top: 10, bottom: 10),
-                          child: InkWell(
-                            onTap: () => Get.toNamed(Routes.page404),
-                            child: Text('404 page',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(
-                                        color: black,
-                                        fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                        space4,
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 85, top: 10, bottom: 10),
-                          child: InkWell(
-                            onTap: () => Get.toNamed(Routes.noData),
-                            child: Text('Page with no data',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(
-                                        color: black,
-                                        fontWeight: FontWeight.bold)),
-                          ),
-                        ),
+                        // space8,
+                        // Padding(
+                        //   padding: const EdgeInsets.only(
+                        //       left: 85, top: 10, bottom: 10),
+                        //   child: InkWell(
+                        //     onTap: () => Get.toNamed(Routes.error),
+                        //     child: Text('Error page',
+                        //         style: Theme.of(context)
+                        //             .textTheme
+                        //             .bodySmall!
+                        //             .copyWith(
+                        //                 color: black,
+                        //                 fontWeight: FontWeight.bold)),
+                        //   ),
+                        // ),
+                        // space4,
+                        // Padding(
+                        //   padding: const EdgeInsets.only(
+                        //       left: 85, top: 10, bottom: 10),
+                        //   child: InkWell(
+                        //     onTap: () => Get.toNamed(Routes.page404),
+                        //     child: Text('404 page',
+                        //         style: Theme.of(context)
+                        //             .textTheme
+                        //             .bodySmall!
+                        //             .copyWith(
+                        //                 color: black,
+                        //                 fontWeight: FontWeight.bold)),
+                        //   ),
+                        // ),
+                        // space4,
+                        // Padding(
+                        //   padding: const EdgeInsets.only(
+                        //       left: 85, top: 10, bottom: 10),
+                        //   child: InkWell(
+                        //     onTap: () => Get.toNamed(Routes.noData),
+                        //     child: Text('Page with no data',
+                        //         style: Theme.of(context)
+                        //             .textTheme
+                        //             .bodySmall!
+                        //             .copyWith(
+                        //                 color: black,
+                        //                 fontWeight: FontWeight.bold)),
+                        //   ),
+                        // ),
                       ],
                     )
                   : const SizedBox()

@@ -20,7 +20,7 @@ class _ProfileViewState extends State<ProfileView> {
   bool product = false;
   String sex = male;
   String workStatus = working;
-  DateTime birthdate = DateTime(2002, 02, 01);
+  String birthdate = "";
   int rentPersonCount = 1;
   String jobTitle = "";
   String professionValue = "";
@@ -40,6 +40,7 @@ class _ProfileViewState extends State<ProfileView> {
   updateData() {
     if (mainController.user != null) {
       sex = mainController.user!.gender ?? male;
+      birthdate = mainController.user!.birthdate ?? '';
       payType = mainController.user!.payType ?? payTypesValues[0];
       jobTitle = mainController.user!.jobTitle ?? '';
       descriptionValue = mainController.user!.description ?? '';
@@ -104,6 +105,8 @@ class _ProfileViewState extends State<ProfileView> {
                           ),
                           value: info,
                           onChanged: (value) {
+                            // mainController
+                            //     .updateUser(User(orderNotification: value));
                             setState(() {
                               info = value;
                             });
@@ -122,8 +125,10 @@ class _ProfileViewState extends State<ProfileView> {
                           value: product,
                           onChanged: (value) {
                             setState(() {
-                              info = value;
+                              product = value;
                             });
+                            // mainController.updateUser(
+                            //     User(productAdsNotification: value));
                           },
                         ),
                         space32,
@@ -179,9 +184,88 @@ class _ProfileViewState extends State<ProfileView> {
                       space13,
                       AdditionCard(
                           title: birthday,
-                          child: Input(
-                            labelText: mainController.user?.birthdate ?? '',
-                          )),
+                          child: GestureDetector(
+                              onTap: () async {
+                                final DateTime now = DateTime.now();
+                                final DateTime? selectedDate =
+                                    await showDatePicker(
+                                        context: context,
+                                        initialDate: DateTime(now.year - 20),
+                                        firstDate: DateTime(now.year - 200),
+                                        lastDate: DateTime(
+                                            now.year, now.month, now.day),
+                                        builder: (context, child) {
+                                          return Theme(
+                                            data: ThemeData.dark().copyWith(
+                                                colorScheme: const ColorScheme
+                                                        .dark(
+                                                    onPrimary:
+                                                        prime, // selected text color
+                                                    onSurface:
+                                                        second, // default text color
+                                                    primary:
+                                                        orange // circle color
+                                                    ),
+                                                dialogBackgroundColor:
+                                                    Colors.black54,
+                                                textButtonTheme:
+                                                    TextButtonThemeData(
+                                                        style: TextButton
+                                                            .styleFrom(
+                                                                textStyle: const TextStyle(
+                                                                    color: Colors
+                                                                        .amber,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .normal,
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontFamily:
+                                                                        'Quicksand'),
+                                                                primary: Colors
+                                                                    .amber, // color of button's letters
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .black54, // Background color
+                                                                shape: RoundedRectangleBorder(
+                                                                    side: const BorderSide(
+                                                                        color: Colors
+                                                                            .transparent,
+                                                                        width:
+                                                                            1,
+                                                                        style: BorderStyle
+                                                                            .solid),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(50))))),
+                                            child: child!,
+                                          );
+                                        });
+                                if (selectedDate != null) {
+                                  setState(() {
+                                    birthdate = selectedDate.toString();
+                                  });
+                                }
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                height: 50,
+                                alignment: Alignment.centerLeft,
+                                padding: EdgeInsets.symmetric(horizontal: 13),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(5),
+                                  border: Border.all(color: black, width: 1),
+                                ),
+                                child: Text(
+                                  birthdate != ""
+                                      ? birthdate.substring(0, 10)
+                                      : birthdate,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(color: black),
+                                ),
+                              ))),
                       space24,
                       AdditionCard(
                           title: gender,
@@ -296,7 +380,7 @@ class _ProfileViewState extends State<ProfileView> {
                         onPressed: () async {
                           bool res = await controller.mainController.updateUser(
                               User(
-                                  birthdate: birthdate.toString(),
+                                  birthdate: birthdate,
                                   gender: sex,
                                   rentPersonCount: rentPersonCount,
                                   job: workStatus,
@@ -307,6 +391,7 @@ class _ProfileViewState extends State<ProfileView> {
                                   description: descriptionValue));
                           if (res) {
                             updateData();
+                            print(mainController.user?.toJson());
                             Get.snackbar(
                               '',
                               '',
@@ -383,14 +468,14 @@ class MainPersonalWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MainController());
-    void changePasswordSnackbar() {
+    void changePasswordSnackbar(bool res) {
       Get.snackbar(
         '',
         '',
         margin: EdgeInsets.zero,
         snackPosition: SnackPosition.BOTTOM,
         maxWidth: MediaQuery.of(context).size.width,
-        backgroundColor: green,
+        backgroundColor: res ? green : warning,
         animationDuration: const Duration(milliseconds: 300),
         forwardAnimationCurve: Curves.easeOut,
         borderRadius: 0,
@@ -400,7 +485,7 @@ class MainPersonalWidget extends StatelessWidget {
             SvgPicture.asset(iconSuccessWhite),
             space13,
             Text(
-              successSaved,
+              res ? successSaved : incomplete,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     color: Colors.white,
                   ),
@@ -408,6 +493,7 @@ class MainPersonalWidget extends StatelessWidget {
           ],
         ),
       );
+      Navigator.pop(context);
     }
 
     return MenuContainer(
@@ -425,9 +511,10 @@ class MainPersonalWidget extends StatelessWidget {
             title: phone,
             verified: controller.user!.mobileVerified,
             onPressed: () async {
-              bool res = await controller.getMobileVerification();
+              if (controller.user!.mobileVerified != null &&
+                  !controller.user!.mobileVerified!) {
+                await controller.getMobileVerification();
 
-              if (res) {
                 showDialog(
                   context: context,
                   builder: (context) {
@@ -491,8 +578,11 @@ class MainPersonalWidget extends StatelessWidget {
           title: email,
           verified: controller.user!.emailVerified,
           onPressed: () {
-            controller.sendEmailVerification();
-            Get.snackbar('Мэдэгдэл', emailVerificationString);
+            if (controller.user!.emailVerified != null &&
+                !controller.user!.emailVerified!) {
+              controller.sendEmailVerification();
+              Get.snackbar('Мэдэгдэл', emailVerificationString);
+            }
           },
         ),
         space27,
@@ -541,11 +631,13 @@ class MainPersonalWidget extends StatelessWidget {
                             controller.confirmPassword.value = p0;
                           },
                           onSubmitted: (p0) async {
-                            bool res = await controller.changePassword();
-                            if (res) {
-                              changePasswordSnackbar();
-                              Navigator.pop(context);
+                            bool res = false;
+                            if (controller.confirmPassword.value != "" &&
+                                controller.newPassword.value != "" &&
+                                controller.oldPassword.value != "") {
+                              res = await controller.changePassword();
                             }
+                            changePasswordSnackbar(res);
                           },
                         )),
                     space24,
@@ -553,11 +645,13 @@ class MainPersonalWidget extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: MainButton(
                         onPressed: () async {
-                          bool res = await controller.changePassword();
-                          if (res) {
-                            changePasswordSnackbar();
+                          bool res = false;
+                          if (controller.confirmPassword.value != "" &&
+                              controller.newPassword.value != "" &&
+                              controller.oldPassword.value != "") {
+                            res = await controller.changePassword();
                           }
-                          Navigator.pop(context);
+                          changePasswordSnackbar(res);
                         },
                         padding: const EdgeInsets.symmetric(
                             vertical: small, horizontal: 24),

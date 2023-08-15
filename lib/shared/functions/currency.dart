@@ -10,8 +10,7 @@ String currencyFormat(double value, bool isD) {
   // result = "${temp.toStringAsFixed(0)}${isD ? "," : "'"}$result";
 
   // return result.substring(0, result.length - 1);
-
-  return value
+  String res = value
       .toInt()
       .toString()
       .split('')
@@ -22,4 +21,8 @@ String currencyFormat(double value, bool isD) {
       .split('')
       .reversed
       .join();
+  if (res.substring(0, 1) == ',' || res.substring(0, 1) == "'") {
+    res = res.substring(1);
+  }
+  return res;
 }

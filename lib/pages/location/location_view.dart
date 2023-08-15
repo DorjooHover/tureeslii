@@ -11,8 +11,8 @@ import 'package:label_marker/label_marker.dart';
 import 'package:location/location.dart';
 import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
+import 'package:tureeslii/pages/location/filter_view.dart';
 import 'package:tureeslii/pages/location/item_detail_view.dart';
-import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class LocationView extends StatefulWidget {
@@ -44,28 +44,33 @@ class _LocationViewState extends State<LocationView> {
   final random = Random();
   bool isSort = false;
 
-  final isLoading = false.obs;
-  List<Post> posts = <Post>[];
+  bool isLoading = false;
+
   bool loading = false;
   int page = 0;
   int limit = 10;
   SortData sortData = SortData();
   List<FilterData> filterData = <FilterData>[];
   Future<void> getPosts() async {
-    isLoading.value = true;
+    setState(() {
+      isLoading = true;
+    });
     try {
-      List<Post> res = await mainController.getAllPosts(
+      await mainController.getAllPosts(
         page,
         limit,
         sortData,
         filterData,
       );
 
-      posts = res;
       addMarkers();
-      isLoading.value = false;
+      setState(() {
+        isLoading = false;
+      });
     } on DioException catch (e) {
-      isLoading.value = false;
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -83,11 +88,14 @@ class _LocationViewState extends State<LocationView> {
   }
 
   void addMarkers() {
-    for (Post post in posts) {
+    locations = [];
+    markers.clear();
+    for (Post post in mainController.allPosts) {
       double lat = double.parse(post.lat!);
       double lng = double.parse(post.long!);
       locations.add(LatLng(lat, lng));
-      markers.addLabelMarker(LabelMarker(
+      markers
+          .addLabelMarker(LabelMarker(
         label: '${currencyFormat(post.price!, true)}₮',
         backgroundColor: post.id! == selected ? orange : Colors.white,
         textStyle: TextStyle(
@@ -102,7 +110,10 @@ class _LocationViewState extends State<LocationView> {
             selected = post.id!;
           });
         },
-      ));
+      ))
+          .then((value) {
+        setState(() {});
+      });
 
       // _customInfoWindowController.addInfoWindow!(
       //     Container(
@@ -112,21 +123,41 @@ class _LocationViewState extends State<LocationView> {
       //         child: Text(currencyFormat(e * 400000, true))),
       //     LatLng(lat, lng));
     }
-    setState(() {
-      startLocation = LatLng(double.parse(posts[0].lat ?? "47.9188141,"),
-          double.parse(posts.first.long ?? '106.917484'));
-    });
+
+    if (mainController.allPosts.isNotEmpty) {
+      setState(() {
+        startLocation = LatLng(
+            double.parse(mainController.allPosts[0].lat ?? "47.9188141,"),
+            double.parse(mainController.allPosts.first.long ?? '106.917484'));
+      });
+    }
   }
 
   List<LatLng> locations = [];
-
+  bool isData = true;
   @override
   void initState() {
     super.initState();
 
+    // if (mainController.allPosts.isEmpty) {
+    filterData = [
+      FilterData(field: 'city', op: "=", qry: mainController.city.value),
+      FilterData(
+          field: mainController.timeType.value == byMonth
+              ? "monthlyRent"
+              : 'dailyRent',
+          op: "=",
+          qry: "true"),
+    ];
     getPosts().then((value) {
       getCurrentLocation();
     });
+    // }
+    if (mainController.allPosts.isEmpty && !isLoading) {
+      setState(() {
+        isData = false;
+      });
+    }
   }
 
   void moveCurrentLocation() async {
@@ -147,8 +178,7 @@ class _LocationViewState extends State<LocationView> {
 
   @override
   Widget build(BuildContext context) {
-    final Size _size = MediaQuery.of(context).size;
-
+    Size _size = MediaQuery.of(context).size;
     return Stack(
       children: [
         startLocation != null
@@ -158,7 +188,6 @@ class _LocationViewState extends State<LocationView> {
                 onMapCreated: (GoogleMapController controller) async {
                   _controller.complete(controller);
                   _customInfoWindowController.googleMapController = controller;
-                  // addMarkers();
                 },
                 markers: {
                   // Marker(
@@ -169,9 +198,14 @@ class _LocationViewState extends State<LocationView> {
                   ...markers
                 },
               )
-            : Center(
-                child: Text('Түр хүлээнэ үү...'),
-              ),
+            : isData
+                ? const Center(
+                    child: Text('Түр хүлээнэ үү...'),
+                  )
+                : Center(
+                    child: Text(
+                        _bodyHeight < 10 && _isDragUp ? 'Зар олдсонгүй' : ""),
+                  ),
         CustomInfoWindow(
           controller: _customInfoWindowController,
           height: 75,
@@ -190,19 +224,18 @@ class _LocationViewState extends State<LocationView> {
                   duration: const Duration(milliseconds: 600),
                   curve: Curves.easeOut,
                   height: selected != -1 ? 160 : 0,
-                  child: LocationCard(
-                    data: posts.firstWhere((Post post) => post.id == selected),
-                    onTap: () {
-                      print(posts
-                          .firstWhere((post) => post.id == selected)
-                          .toJson());
-                      Get.to(() => ItemDetailView(
-                            data:
-                                posts.firstWhere((post) => post.id == selected),
-                          ));
-                    },
-                  ),
-                )
+                  child: Obx(
+                    () => LocationCard(
+                      data: mainController.allPosts
+                          .firstWhere((Post post) => post.id == selected),
+                      onTap: () {
+                        Get.to(() => ItemDetailView(
+                              data: mainController.allPosts
+                                  .firstWhere((post) => post.id == selected),
+                            ));
+                      },
+                    ),
+                  ))
               : const SizedBox(),
         ),
         Positioned(
@@ -282,7 +315,17 @@ class _LocationViewState extends State<LocationView> {
                             children: <Widget>[
                               MainIconButton(
                                 onPressed: () {
-                                  Get.toNamed(Routes.locationFilter);
+                                  Get.to(FilterView(
+                                    func: (List<FilterData> data) {
+                                      setState(() {
+                                        filterData = data;
+                                      });
+                                      addMarkers();
+                                    },
+                                  ),
+                                      transition: Transition.cupertino,
+                                      duration:
+                                          const Duration(milliseconds: 300));
                                 },
                                 back: true,
                                 text: search,
@@ -305,38 +348,44 @@ class _LocationViewState extends State<LocationView> {
                       ),
                     ),
                     Expanded(
-                      child: SingleChildScrollView(
-                        child: Container(
-                          width: _size.width,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: origin, vertical: 12),
-                          color: Colors.white,
-                          child: Column(
-                            children: <Widget>[
-                              ...posts.map((Post post) {
-                                return Obx(
-                                  () => BookmarkCard(
-                                    onPress: () {
-                                      Get.to(() => ItemDetailView(
-                                            data: post,
-                                          ));
-                                    },
-                                    active: mainController.savedPosts
-                                        .where((p0) => p0.id == post.id)
-                                        .isNotEmpty,
-                                    data: post,
-                                    onBookmark: () async {
-                                      await mainController.togglePost(
-                                          id: post.id!, post: post);
-                                    },
-                                  ),
-                                );
-                              }).toList()
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                        child: Obx(
+                      () => mainController.allPosts.isNotEmpty
+                          ? SingleChildScrollView(
+                              child: Container(
+                                width: _size.width,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: origin, vertical: 12),
+                                color: Colors.white,
+                                child: Column(
+                                  children: <Widget>[
+                                    ...mainController.allPosts.map((Post post) {
+                                      return Obx(
+                                        () => BookmarkCard(
+                                          onPress: () {
+                                            Get.to(() => ItemDetailView(
+                                                  data: post,
+                                                ));
+                                          },
+                                          active: mainController.savedPosts
+                                              .where((p0) => p0.id == post.id)
+                                              .isNotEmpty,
+                                          data: post,
+                                          onBookmark: () async {
+                                            await mainController.togglePost(
+                                                id: post.id!, post: post);
+                                          },
+                                        ),
+                                      );
+                                    }).toList()
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Center(
+                              child:
+                                  Text(_bodyHeight > 10 ? "Зар олдсонгүй" : ""),
+                            ),
+                    )),
                   ],
                 ),
               )),
@@ -399,7 +448,9 @@ class _LocationViewState extends State<LocationView> {
                   .map(
                     (e) => GestureDetector(
                       onTap: () {
+                        // mainController.getAllPosts(page, limit, e, filterData);
                         setState(() {
+                          sortData = e;
                           isSort = !isSort;
                         });
                       },
@@ -412,15 +463,9 @@ class _LocationViewState extends State<LocationView> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(e['text']!,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(
-                                        color: e['is']! == 'true'
-                                            ? orange
-                                            : Colors.black)),
-                            SvgPicture.asset(e['icon']!),
+                            Text(e.name!,
+                                style: Theme.of(context).textTheme.bodyMedium!),
+                            SvgPicture.asset(e.icon!),
                           ],
                         ),
                       ),

@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tureeslii/controllers/auth_controller.dart';
+import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/routes.dart';
-import 'package:tureeslii/shared/constants/assets.dart';
-import 'package:tureeslii/shared/constants/colors.dart';
-import 'package:tureeslii/shared/constants/spacing.dart';
-import 'package:tureeslii/shared/constants/strings.dart';
-import 'package:tureeslii/shared/constants/values.dart';
+import 'package:tureeslii/shared/index.dart';
 
 class AuthView extends StatelessWidget {
   AuthView({super.key});
   final AuthController controller = Get.find();
+  final mainController = Get.put(MainController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +35,8 @@ class AuthView extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Align(
+                  Container(
+                    margin: EdgeInsets.only(top: 24),
                     alignment: Alignment.topRight,
                     child: TextButton(
                       onPressed: () {
@@ -51,12 +50,12 @@ class AuthView extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium!
-                                .copyWith(color: orange),
+                                .copyWith(color: Colors.white),
                           ),
                           space8,
                           const Icon(
                             Icons.arrow_forward_ios,
-                            color: orange,
+                            color: Colors.white,
                             size: 24,
                           )
                         ],
@@ -67,32 +66,134 @@ class AuthView extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ...cities
-                          .map((e) => GestureDetector(
-                                onTap: () {
-                                  controller.city.value = e;
-                         
-                                  Get.toNamed(Routes.login);
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: origin),
-                                  width: double.infinity,
-                                  alignment: Alignment.center,
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(e,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall),
+                      Container(
+                          decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(origin),
+                                  topRight: Radius.circular(origin)),
+                              color: Colors.white),
+                          margin: const EdgeInsets.symmetric(horizontal: 40),
+                          padding: const EdgeInsets.symmetric(horizontal: 25),
+                          child: Obx(
+                            () => RowRadio(
+                              border: const Border(),
+                              groupValue: mainController.timeType.value,
+                              onChanged: (value) {
+                                if (value != null) {
+                                  mainController.timeType.value = value;
+                                }
+                              },
+                              list: const [byMonth, byDay],
+                            ),
+                          )),
+                      GestureDetector(
+                        onTap: () {
+                          Get.bottomSheet(GestureDetector(
+                            child: Container(
+                              width: double.infinity,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(20.0),
+                                  topLeft: Radius.circular(20.0),
                                 ),
-                              ))
-                          .toList(),
-                      space8,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  space24,
+                                  Container(
+                                    width: 50,
+                                    height: 4,
+                                    decoration: BoxDecoration(
+                                        color: prime,
+                                        borderRadius:
+                                            BorderRadius.circular(2.5)),
+                                  ),
+                                  space32,
+                                  ...cities
+                                      .map(
+                                        (e) => GestureDetector(
+                                          onTap: () {
+                                            mainController.city.value = e;
+                                            Navigator.pop(context);
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 14,
+                                            ),
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 30),
+                                            width: double.infinity,
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    bottom: BorderSide(
+                                                        color: Color(
+                                                            0xffEFEFEF)))),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 18),
+                                                  child: Text(e,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleMedium!
+                                                          .copyWith(
+                                                              color: black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal)),
+                                                ),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                      color: prime,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              9)),
+                                                  alignment: Alignment.center,
+                                                  width: 35,
+                                                  child: Text(
+                                                    '2',
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                  space64
+                                ],
+                              ),
+                            ),
+                          ));
+                        },
+                        child: Container(
+                            margin:
+                                const EdgeInsets.symmetric(horizontal: origin),
+                            width: double.infinity,
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Obx(
+                              () => Text(mainController.city.value,
+                                  style:
+                                      Theme.of(context).textTheme.titleSmall),
+                            )),
+                      ),
+                      space16,
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: origin),
                         child: Text(
