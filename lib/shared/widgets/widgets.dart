@@ -10,6 +10,7 @@ export './dialogs/dialogs.dart';
 export './status/order_status.dart';
 export 'button.dart';
 export 'containers/shadow_container.dart';
+export 'datepicker.dart';
 export 'image_dialog.dart';
 export 'item.dart';
 export 'items/checkbox.dart';

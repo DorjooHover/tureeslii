@@ -217,7 +217,7 @@ class ApiRepository {
   }
 
   Future<ErrorHandler> rentRequest(
-      int postId, int startDate, int duration, String type) async {
+      int postId, String startDate, int duration, String type) async {
     try {
       final data = {
         "postId": postId,

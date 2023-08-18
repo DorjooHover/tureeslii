@@ -40,6 +40,11 @@ class MainController extends GetxController
   // own posts
   final myRentRequest = <RentRequest>[].obs;
 
+  // rent request
+  final startDate = ''.obs;
+  final endDate = ''.obs;
+  final duration = 1.obs;
+
   User? get user => rxUser.value;
   set user(value) => rxUser.value = value;
 // orders
@@ -112,7 +117,7 @@ class MainController extends GetxController
   }
 
   Future<bool> rentRequest(
-      int postId, int startDate, int duration, String type) async {
+      int postId, String startDate, int duration, String type) async {
     try {
       ErrorHandler res =
           await _apiRepository.rentRequest(postId, startDate, duration, type);

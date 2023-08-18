@@ -243,50 +243,8 @@ class _FilterViewState extends State<FilterView> {
                                                 now.year, now.month, now.day),
                                             lastDate: DateTime(now.year + 10),
                                             builder: (context, child) {
-                                              return Theme(
-                                                data: ThemeData.dark().copyWith(
-                                                    colorScheme: const ColorScheme
-                                                            .dark(
-                                                        onPrimary:
-                                                            prime, // selected text color
-                                                        onSurface:
-                                                            second, // default text color
-                                                        primary:
-                                                            orange // circle color
-                                                        ),
-                                                    dialogBackgroundColor:
-                                                        Colors.black54,
-                                                    textButtonTheme:
-                                                        TextButtonThemeData(
-                                                            style: TextButton
-                                                                .styleFrom(
-                                                                    textStyle: const TextStyle(
-                                                                        color: Colors
-                                                                            .amber,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .normal,
-                                                                        fontSize:
-                                                                            12,
-                                                                        fontFamily:
-                                                                            'Quicksand'),
-                                                                    primary: Colors
-                                                                        .amber, // color of button's letters
-                                                                    backgroundColor:
-                                                                        Colors
-                                                                            .black54, // Background color
-                                                                    shape: RoundedRectangleBorder(
-                                                                        side: const BorderSide(
-                                                                            color: Colors
-                                                                                .transparent,
-                                                                            width:
-                                                                                1,
-                                                                            style: BorderStyle
-                                                                                .solid),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(50))))),
-                                                child: child!,
-                                              );
+                                              return DatePickerTheme(
+                                                  child: child!);
                                             });
                                     if (selectedDate != null) {
                                       setState(() {
