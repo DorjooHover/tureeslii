@@ -5,10 +5,12 @@ import 'package:tureeslii/model/error_handler.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class FilterView extends StatefulWidget {
-  const FilterView(
-      {super.key, required this.func, });
+  const FilterView({
+    super.key,
+    required this.func,
+  });
   final Function(List<FilterData>) func;
- 
+
   @override
   State<FilterView> createState() => _FilterViewState();
 }
@@ -129,7 +131,7 @@ class _FilterViewState extends State<FilterView> {
       print(filterData[i]);
     }
     print(controller.allPosts);
-    
+
     widget.func(filterData);
     loading.value = false;
   }
@@ -306,7 +308,7 @@ class _FilterViewState extends State<FilterView> {
                                     ),
                                     child: Text(
                                       startDate != ""
-                                          ? startDate.substring(0, 11)
+                                          ? startDate.substring(0, 10)
                                           : startDate,
                                       style: Theme.of(context)
                                           .textTheme

@@ -13,6 +13,7 @@ import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/pages/location/filter_view.dart';
 import 'package:tureeslii/pages/location/item_detail_view.dart';
+import 'package:tureeslii/pages/no_data.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class LocationView extends StatefulWidget {
@@ -383,7 +384,7 @@ class _LocationViewState extends State<LocationView> {
                             )
                           : Center(
                               child:
-                                  Text(_bodyHeight > 10 ? "Зар олдсонгүй" : ""),
+                                  _bodyHeight > 10 ? NoDataView() : Container(),
                             ),
                     )),
                   ],

@@ -71,6 +71,7 @@ class ItemDetailView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          DateTime date = DateTime.parse(data.startDate!.substring(0, 10));
           showDialog(
               context: context,
               builder: (context) {
@@ -85,9 +86,29 @@ class ItemDetailView extends StatelessWidget {
                         children: <Widget>[
                           Flexible(
                             child: AdditionCard(
-                                color: black,
-                                title: startRentDate,
-                                child: const Input()),
+                              color: black,
+                              title: startRentDate,
+                              child: Container(
+                                width: double.infinity,
+                                height: 50,
+                                alignment: Alignment.centerLeft,
+                                padding: EdgeInsets.symmetric(horizontal: 13),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(5),
+                                  border: Border.all(color: black, width: 1),
+                                ),
+                                child: Text(
+                                  data.startDate != ""
+                                      ? data.startDate!.substring(0, 10)
+                                      : data.startDate ?? "",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(color: black),
+                                ),
+                              ),
+                            ),
                           ),
                           space4,
                           space2,
@@ -100,9 +121,45 @@ class ItemDetailView extends StatelessWidget {
                           space2,
                           Flexible(
                             child: AdditionCard(
-                                color: black,
-                                title: startEndDate,
-                                child: Input()),
+                              color: black,
+                              title: startEndDate,
+                              child: Container(
+                                width: double.infinity,
+                                height: 50,
+                                alignment: Alignment.centerLeft,
+                                padding: EdgeInsets.symmetric(horizontal: 13),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(5),
+                                  border: Border.all(color: black, width: 1),
+                                ),
+                                child: Text(
+                                  data.startDate != "" &&
+                                          (data.minDurationDaily != null ||
+                                              data.minDurationMonthly != null)
+                                      ? data.minDurationDaily != null
+                                          ? DateTime(
+                                                  date.year,
+                                                  date.month,
+                                                  date.day +
+                                                      data.minDurationDaily!)
+                                              .toString()
+                                              .substring(0, 10)
+                                          : DateTime(
+                                                  date.year,
+                                                  date.month +
+                                                      data.minDurationMonthly!,
+                                                  date.day)
+                                              .toString()
+                                              .substring(0, 10)
+                                      : data.startDate ?? "",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(color: black),
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -120,7 +177,10 @@ class ItemDetailView extends StatelessWidget {
                                     .textTheme
                                     .labelLarge!
                                     .copyWith(color: black)),
-                            Text('2 сар 1 өдөр',
+                            Text(
+                                data.minDurationDaily != null
+                                    ? '${data.minDurationDaily} өдөр'
+                                    : '${data.minDurationMonthly} сар',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium!

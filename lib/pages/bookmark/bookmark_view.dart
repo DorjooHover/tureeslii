@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/pages/location/item_detail_view.dart';
+import 'package:tureeslii/pages/no_data.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class BookmarkView extends StatefulWidget {
@@ -59,7 +60,7 @@ class _HomeViewState extends State<BookmarkView> {
                   ),
                   itemCount: mainController.savedPosts.length,
                 )
-              : const Center(child: Text("Хадгалсан зар олдсонгүй")),
+              : const Center(child: NoDataView()),
         ));
   }
 }

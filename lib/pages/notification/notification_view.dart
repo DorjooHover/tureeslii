@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:tureeslii/controllers/notification_controller.dart';
+import 'package:tureeslii/pages/no_data.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class NotificationView extends StatefulWidget {
@@ -45,7 +46,7 @@ class _NotificationViewState extends State<NotificationView> {
                 ),
                 itemCount: controller.notification.length,
               )
-            : const Center(child: Text('Мэдэгдэл байхгүй байна')),
+            : const Center(child: NoDataView()),
       ),
     );
   }

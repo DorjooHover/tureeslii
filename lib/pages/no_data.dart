@@ -10,7 +10,7 @@ class NoDataView extends StatelessWidget {
       appBar: const MainAppBar(
         currentIndex: 4,
         height: 246,
-        back: true,
+        back: false,
         bgColor: bgGray,
       ),
       body: SingleChildScrollView(
