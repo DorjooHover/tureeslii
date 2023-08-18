@@ -26,6 +26,7 @@ class _MainViewState extends State<MainView> {
   Widget build(BuildContext context) {
     final controller = Get.put(MainController());
     final notificationController = Get.put(NotificationController());
+
     return GetBuilder<MainController>(
       init: MainController(),
       builder: (controller) => controller.obx(
