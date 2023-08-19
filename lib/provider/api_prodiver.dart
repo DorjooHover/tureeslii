@@ -226,8 +226,10 @@ class ApiRepository {
         "type": type
       };
       final response = await apiProvider.post('/posts/rentRequest', data: data);
+      print(response);
+      
       if (response['success']) {
-        return ErrorHandler(success: true, message: 'Ажмилттай');
+        return ErrorHandler(success: true, message: 'Амжилттай');
       }
       if (response['message'] == 'please_confirm_email') {
         return ErrorHandler(

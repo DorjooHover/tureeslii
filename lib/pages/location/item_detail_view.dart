@@ -71,6 +71,7 @@ class ItemDetailView extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           DateTime date = DateTime.parse(data.startDate!);
+          DateTime now = DateTime.now();
           showDialog(
               context: context,
               builder: (context) {
@@ -92,8 +93,14 @@ class ItemDetailView extends StatelessWidget {
                                   final DateTime? selectedDate =
                                       await showDatePicker(
                                           context: context,
-                                          initialDate: date,
-                                          firstDate: date,
+                                          initialDate:
+                                              now.difference(date).inDays < 0
+                                                  ? date
+                                                  : now,
+                                          firstDate:
+                                              now.difference(date).inDays < 0
+                                                  ? date
+                                                  : now,
                                           lastDate: DateTime(date.year + 10),
                                           builder: (context, child) {
                                             return DatePickerTheme(
@@ -146,14 +153,17 @@ class ItemDetailView extends StatelessWidget {
                               title: startEndDate,
                               child: GestureDetector(
                                 onTap: () async {
+                                  DateTime late = now.difference(now).inDays < 0
+                                      ? date
+                                      : now;
                                   final DateTime end = data.minDurationDaily !=
                                           null
-                                      ? DateTime(date.year, date.month,
-                                          date.day + data.minDurationDaily!)
+                                      ? DateTime(late.year, late.month,
+                                          late.day + data.minDurationDaily!)
                                       : DateTime(
-                                          date.year,
-                                          date.month + data.minDurationMonthly!,
-                                          date.day);
+                                          late.year,
+                                          late.month + data.minDurationMonthly!,
+                                          late.day);
                                   final DateTime? selectedDate =
                                       await showDatePicker(
                                           context: context,
