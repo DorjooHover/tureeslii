@@ -274,7 +274,7 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(Routes.condition);
+                         Navigator.pop(context);
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

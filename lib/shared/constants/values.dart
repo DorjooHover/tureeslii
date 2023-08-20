@@ -11,12 +11,6 @@ const menuHelp = [
   {'url': '', "text": contact},
 ];
 
-const cities = [
-  'Улаанбаатар',
-  'Дархан',
-  'Эрдэнэт',
-];
-
 const filterType = [
   'Орон сууц',
   'Хажуу өрөө',
@@ -59,15 +53,36 @@ const filterVerification = ['Баталгаажсан', 'Онцлох'];
 
 const filterFloor = ['1', '2-5', '5+'];
 const paymentConditionValues = ['1 сар', "3 сар", "6 сар"];
-const bailConditionValues = ['Хагас сараар' ,"3 сар", "6 сар"];
-const contractConditionValues = ['Хагас сараар', "3 сар", "6 сар"];
-const cancelConditionValues = ['Хатуу', "3 сар", "6 сар"];
+const paymentConditionValuesValue = ['1_month', "3_month", "6_month"];
+const bailConditionValues = ['Хагас сараар', "1 сар", "Үнийн дүн"];
+const bailConditionValuesValue = ['half', "month", "0"];
+const contractConditionValues = ['Хагас сараар', "Өдрөөр"];
+const contractConditionValuesValue = ['MONTH', "DAY"];
+const cancelConditionValues = ['Хатуу', "Уян хатан", "Буцаалтгүй"];
 const collaterals = ['Барьцаагүй'];
-const whomRentValues = ['Гадаадын иргэн', "3 сар", "6 сар"];
+const whomRentValues = [
+  'Хамаагүй',
+  "Эрэгтэй",
+  "Эмэгтэй",
+  "Гэр бүл",
+  'Гадаадын иргэн',
+];
+const whomRentValuesValue = [
+  'ALL',
+  "Male",
+  "Female",
+  "family",
+  'foreign',
+];
 // flat info
-const heatingValues = ['Төвийн', "3 сар", "6 сар"];
-const waterSupplyValues = ['Төвийн', "3 сар", "6 сар"];
-const toiletValues = ['Нийтийн', "3 сар", "6 сар"];
+const heatingValues = [
+  'Төвийн',
+  "Цахилгаан халаалт",
+  "Нам даралтьн зуух",
+  "Пийшин"
+];
+const waterSupplyValues = ['Төвийн', "Гүний худаг", "Зөөврийн"];
+const toiletValues = ['Дотор', "Гадна", "Нийтийн"];
 // room info
 const typeValues = ['Хажуу өрөө', "3 сар", "6 сар"];
 // verification

@@ -18,7 +18,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
   bool isDrawer = false;
   final controller = Get.put(MainController());
 
-  String selectedType = typeValues[0];
+  int selectedType = 0;
   String titleValue = "";
   int kitchenValue = 0;
   int bathRoomValue = 0;
@@ -26,20 +26,22 @@ class _RoomInfoViewState extends State<RoomInfoView> {
   int bedRoomValue = 0;
   int bedOneValue = 0;
   int bedTwoValue = 0;
-  nextStep() {
-    if (titleValue != '') {
-      controller.createPost.value!.title = titleValue;
-      controller.createPost.value!.kitchen = kitchenValue;
-      controller.createPost.value!.bathroom = bathRoomValue;
-      controller.createPost.value!.livingRoom = livingRoomValue;
-      controller.createPost.value!.bedroom = bedRoomValue;
-      controller.createPost.value!.singleBed = bedOneValue;
-      controller.createPost.value!.doubleBed = bedTwoValue;
-      controller.createPost.value!.roomCount = bedOneValue + bedTwoValue;
-      controller.createPost.value!.description = selectedType;
-      controller.nextStep();
-      Get.toNamed(Routes.imageLibrary);
+  CustomSnackbar snackbar = CustomSnackbar();
+  Future nextStep() async {
+    if (titleValue == '') {
+      snackbar.mainSnackbar(context, incompleteTitle, 'error');
+      return;
     }
+    controller.createPost.value!.singleBed = bedOneValue;
+    controller.createPost.value!.doubleBed = bedTwoValue;
+    controller.createPost.value!.bedroom = bedRoomValue;
+    controller.createPost.value!.bathroom = bathRoomValue;
+    controller.createPost.value!.livingRoom = livingRoomValue;
+    controller.createPost.value!.kitchen = kitchenValue;
+    controller.createPost.value!.title = titleValue;
+    controller.createPost.value!.category = selectedType;
+    controller.nextStep();
+    Get.toNamed(Routes.imageLibrary);
   }
 
   @override
@@ -96,15 +98,45 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                         AdditionCard(
                             title: typeStr,
                             child: DropDown(
-                              list: typeValues,
-                              value: selectedType,
-                              onChanged: (value) {
-                                if (value != null) {
-                                  setState(() {
-                                    selectedType = value;
-                                  });
-                                }
-                              },
+                              list: const [],
+                              value: '',
+                              child: DropdownButton(
+                                  isDense: true,
+                                  icon: SvgPicture.asset(iconArrowDown),
+                                  iconEnabledColor: gray,
+                                  isExpanded: true,
+                                  dropdownColor: Colors.white,
+                                  value: controller
+                                      .allCategory[selectedType].name!,
+                                  hint: Text(choose,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(color: labelGray)),
+                                  underline: const SizedBox(),
+                                  items: controller.allCategory.map((e) {
+                                    return DropdownMenuItem(
+                                      value: e.name!,
+                                      child: Text(
+                                        e.name!,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .copyWith(color: black),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      final i = controller.allCategory
+                                          .indexWhere((element) =>
+                                              element.name == value);
+                                      setState(() {
+                                        selectedType = i;
+                                      });
+                                    }
+                                  }),
+                              onChanged: (value) {},
                             )),
                         space24,
                         Row(
@@ -185,46 +217,47 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                           ],
                         ),
                         space24,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: AdditionCard(
-                                  title: bedOne,
-                                  child: Input(
-                                    textInputType: TextInputType.number,
-                                    textInputAction: TextInputAction.next,
-                                    inputFormatter: [
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
-                                    onChange: (p0) {
-                                      setState(() {
-                                        bedOneValue = int.parse(p0);
-                                      });
-                                    },
-                                  )),
-                            ),
-                            space16,
-                            Expanded(
-                              child: AdditionCard(
-                                  title: bedTwo,
-                                  child: Input(
-                                    textInputType: TextInputType.number,
-                                    inputFormatter: [
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
-                                    onChange: (p0) {
-                                      setState(() {
-                                        bedTwoValue = int.parse(p0);
-                                      });
-                                    },
-                                    onSubmitted: ((p0) {
-                                      nextStep();
-                                    }),
-                                  )),
-                            ),
-                          ],
-                        ),
+                        if (bedRoomValue > 0)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: AdditionCard(
+                                    title: bedOne,
+                                    child: Input(
+                                      textInputType: TextInputType.number,
+                                      textInputAction: TextInputAction.next,
+                                      inputFormatter: [
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
+                                      onChange: (p0) {
+                                        setState(() {
+                                          bedOneValue = int.parse(p0);
+                                        });
+                                      },
+                                    )),
+                              ),
+                              space16,
+                              Expanded(
+                                child: AdditionCard(
+                                    title: bedTwo,
+                                    child: Input(
+                                      textInputType: TextInputType.number,
+                                      inputFormatter: [
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
+                                      onChange: (p0) {
+                                        setState(() {
+                                          bedTwoValue = int.parse(p0);
+                                        });
+                                      },
+                                      onSubmitted: ((p0) {
+                                        nextStep();
+                                      }),
+                                    )),
+                              ),
+                            ],
+                          ),
                       ],
                     )),
                     space40,
@@ -257,7 +290,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(Routes.flatInfo);
+                        Navigator.pop(context);
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

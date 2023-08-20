@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/shared/constants/assets.dart';
 import 'package:landlord/shared/constants/colors.dart';
 import 'package:landlord/shared/constants/spacing.dart';
 import 'package:landlord/shared/constants/strings.dart';
-import 'package:landlord/shared/constants/values.dart';
 
 class ChangeCityView extends StatefulWidget {
   const ChangeCityView({super.key});
@@ -13,6 +14,7 @@ class ChangeCityView extends StatefulWidget {
 }
 
 class _ChangeCityViewState extends State<ChangeCityView> {
+  final controller = Get.put(MainController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,13 +81,13 @@ class _ChangeCityViewState extends State<ChangeCityView> {
                         iconEnabledColor: gray,
                         isExpanded: true,
                         dropdownColor: Colors.white,
-                        value: cities[1],
+                        value: controller.cities[1],
                         underline: const SizedBox(),
-                        items: cities.map((e) {
+                        items: controller.cities.map((e) {
                           return DropdownMenuItem(
                             value: e,
                             child: Text(
-                              e,
+                              e.name!,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!

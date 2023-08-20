@@ -17,19 +17,21 @@ class _FlatInfoViewState extends State<FlatInfoView> {
   bool isDrawer = false;
   final controller = Get.put(MainController());
 
-  String selectedHeating = heatingValues[0];
-  String selectedWaterSupply = waterSupplyValues[0];
-  String selectedToilet = toiletValues[0];
+  int selectedHeating = 0, selectedWaterSupply = 0, selectedToilet = 0;
   double flatArea = 0.0;
+  CustomSnackbar snackbar = CustomSnackbar();
   nextStep() {
-    if (flatArea > 0) {
-      controller.createPost.value!.plot = flatArea;
-      controller.createPost.value!.heating = selectedHeating;
-      controller.createPost.value!.waterSupply = selectedWaterSupply;
-      controller.createPost.value!.restroom = selectedToilet;
-      controller.nextStep();
-      Get.toNamed(Routes.roomInfo);
+    if (flatArea <= 0) {
+      snackbar.mainSnackbar(context, 'Талбайгаа оруулна уу', 'error');
+      return;
     }
+    controller.createPost.value!.plot = flatArea;
+    controller.createPost.value!.heating = heatingValues[selectedHeating];
+    controller.createPost.value!.waterSupply =
+        waterSupplyValues[selectedWaterSupply];
+    controller.createPost.value!.restroom = toiletValues[selectedToilet];
+    controller.nextStep();
+    Get.toNamed(Routes.roomInfo);
   }
 
   @override
@@ -78,24 +80,45 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                             title: heating,
                             child: DropDown(
                               list: heatingValues,
-                              value: selectedHeating,
-                              onChanged: (value) {},
+                              value: heatingValues[selectedHeating],
+                              onChanged: (value) {
+                                if (value != null) {
+                                  final i = heatingValues.indexOf(value);
+                                  setState(() {
+                                    selectedHeating = i;
+                                  });
+                                }
+                              },
                             )),
                         space24,
                         AdditionCard(
                             title: waterSupple,
                             child: DropDown(
                               list: waterSupplyValues,
-                              value: selectedWaterSupply,
-                              onChanged: (value) {},
+                              value: waterSupplyValues[selectedWaterSupply],
+                              onChanged: (value) {
+                                if (value != null) {
+                                  final i = waterSupplyValues.indexOf(value);
+                                  setState(() {
+                                    selectedWaterSupply = i;
+                                  });
+                                }
+                              },
                             )),
                         space24,
                         AdditionCard(
                             title: toilet,
                             child: DropDown(
                               list: toiletValues,
-                              value: selectedToilet,
-                              onChanged: (value) {},
+                              value: toiletValues[selectedToilet],
+                              onChanged: (value) {
+                                if (value != null) {
+                                  final i = toiletValues.indexOf(value);
+                                  setState(() {
+                                    selectedToilet = i;
+                                  });
+                                }
+                              },
                             )),
                         space24,
                         AdditionCard(
@@ -143,7 +166,7 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(Routes.flatFeature);
+                        Navigator.pop(context);
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

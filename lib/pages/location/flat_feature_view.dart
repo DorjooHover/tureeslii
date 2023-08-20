@@ -25,6 +25,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
   bool cabel = false;
   bool refrigerator = false;
   bool kitchen = false;
+  bool hasFurniture = false;
   bool drawer = false;
   bool table = false;
   bool chair = false;
@@ -39,6 +40,9 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
     controller.createPost.value!.tvCable = cabel;
     controller.createPost.value!.refrigerator = refrigerator;
     controller.createPost.value!.kitchenFurniture = kitchen;
+    if (refrigerator) {
+      controller.createPost.value!.furnitures?.add('refrigerator');
+    }
     if (drawer) {
       controller.createPost.value!.furnitures?.add('drawer');
     }
@@ -314,7 +318,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                               SvgPicture.asset(iconKitchen),
                               space13,
                               Text(
-                                kitchenStr,
+                                isFurniture,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium!
@@ -324,148 +328,181 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                               ),
                             ],
                           ),
-                          value: kitchen,
+                          value: hasFurniture,
                           onChanged: (value) {
                             setState(() {
-                              kitchen = value;
+                              hasFurniture = value;
                             });
                           },
                         ),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
-                          activeTrackColor: active,
-                          title: Row(
+                        if (hasFurniture)
+                          Column(
                             mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SvgPicture.asset(iconDrawer),
-                              space13,
-                              Text(
-                                drawerStr,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(
-                                      color: black,
+                            children: <Widget>[
+                              SwitchListTile.adaptive(
+                                contentPadding: EdgeInsets.zero,
+                                activeColor: Colors.white,
+                                activeTrackColor: active,
+                                title: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SvgPicture.asset(iconKitchen),
+                                    space13,
+                                    Text(
+                                      kitchenStr,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: black,
+                                          ),
                                     ),
+                                  ],
+                                ),
+                                value: kitchen,
+                                onChanged: (value) {
+                                  setState(() {
+                                    kitchen = value;
+                                  });
+                                },
+                              ),
+                              SwitchListTile.adaptive(
+                                contentPadding: EdgeInsets.zero,
+                                activeColor: Colors.white,
+                                activeTrackColor: active,
+                                title: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SvgPicture.asset(iconDrawer),
+                                    space13,
+                                    Text(
+                                      drawerStr,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: black,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                value: drawer,
+                                onChanged: (value) {
+                                  setState(() {
+                                    drawer = value;
+                                  });
+                                },
+                              ),
+                              SwitchListTile.adaptive(
+                                contentPadding: EdgeInsets.zero,
+                                activeColor: Colors.white,
+                                activeTrackColor: active,
+                                title: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SvgPicture.asset(iconTable),
+                                    space13,
+                                    Text(
+                                      tableStr,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: black,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                value: table,
+                                onChanged: (value) {
+                                  setState(() {
+                                    table = value;
+                                  });
+                                },
+                              ),
+                              SwitchListTile.adaptive(
+                                contentPadding: EdgeInsets.zero,
+                                activeColor: Colors.white,
+                                activeTrackColor: active,
+                                title: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SvgPicture.asset(iconSofa),
+                                    space13,
+                                    Text(
+                                      sofaStr,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: black,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                value: sofa,
+                                onChanged: (value) {
+                                  setState(() {
+                                    sofa = value;
+                                  });
+                                },
+                              ),
+                              SwitchListTile.adaptive(
+                                contentPadding: EdgeInsets.zero,
+                                activeColor: Colors.white,
+                                activeTrackColor: active,
+                                title: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SvgPicture.asset(iconChair),
+                                    space13,
+                                    Text(
+                                      chairStr,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: black,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                value: chair,
+                                onChanged: (value) {
+                                  setState(() {
+                                    chair = value;
+                                  });
+                                },
+                              ),
+                              SwitchListTile.adaptive(
+                                contentPadding: EdgeInsets.zero,
+                                activeColor: Colors.white,
+                                activeTrackColor: active,
+                                title: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SvgPicture.asset(iconCabinet),
+                                    space13,
+                                    Text(
+                                      cabinetStr,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: black,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                value: cabinet,
+                                onChanged: (value) {
+                                  setState(() {
+                                    cabinet = value;
+                                  });
+                                },
                               ),
                             ],
-                          ),
-                          value: drawer,
-                          onChanged: (value) {
-                            setState(() {
-                              drawer = value;
-                            });
-                          },
-                        ),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
-                          activeTrackColor: active,
-                          title: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SvgPicture.asset(iconTable),
-                              space13,
-                              Text(
-                                tableStr,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(
-                                      color: black,
-                                    ),
-                              ),
-                            ],
-                          ),
-                          value: table,
-                          onChanged: (value) {
-                            setState(() {
-                              table = value;
-                            });
-                          },
-                        ),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
-                          activeTrackColor: active,
-                          title: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SvgPicture.asset(iconSofa),
-                              space13,
-                              Text(
-                                sofaStr,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(
-                                      color: black,
-                                    ),
-                              ),
-                            ],
-                          ),
-                          value: sofa,
-                          onChanged: (value) {
-                            setState(() {
-                              sofa = value;
-                            });
-                          },
-                        ),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
-                          activeTrackColor: active,
-                          title: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SvgPicture.asset(iconChair),
-                              space13,
-                              Text(
-                                chairStr,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(
-                                      color: black,
-                                    ),
-                              ),
-                            ],
-                          ),
-                          value: chair,
-                          onChanged: (value) {
-                            setState(() {
-                              chair = value;
-                            });
-                          },
-                        ),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
-                          activeTrackColor: active,
-                          title: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SvgPicture.asset(iconCabinet),
-                              space13,
-                              Text(
-                                cabinetStr,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(
-                                      color: black,
-                                    ),
-                              ),
-                            ],
-                          ),
-                          value: cabinet,
-                          onChanged: (value) {
-                            setState(() {
-                              cabinet = value;
-                            });
-                          },
-                        ),
+                          )
                       ],
                     )),
                     space40,
@@ -499,7 +536,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(Routes.condition);
+                        Navigator.pop(context);
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

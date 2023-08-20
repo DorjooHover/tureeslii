@@ -10,10 +10,12 @@ class DropDown extends StatelessWidget {
       required this.list,
       required this.value,
       this.icon,
+      this.child,
       required this.onChanged});
   final String value;
   final List<String> list;
   final Widget? icon;
+  final Widget? child;
   final Function(String? value) onChanged;
   @override
   Widget build(BuildContext context) {
@@ -23,9 +25,8 @@ class DropDown extends StatelessWidget {
           color: Colors.white,
           border: Border.all(color: gray),
           borderRadius: BorderRadius.circular(5)),
-      child: DropdownButton(
+      child: child ??  DropdownButton(
           isDense: true,
-          
           icon: icon ?? SvgPicture.asset(iconArrowDown),
           iconEnabledColor: gray,
           isExpanded: true,

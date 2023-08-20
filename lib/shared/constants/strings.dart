@@ -43,6 +43,7 @@ const String markInMap = 'Газрын зураг дээр дарж байрши
 const String city = 'Хот';
 const String district = 'Дүүрэг';
 const String committee = 'Хороо';
+
 const String floor = 'Давхар';
 const String flatNumber = 'Байрны дугаар';
 const String doorNumber = 'Хаалганы дугаар';
@@ -52,6 +53,7 @@ const String canDay = 'Өдрөөр түрээслэх боломжтой';
 const String canMonth = 'Сараар түрээслэх боломжтой';
 const String rentPrice = 'Хөлслөх үнэ (₮)';
 const String minimumRentDay = 'Өдрөөр түрээслэх хамгйин бага хугацаа (өдөр)';
+const String minimumRentMonth = 'Сараар түрээслэх хамгйин бага хугацаа (сар)';
 const String inPayment = 'Төлбөрт багтсан зүйлс';
 const String flatPriceStr = 'Байрны мөнгө';
 const String bailMoneyStr = 'Барьцаа мөнгө авна';
@@ -207,7 +209,7 @@ const String mn = 'MN';
 const String hello = 'Сайн байна уу.';
 const String agree = 'Зөвшөөрөх';
 const String decline = 'Татгалзах';
-
+const String emailVerificationString = 'Та имайл хаягаа шалгана уу.';
 const String slogan = 'Ая тухтай байдлыг амар хялбараар';
 
 // drawer
@@ -216,3 +218,11 @@ const String myAds = 'Миний оруулсан зар';
 const String order = 'Захиалга';
 const String statistic = 'Статистик';
 const String logout = 'Гарах';
+
+
+// errors
+const String locationErrorStr = 'Газрын зураг тэмдэглэгээ хийнэ үү';
+const String incompleteInfo = 'Мэдээллээ бүрэн оруулна уу';
+const String inDayCanNot30Day = 'Өдрөөр түрээслэхэд 30 хоногоос хэтэрч болохгүй';
+const String chooseAnyOptionInRentType = 'Өдрөөр эсвэл сараар түрээслэх сонголт хийнэ үү';
+const String incompleteTitle = 'Гарчигаа оруулна уу';

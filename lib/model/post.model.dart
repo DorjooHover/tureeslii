@@ -32,7 +32,7 @@ class Post {
   String? doorNo;
   bool? kitchenFurniture;
   bool? wifi;
-  String? cancelTerm;
+  dynamic cancelTerm;
   String? priceTerm;
   bool? tvCable;
   bool? refrigerator;
@@ -57,6 +57,7 @@ class Post {
   double? long;
   double? lat;
   double? plot;
+  dynamic category;
   List<PostAttachments>? postAttachments;
   User? user;
 
@@ -118,6 +119,7 @@ class Post {
       this.lat,
       this.plot,
       this.postAttachments,
+      this.category,
       this.user});
 
   Post.fromJson(Map<String, dynamic> json) {
@@ -175,6 +177,7 @@ class Post {
     district = json['district'];
     state = json['state'];
     long = json['long'];
+    category = json['category'];
     lat = json['lat'];
     plot = double.parse(json['plot'].toString());
     if (json['postAttachments'] != null) {
@@ -206,6 +209,7 @@ class Post {
     data['singleBed'] = this.singleBed;
     data['doubleBed'] = this.doubleBed;
     data['bedCount'] = this.bedCount;
+    data['category'] = this.category;
     data['heating'] = this.heating;
     data['waterSupply'] = this.waterSupply;
     data['restroom'] = this.restroom;

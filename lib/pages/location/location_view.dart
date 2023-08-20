@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:landlord/controllers/main_controller.dart';
+import 'package:landlord/model/models.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 import 'package:location/location.dart';
@@ -54,16 +55,29 @@ class _LocationViewState extends State<LocationView>
   @override
   void initState() {
     super.initState();
-    print(currentLocation);
+
     if (currentLocation == null) {
       getCurrentLocation();
     }
+    if (controller.cities.isNotEmpty) {
+      moveLocation(LatLng(controller.cities[0].location![0],
+          controller.cities[0].location![1]));
+      setState(() {
+        cityValue = controller.cities[0];
+      });
+    }
   }
 
-  void moveCurrentLocation() async {
+  void moveCurrentLocation() {
+    if (currentLocation != null) {
+      moveLocation(
+          LatLng(currentLocation!.latitude!, currentLocation!.longitude!));
+    }
+  }
+
+  void moveLocation(LatLng location) async {
     GoogleMapController googleMapController = await _controller.future;
-    googleMapController.animateCamera(CameraUpdate.newLatLngZoom(
-        LatLng(currentLocation!.latitude!, currentLocation!.longitude!), 14));
+    googleMapController.animateCamera(CameraUpdate.newLatLngZoom(location, 14));
   }
 
   void addCustomIcon() {
@@ -78,28 +92,49 @@ class _LocationViewState extends State<LocationView>
 
   bool isDrawer = false;
   LatLng? selectedLocation;
-  String cityValue = cities[0];
+  City? cityValue;
   String stateValue = '';
   String districtValue = "";
+  String flatNumberValue = "";
   int floorValue = 1;
+  int doorNumberValue = 0;
   String addressValue = '';
   final controller = Get.put(MainController());
-  void nextStep() {
+  CustomSnackbar snackbar = CustomSnackbar();
+  Future nextStep() async {
+    if (selectedLocation == null) {
+      snackbar.mainSnackbar(
+        context,
+        locationErrorStr,
+        'error',
+      );
+      return;
+    }
     if (addressValue != '' &&
-        cityValue != '' &&
+        cityValue != null &&
         stateValue != '' &&
         districtValue != '' &&
         floorValue != -1 &&
-        selectedLocation != null) {
+        flatNumberValue != '' &&
+        doorNumberValue != -1) {
       controller.createPost.value!.address = addressValue;
-      controller.createPost.value!.city = cityValue;
+      controller.createPost.value!.city = cityValue!.name!;
       controller.createPost.value!.state = stateValue;
       controller.createPost.value!.district = districtValue;
       controller.createPost.value!.floor = floorValue;
+      controller.createPost.value!.apartmentNo = flatNumberValue;
+      controller.createPost.value!.doorNo = doorNumberValue.toString();
       controller.createPost.value!.long = selectedLocation!.longitude;
       controller.createPost.value!.lat = selectedLocation!.latitude;
       controller.nextStep();
       Get.toNamed(Routes.general);
+    } else {
+      snackbar.mainSnackbar(
+        context,
+        incompleteInfo,
+        'error',
+      );
+      return;
     }
   }
 
@@ -161,7 +196,7 @@ class _LocationViewState extends State<LocationView>
                         },
                       )
                     : const Center(
-                        child: Text('loading...'),
+                        child: Text('Түр хүлээнэ үү...'),
                       ),
                 Positioned(
                     left: origin,
@@ -261,19 +296,56 @@ class _LocationViewState extends State<LocationView>
                                       children: <Widget>[
                                         Expanded(
                                             child: AdditionCard(
-                                                title: city,
-                                                child: DropDown(
-                                                  list: cities,
-                                                  onChanged: (value) {
-                                                    if (value != null) {
-                                                      setState(() {
-                                                        cityValue = value;
-                                                        isDrag = true;
-                                                      });
-                                                    }
-                                                  },
-                                                  value: cities[0],
-                                                ))),
+                                          title: city,
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 13, vertical: 13),
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                border: Border.all(color: gray),
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            child: DropdownButton(
+                                              isDense: true,
+                                              icon: SvgPicture.asset(
+                                                  iconArrowDown),
+                                              iconEnabledColor: gray,
+                                              isExpanded: true,
+                                              dropdownColor: Colors.white,
+                                              value: cityValue,
+                                              hint: Text(choose,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium!
+                                                      .copyWith(
+                                                          color: labelGray)),
+                                              underline: const SizedBox(),
+                                              items: controller.cities.map((e) {
+                                                return DropdownMenuItem(
+                                                  value: e,
+                                                  child: Text(
+                                                    e.name!,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium!
+                                                        .copyWith(color: black),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              onChanged: (value) {
+                                                if (value != null) {
+                                                  setState(() {
+                                                    cityValue = value;
+                                                    isDrag = true;
+                                                  });
+                                                  moveLocation(LatLng(
+                                                      value.location![0],
+                                                      value.location![1]));
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        )),
                                         space16,
                                         Expanded(
                                             child: AdditionCard(
@@ -297,12 +369,6 @@ class _LocationViewState extends State<LocationView>
                                             child: AdditionCard(
                                                 title: committee,
                                                 child: Input(
-                                                    textInputType:
-                                                        TextInputType.number,
-                                                    inputFormatter: [
-                                                      FilteringTextInputFormatter
-                                                          .digitsOnly
-                                                    ],
                                                     textInputAction:
                                                         TextInputAction.next,
                                                     onChange: (p0) {
@@ -328,6 +394,43 @@ class _LocationViewState extends State<LocationView>
                                                       setState(() {
                                                         isDrag = true;
                                                         floorValue =
+                                                            int.parse(p0);
+                                                      });
+                                                    }))),
+                                      ],
+                                    ),
+                                    space24,
+                                    Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                            child: AdditionCard(
+                                                title: flatNumber,
+                                                child: Input(
+                                                    textInputAction:
+                                                        TextInputAction.next,
+                                                    onChange: (p0) {
+                                                      setState(() {
+                                                        flatNumberValue = p0;
+                                                        isDrag = true;
+                                                      });
+                                                    }))),
+                                        space16,
+                                        Expanded(
+                                            child: AdditionCard(
+                                                title: doorNumber,
+                                                child: Input(
+                                                    textInputType:
+                                                        TextInputType.number,
+                                                    inputFormatter: [
+                                                      FilteringTextInputFormatter
+                                                          .digitsOnly
+                                                    ],
+                                                    textInputAction:
+                                                        TextInputAction.next,
+                                                    onChange: (p0) {
+                                                      setState(() {
+                                                        isDrag = true;
+                                                        doorNumberValue =
                                                             int.parse(p0);
                                                       });
                                                     }))),

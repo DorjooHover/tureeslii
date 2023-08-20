@@ -30,12 +30,6 @@ class _MainViewState extends State<MainView>
   @override
   void initState() {
     super.initState();
-    // animationController = AnimationController(
-    //   vsync: this,
-    //   duration: const Duration(milliseconds: 300),
-    // );
-    // animation = Tween(begin: 0.0, end: 300.0).animate(animationController);
-    // animationController.forward();
   }
 
   Widget build(BuildContext context) {

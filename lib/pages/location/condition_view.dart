@@ -27,16 +27,16 @@ class _ConditionViewState extends State<ConditionView> {
   int personCount = 1;
 
   nextStep() {
-    if (personCount > 0) {
-      controller.createPost.value!.acceptedTenants = personCount;
-      controller.createPost.value!.acceptedGender = selectedWhomRent;
-      controller.createPost.value!.petAllowed = pet;
-      controller.createPost.value!.guestAllowed = invite;
-      controller.createPost.value!.smokingAllowed = smoke;
-      controller.createPost.value!.livingProperty = isLive;
-      controller.nextStep();
-      Get.toNamed(Routes.flatFeature);
-    } else {}
+    controller.createPost.value!.acceptedTenants = personCount;
+    controller.createPost.value!.petAllowed = pet;
+    controller.createPost.value!.guestAllowed = invite;
+    controller.createPost.value!.smokingAllowed = smoke;
+    controller.createPost.value!.livingProperty = isLive;
+    int whomRentIndex = whomRentValues.indexOf(selectedWhomRent);
+    controller.createPost.value!.acceptedGender =
+        whomRentValuesValue[whomRentIndex];
+    controller.nextStep();
+    Get.toNamed(Routes.flatFeature);
   }
 
   @override
@@ -104,7 +104,7 @@ class _ConditionViewState extends State<ConditionView> {
                               ],
                               onChange: (p0) {
                                 setState(() {
-                                  personCount = int.parse(p0);
+                                  personCount = int.tryParse(p0) ?? 1;
                                 });
                               },
                             )),
@@ -264,7 +264,7 @@ class _ConditionViewState extends State<ConditionView> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(Routes.general);
+                        Navigator.pop(context);
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

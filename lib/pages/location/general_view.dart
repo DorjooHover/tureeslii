@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:landlord/controllers/main_controller.dart';
@@ -18,49 +19,74 @@ class _GeneralViewState extends State<GeneralView> {
   final controller = Get.put(MainController());
 
   bool isDay = false,
-      isMonth = false,
+      isMonth = true,
       flatPrice = false,
       sokh = false,
       electronic = false,
       internet = false,
       bailMoney = false;
 
-  String startRentDateValue = "2023/08/12";
-  double rentPriceValue = 0.0, minimumRentDayValue = 0.0;
-
+  String startRentDateValue = DateTime.now().toString().substring(0, 10);
+  double rentPriceValue = 0.0;
+  double rentPriceMonthValue = 0.0;
+  int minimumRentDayValue = 1, minimumRentMonthValue = 1;
   String selectedContractCondition = contractConditionValues[0],
       selectedPaymentCondition = paymentConditionValues[0],
-      selectedBailCondition = bailConditionValues[0],
-      selectedCancelCondition = cancelConditionValues[0];
-  void nextStep() {
-    if (startRentDate != '' &&
-        rentPriceValue > 0 &&
-        minimumRentDayValue > 0 &&
-        selectedBailCondition != '' &&
-        selectedPaymentCondition != '' &&
-        selectedContractCondition != '' &&
-        selectedCancelCondition != '') {
-      controller.createPost.value!.startDate = startRentDateValue;
-      controller.createPost.value!.priceTerm = selectedContractCondition;
-      controller.createPost.value!.cancelTerm = selectedCancelCondition;
-      controller.createPost.value!.dailyRent = isDay;
-      controller.createPost.value!.price = rentPriceValue;
-      controller.createPost.value!.priceDaily = minimumRentDayValue;
-      controller.createPost.value!.monthlyRent = isMonth;
-      controller.createPost.value!.depositRequired = flatPrice;
-      // controller.createPost.value!.depositRequired = sokh;
-      if (electronic) {
-        controller.createPost.value!.priceIncluded?.add('electric');
-      }
-      if (internet) {
-        controller.createPost.value!.priceIncluded?.add('internet');
-      }
-      controller.createPost.value!.paymentTerm = selectedPaymentCondition;
-      // controller.createPost.value!. = selectedPaymentCondition ;
-      controller.createPost.value!.depositTerm = selectedPaymentCondition;
-      // controller.createPost.value!.depositRequired = sokh;
-      controller.nextStep();
-      Get.toNamed(Routes.condition);
+      selectedBailCondition = bailConditionValues[0];
+  int selectedCancelCondition = 0;
+  CustomSnackbar snackbar = CustomSnackbar();
+  Future nextStep() async {
+    if (!isDay && !isMonth) {
+      snackbar.mainSnackbar(context, chooseAnyOptionInRentType, 'error');
+      return;
+    }
+    if (isDay && minimumRentDayValue > 30) {
+      snackbar.mainSnackbar(context, inDayCanNot30Day, 'error');
+      return;
+    }
+
+    controller.createPost.value!.cancelTerm = selectedCancelCondition;
+    controller.createPost.value!.startDate = startRentDateValue;
+    controller.createPost.value!.depositRequired = bailMoney;
+    controller.createPost.value!.monthlyRent = isMonth;
+    controller.createPost.value!.dailyRent = isDay;
+    final bailCondIndex = bailConditionValues
+        .indexWhere((element) => element == selectedBailCondition);
+    controller.createPost.value!.depositTerm =
+        bailConditionValuesValue[bailCondIndex];
+    final paymentCondIndex = paymentConditionValues
+        .indexWhere((element) => element == selectedPaymentCondition);
+    controller.createPost.value!.paymentTerm =
+        paymentConditionValuesValue[paymentCondIndex];
+    final contractCondIndex = contractConditionValues
+        .indexWhere((element) => element == selectedContractCondition);
+    controller.createPost.value!.priceTerm =
+        contractConditionValuesValue[contractCondIndex];
+
+    controller.createPost.value!.price = rentPriceMonthValue;
+    controller.createPost.value!.priceDaily = rentPriceValue;
+
+    if (electronic) {
+      controller.createPost.value!.priceIncluded?.add('electric');
+    }
+    if (internet) {
+      controller.createPost.value!.priceIncluded?.add('internet');
+    }
+    if (sokh) {
+      controller.createPost.value!.priceIncluded?.add('cox');
+    }
+    if (flatPrice) {
+      controller.createPost.value!.priceIncluded?.add('apartment_fees');
+    }
+
+    controller.nextStep();
+    Get.toNamed(Routes.condition);
+  }
+
+  void initState() {
+    super.initState();
+    if (controller.cancelTerm.isNotEmpty) {
+      selectedCancelCondition = controller.cancelTerm.first.id!;
     }
   }
 
@@ -108,33 +134,81 @@ class _GeneralViewState extends State<GeneralView> {
                         child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        AdditionCard(title: startRentDate, child: Input()),
-                        space24,
                         AdditionCard(
-                            mark: true,
-                            title: contractCondition,
-                            child: DropDown(
-                              list: contractConditionValues,
-                              value: selectedContractCondition,
-                              onChanged: (value) {
-                                if (value != null) {
-                                  setState(() {
-                                    selectedContractCondition = value;
-                                  });
-                                }
-                              },
-                            )),
+                          title: startRentDate,
+                          child: GestureDetector(
+                            onTap: () async {
+                              final DateTime now = DateTime.now();
+                              final DateTime? selectedDate =
+                                  await showDatePicker(
+                                      context: context,
+                                      initialDate: now,
+                                      firstDate: DateTime(
+                                          now.year, now.month, now.day),
+                                      lastDate: DateTime(now.year + 10),
+                                      builder: (context, child) {
+                                        return DatePickerTheme(child: child!);
+                                      });
+                              if (selectedDate != null) {
+                                setState(() {
+                                  startRentDateValue =
+                                      selectedDate.toString().substring(0, 10);
+                                });
+                              }
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              height: 50,
+                              alignment: Alignment.centerLeft,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 13),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(color: black, width: 1),
+                              ),
+                              child: Text(
+                                startRentDateValue,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(color: black),
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (isMonth) space24,
+                        if (isMonth)
+                          AdditionCard(
+                              mark: true,
+                              title: contractCondition,
+                              child: DropDown(
+                                list: contractConditionValues,
+                                value: selectedContractCondition,
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    setState(() {
+                                      selectedContractCondition = value;
+                                    });
+                                  }
+                                },
+                              )),
                         space24,
                         AdditionCard(
                             mark: true,
                             title: cancelCondition,
                             child: DropDown(
                               list: cancelConditionValues,
-                              value: selectedCancelCondition,
+                              value: controller
+                                      .cancelTerm[selectedCancelCondition]
+                                      .name ??
+                                  "",
                               onChanged: (value) {
                                 if (value != null) {
+                                  int i = controller.cancelTerm.indexWhere(
+                                      (element) => element.name == value);
                                   setState(() {
-                                    selectedCancelCondition = value;
+                                    selectedCancelCondition = i;
                                   });
                                 }
                               },
@@ -163,30 +237,35 @@ class _GeneralViewState extends State<GeneralView> {
                             });
                           },
                         ),
-                        space24,
-                        AdditionCard(
-                            title: rentPrice,
-                            child: Input(
-                              textInputType: TextInputType.number,
-                              textInputAction: TextInputAction.next,
-                              onChange: (p0) {
-                                setState(() {
-                                  rentPriceValue = double.parse(p0);
-                                });
-                              },
-                            )),
-                        space24,
-                        AdditionCard(
-                            title: minimumRentDay,
-                            child: Input(
-                              textInputType: TextInputType.number,
-                              textInputAction: TextInputAction.next,
-                              onChange: (p0) {
-                                setState(() {
-                                  rentPriceValue = double.parse(p0);
-                                });
-                              },
-                            )),
+                        if (isDay) space24,
+                        if (isDay)
+                          AdditionCard(
+                              title: rentPrice,
+                              child: Input(
+                                textInputType: TextInputType.number,
+                                textInputAction: TextInputAction.next,
+                                onChange: (p0) {
+                                  setState(() {
+                                    rentPriceValue = double.parse(p0);
+                                  });
+                                },
+                              )),
+                        if (isDay) space24,
+                        if (isDay)
+                          AdditionCard(
+                              title: minimumRentDay,
+                              child: Input(
+                                textInputType: TextInputType.number,
+                                textInputAction: TextInputAction.next,
+                                inputFormatter: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
+                                onChange: (p0) {
+                                  setState(() {
+                                    minimumRentDayValue = int.tryParse(p0) ?? 1;
+                                  });
+                                },
+                              )),
                       ],
                     )),
                     space40,
@@ -211,128 +290,133 @@ class _GeneralViewState extends State<GeneralView> {
                             });
                           },
                         ),
-                        space24,
-                        AdditionCard(
-                            title: rentPrice,
-                            child: Input(
-                              textInputType: TextInputType.number,
-                              textInputAction: TextInputAction.next,
-                              onChange: (p0) {
-                                setState(() {
-                                  rentPriceValue = double.parse(p0);
-                                });
-                              },
-                            )),
-                        space24,
-                        AdditionCard(
-                            title: minimumRentDay,
-                            child: Input(
-                              textInputType: TextInputType.number,
-                              textInputAction: TextInputAction.next,
-                              onChange: (p0) {
-                                setState(() {
-                                  minimumRentDayValue = double.parse(p0);
-                                });
-                              },
-                            )),
+                        if (isMonth) space24,
+                        if (isMonth)
+                          AdditionCard(
+                              title: rentPrice,
+                              child: Input(
+                                textInputType: TextInputType.number,
+                                textInputAction: TextInputAction.next,
+                                onChange: (p0) {
+                                  setState(() {
+                                    rentPriceMonthValue =
+                                        double.tryParse(p0) ?? 0.0;
+                                  });
+                                },
+                              )),
+                        if (isMonth) space24,
+                        if (isMonth)
+                          AdditionCard(
+                              title: minimumRentMonth,
+                              child: Input(
+                                textInputType: TextInputType.number,
+                                textInputAction: TextInputAction.next,
+                                onChange: (p0) {
+                                  setState(() {
+                                    minimumRentMonthValue =
+                                        int.tryParse(p0) ?? 1;
+                                  });
+                                },
+                              )),
                       ],
                     )),
-                    space40,
-                    MenuContainer(
-                        child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          inPayment,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(
-                                  color: black, fontWeight: FontWeight.bold),
-                        ),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
-                          activeTrackColor: active,
-                          title: Text(
-                            flatPriceStr,
+                    if (isMonth) space40,
+                    if (isMonth)
+                      MenuContainer(
+                          child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            inPayment,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium!
                                 .copyWith(
-                                  color: black,
-                                ),
+                                    color: black, fontWeight: FontWeight.bold),
                           ),
-                          value: flatPrice,
-                          onChanged: (value) {
-                            setState(() {
-                              flatPrice = value;
-                            });
-                          },
-                        ),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
-                          activeTrackColor: active,
-                          title: Text(
-                            sokhStr,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  color: black,
-                                ),
+                          SwitchListTile.adaptive(
+                            contentPadding: EdgeInsets.zero,
+                            activeColor: Colors.white,
+                            activeTrackColor: active,
+                            title: Text(
+                              flatPriceStr,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                    color: black,
+                                  ),
+                            ),
+                            value: flatPrice,
+                            onChanged: (value) {
+                              setState(() {
+                                flatPrice = value;
+                              });
+                            },
                           ),
-                          value: sokh,
-                          onChanged: (value) {
-                            setState(() {
-                              sokh = value;
-                            });
-                          },
-                        ),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
-                          activeTrackColor: active,
-                          title: Text(
-                            eletronicStr,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  color: black,
-                                ),
+                          SwitchListTile.adaptive(
+                            contentPadding: EdgeInsets.zero,
+                            activeColor: Colors.white,
+                            activeTrackColor: active,
+                            title: Text(
+                              sokhStr,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                    color: black,
+                                  ),
+                            ),
+                            value: sokh,
+                            onChanged: (value) {
+                              setState(() {
+                                sokh = value;
+                              });
+                            },
                           ),
-                          value: electronic,
-                          onChanged: (value) {
-                            setState(() {
-                              electronic = value;
-                            });
-                          },
-                        ),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
-                          activeTrackColor: active,
-                          title: Text(
-                            internetStr,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  color: black,
-                                ),
+                          SwitchListTile.adaptive(
+                            contentPadding: EdgeInsets.zero,
+                            activeColor: Colors.white,
+                            activeTrackColor: active,
+                            title: Text(
+                              eletronicStr,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                    color: black,
+                                  ),
+                            ),
+                            value: electronic,
+                            onChanged: (value) {
+                              setState(() {
+                                electronic = value;
+                              });
+                            },
                           ),
-                          value: internet,
-                          onChanged: (value) {
-                            setState(() {
-                              internet = value;
-                            });
-                          },
-                        ),
-                      ],
-                    )),
+                          SwitchListTile.adaptive(
+                            contentPadding: EdgeInsets.zero,
+                            activeColor: Colors.white,
+                            activeTrackColor: active,
+                            title: Text(
+                              internetStr,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                    color: black,
+                                  ),
+                            ),
+                            value: internet,
+                            onChanged: (value) {
+                              setState(() {
+                                internet = value;
+                              });
+                            },
+                          ),
+                        ],
+                      )),
                     space40,
                     MenuContainer(
                         child: Column(
@@ -372,19 +456,20 @@ class _GeneralViewState extends State<GeneralView> {
                             });
                           },
                         ),
-                        AdditionCard(
-                            title: bailCondition,
-                            child: DropDown(
-                              list: bailConditionValues,
-                              value: selectedBailCondition,
-                              onChanged: (value) {
-                                if (value != null) {
-                                  setState(() {
-                                    selectedBailCondition = value;
-                                  });
-                                }
-                              },
-                            )),
+                        if (bailMoney)
+                          AdditionCard(
+                              title: bailCondition,
+                              child: DropDown(
+                                list: bailConditionValues,
+                                value: selectedBailCondition,
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    setState(() {
+                                      selectedBailCondition = value;
+                                    });
+                                  }
+                                },
+                              )),
                       ],
                     )),
                   ],
@@ -417,7 +502,7 @@ class _GeneralViewState extends State<GeneralView> {
                     GestureDetector(
                       onTap: () {
                         controller.prevStep();
-                        Get.toNamed(Routes.location);
+                        Navigator.pop(context);
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

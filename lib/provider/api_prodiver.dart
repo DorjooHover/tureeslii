@@ -9,12 +9,12 @@ class ApiRepository {
   final DioProvider apiProvider;
 
   // auth
-  Future<ErrorHandler> getUser() async {
+  getUser() async {
     try {
       final response = await apiProvider.get('/auth/user');
-      return ErrorHandler(success: true, data: User.fromJson(response['data']));
+      return User.fromJson(response['data']);
     } on DioException catch (e) {
-      return ErrorHandler(success: false, message: e.response?.data['message']);
+      rethrow;
     }
   }
 
@@ -44,7 +44,7 @@ class ApiRepository {
         "kitchen": post.kitchen,
         "singleBed": post.singleBed,
         "doubleBed": post.doubleBed,
-        "priceTerm": "MONTH",
+        "priceTerm": post.priceTerm,
         "price": post.price,
         "description": post.description,
         "plot": post.plot,
@@ -61,7 +61,6 @@ class ApiRepository {
         "acceptedGender": post.acceptedGender,
         "acceptedTenants": post.acceptedTenants,
         "petAllowed": post.petAllowed,
-        "petAllowed": post.smokingAllowed,
         "guestAllowed": post.guestAllowed,
         "balcony": post.balcony,
         "cancelTerm": post.cancelTerm,
@@ -82,10 +81,10 @@ class ApiRepository {
         "stove": post.stove,
         "tvCable": post.tvCable,
         "washingMachine": post.washingMachine,
-        "waterSupply": post.waterSupply,
         "wifi": post.wifi,
         "title": post.title,
       };
+      print(data);
       final res = await apiProvider.post('/posts', data: data);
       print(res);
       return true;
@@ -181,6 +180,27 @@ class ApiRepository {
     }
   }
 
+  Future<bool> getMobileVerifyCode() async {
+    try {
+      final res = await apiProvider.get(
+        '/auth/requestVerifyCodeMobile',
+      );
+      return res['success'];
+    } on DioException catch (e) {
+      throw Exception("Алдаа гарлаа");
+    }
+  }
+
+  Future<bool> sendMobileVerifyCode(String code) async {
+    final data = {'code': code};
+    try {
+      final res = await apiProvider.post('/auth/verifyMobile', data: data);
+      return res['success'];
+    } on DioException catch (e) {
+      throw Exception("Алдаа гарлаа");
+    }
+  }
+
   Future<bool> verifyEmailCode(String code) async {
     try {
       final data = {"code": code};
@@ -191,7 +211,63 @@ class ApiRepository {
     }
   }
 
+  // verification
+  Future<bool> verificationUser(String frontCard, String backCard,
+      String bankAccount, String bankName, String bankAccName) async {
+    try {
+      final data = {
+        "front": frontCard,
+        "back": backCard,
+        "bankAccNo": bankAccount,
+        "bankName": bankName,
+        "bankAccName": bankAccName,
+      };
+
+      final res =
+          await apiProvider.post('/user/verificationRequest', data: data);
+
+      return res['success'];
+    } on DioException catch (e) {
+      throw Exception("Алдаа гарлаа");
+    }
+  }
+
+// config
+  Future<Config> getConfigById(String id) async {
+    try {
+      final response = await apiProvider.get('/admin/config/$id');
+      return Config.fromJson(response);
+    } on DioException catch (e) {
+      throw Exception("Алдаа гарлаа");
+    }
+  }
+
+  // cancel term
+  Future<List<Cancelation>> getCancelation() async {
+    try {
+      final response = await apiProvider.get('/cancelation/get');
+      return (response['data'] as List)
+          .map((e) => Cancelation.fromJson(e))
+          .toList();
+    } on DioException catch (e) {
+      rethrow;
+    }
+  }
+
+  // category
+  Future<List<Category>> getCategories() async {
+    try {
+      final response = await apiProvider.get('/category');
+
+      return (response['data'] as List)
+          .map((e) => Category.fromJson(e))
+          .toList();
+    } on DioException catch (e) {
+      throw Exception("Алдаа гарлаа");
+    }
+  }
   // posts
+
   Future<List<Post>> getAllPosts(int? skip, int? take, SortData? sortData,
       List<FilterData>? filterData) async {
     try {

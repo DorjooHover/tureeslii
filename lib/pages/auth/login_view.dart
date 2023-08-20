@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:landlord/controllers/auth_controller.dart';
 import 'package:landlord/controllers/main_controller.dart';
+import 'package:landlord/model/models.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
@@ -21,9 +22,16 @@ class _LoginViewState extends State<LoginView> {
   String username = "";
   String passwordValue = "";
   loginFunc() async {
-    await controller.login(username, passwordValue);
     if (loginKey.currentState!.validate()) {
       // loginKey.currentState!.save();
+      final user = await controller.login(username, passwordValue);
+
+      if (user is User) {
+        Get.toNamed(Routes.main);
+        mainController.refreshUser();
+      } else {
+        Get.snackbar('Алдаа', user.toString());
+      }
     }
   }
 

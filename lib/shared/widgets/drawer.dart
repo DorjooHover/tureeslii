@@ -45,41 +45,43 @@ class MainDrawer extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(origin),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    CircleAvatar(
-                      radius: 24,
-                      backgroundImage: NetworkImage(controller
-                                      .user?.profilePic !=
-                                  "" &&
-                              controller.user?.profilePic != null
-                          ? controller.user!.profilePic!
-                          : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'),
-                    ),
-                    space16,
-                    Text(
-                      controller.user?.lastname ?? '',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: black, fontWeight: FontWeight.bold),
-                    )
-                  ],
-                ),
-                IconButton(
-                    onPressed: () {
-                      Get.toNamed(Routes.personal);
-                    },
-                    icon: const Icon(
+            child: GestureDetector(
+              onTap: () {
+                Get.toNamed(Routes.personal);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      CircleAvatar(
+                        radius: 24,
+                        backgroundImage: NetworkImage(controller
+                                        .user?.profilePic !=
+                                    "" &&
+                                controller.user?.profilePic != null
+                            ? controller.user!.profilePic!
+                            : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'),
+                      ),
+                      space16,
+                      Text(
+                        controller.user?.lastname ?? '',
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: black, fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: origin),
+                    child: Icon(
                       Icons.arrow_forward_ios,
                       size: 24,
                       color: gray,
-                    ))
-              ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const Divider(

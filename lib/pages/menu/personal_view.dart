@@ -95,7 +95,13 @@ class _PersonalViewState extends State<PersonalView> {
                   child: Input(
                       value: controller.user!.email!,
                       suffixIcon: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          if (controller.user!.emailVerified != null &&
+                              !controller.user!.emailVerified!) {
+                            controller.sendEmailVerification();
+                            Get.snackbar('Мэдэгдэл', emailVerificationString);
+                          }
+                        },
                         child: Padding(
                           padding: const EdgeInsets.all(13),
                           child: Obx(
@@ -116,7 +122,66 @@ class _PersonalViewState extends State<PersonalView> {
                   child: Input(
                       value: phoneValue,
                       suffixIcon: GestureDetector(
-                        onTap: () {},
+                        onTap: () async {
+                          if (controller.user!.mobileVerified != null &&
+                              !controller.user!.mobileVerified!) {
+                            await controller.getMobileVerification();
+
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertContainer(
+                                  child: [
+                                    Text(
+                                      otpString,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(color: black),
+                                    ),
+                                    space20,
+                                    OtpView(),
+                                    space36,
+                                    MainButton(
+                                      onPressed: () async {
+                                        if (!controller.otp.value
+                                            .contains('-')) {
+                                          final otp = await controller
+                                              .sendMobileVerification();
+                                          if (otp) {
+                                            Navigator.pop(context);
+                                            successVerified(context);
+                                          }
+                                        } else {
+                                          Get.snackbar('Алдаа', "Дутуу байна");
+                                        }
+                                      },
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: small, horizontal: 24),
+                                      text: verify,
+                                    ),
+                                    space24,
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: TextButton(
+                                        onPressed: () {},
+                                        child: Text(
+                                          againSend,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .copyWith(color: orange),
+                                        ),
+                                      ),
+                                    ),
+                                    space36
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        },
                         child: Padding(
                           padding: const EdgeInsets.all(13),
                           child: Obx(
@@ -229,4 +294,32 @@ class _PersonalViewState extends State<PersonalView> {
       ),
     );
   }
+}
+
+successVerified(
+  BuildContext context,
+) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return AlertContainer(
+          child: [
+            SvgPicture.asset(
+              iconSuccess,
+              width: 36,
+              height: 36,
+            ),
+            space20,
+            Text(
+              verifiedPhone,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(color: black),
+              textAlign: TextAlign.center,
+            ),
+            space64,
+          ],
+        );
+      });
 }
