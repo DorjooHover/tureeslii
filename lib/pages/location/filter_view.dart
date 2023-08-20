@@ -229,51 +229,51 @@ class _FilterViewState extends State<FilterView> {
                             ),
                           )),
                       child: AdditionCard(
-                          title: startRentDate,
-                          color: black,
-                          child: ShadowContainer(
-                              child: GestureDetector(
-                                  onTap: () async {
-                                    final DateTime now = DateTime.now();
-                                    final DateTime? selectedDate =
-                                        await showDatePicker(
-                                            context: context,
-                                            initialDate: now,
-                                            firstDate: DateTime(
-                                                now.year, now.month, now.day),
-                                            lastDate: DateTime(now.year + 10),
-                                            builder: (context, child) {
-                                              return DatePickerTheme(
-                                                  child: child!);
-                                            });
-                                    if (selectedDate != null) {
-                                      setState(() {
-                                        startDate = selectedDate.toString();
+                        title: startRentDate,
+                        color: black,
+                        child: ShadowContainer(
+                          child: GestureDetector(
+                            onTap: () async {
+                              final DateTime now = DateTime.now();
+                              final DateTime? selectedDate =
+                                  await showDatePicker(
+                                      context: context,
+                                      initialDate: now,
+                                      firstDate: DateTime(
+                                          now.year, now.month, now.day),
+                                      lastDate: DateTime(now.year + 10),
+                                      builder: (context, child) {
+                                        return DatePickerTheme(child: child!);
                                       });
-                                    }
-                                  },
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: 50,
-                                    alignment: Alignment.centerLeft,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 13),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(5),
-                                      border:
-                                          Border.all(color: black, width: 1),
-                                    ),
-                                    child: Text(
-                                      startDate != ""
-                                          ? startDate.substring(0, 10)
-                                          : startDate,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .copyWith(color: black),
-                                    ),
-                                  )))),
+                              if (selectedDate != null) {
+                                setState(() {
+                                  startDate = selectedDate.toString();
+                                });
+                              }
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              height: 50,
+                              alignment: Alignment.centerLeft,
+                              padding: EdgeInsets.symmetric(horizontal: 13),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(color: black, width: 1),
+                              ),
+                              child: Text(
+                                startDate != ""
+                                    ? startDate.substring(0, 10)
+                                    : startDate,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(color: black),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                     space36,
                     space4,
