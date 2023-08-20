@@ -9,6 +9,7 @@ import 'package:tureeslii/theme/theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DenpendencyInjection.init();
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle());
@@ -22,17 +23,42 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 640),
-      child: GetMaterialApp(
-        title: 'Tureeslii',
-        theme: MyTheme.light,
-        darkTheme: MyTheme.dark,
-        themeMode: ThemeMode.light,
-        debugShowCheckedModeBanner: false,
-        initialBinding: AppBinding(),
-        initialRoute: Routes.splash,
-        getPages: Routes.routes,
+    return GetMaterialApp(
+      title: 'Tureeslii',
+      theme: MyTheme.light,
+      darkTheme: MyTheme.dark,
+      themeMode: ThemeMode.light,
+      debugShowCheckedModeBanner: false,
+      initialBinding: AppBinding(),
+      initialRoute: Routes.splash,
+      getPages: Routes.routes,
+      builder: (context, child) {
+        return LayoutBuilder(builder: (context, constraints) {
+          if (constraints.maxWidth > 640) {
+            return TabletLayout(child: child!);
+          } else {
+            return child!;
+          }
+        });
+      },
+    );
+  }
+}
+
+class TabletLayout extends StatelessWidget {
+  TabletLayout({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Container(
+          constraints:
+              BoxConstraints(maxWidth: 640), // Set your desired max width
+          child: child,
+        ),
       ),
     );
   }
