@@ -161,7 +161,9 @@ class LocationDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      width: MediaQuery.of(context).size.width * 0.75,
+      width: MediaQuery.of(context).size.width > 640
+          ? 640 * 0.75
+          : MediaQuery.of(context).size.width * 0.75,
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: origin),

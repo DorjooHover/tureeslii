@@ -225,6 +225,8 @@ class _LocationViewState extends State<LocationView>
                     )),
                 Positioned(
                   bottom: MediaQuery.of(context).padding.bottom,
+                  right: 0,
+                  left: 0,
                   child: AnimatedContainer(
                       constraints: BoxConstraints(
                         maxHeight: MediaQuery.of(context).size.height * 0.6,
@@ -476,15 +478,16 @@ class _LocationViewState extends State<LocationView>
                     bottom: MediaQuery.of(context).padding.bottom,
                     left: 0,
                     right: 0,
-                    child: Container(
-                      color: bgGray,
-                      width: double.infinity,
-                      alignment: Alignment.centerLeft,
-                      padding: EdgeInsets.only(top: 18, right: 16, bottom: 32),
-                      child: GestureDetector(
-                        onTap: () {
-                          nextStep();
-                        },
+                    child: GestureDetector(
+                      onTap: () {
+                        nextStep();
+                      },
+                      child: Container(
+                        color: bgGray,
+                        width: double.infinity,
+                        alignment: Alignment.centerLeft,
+                        padding:
+                            EdgeInsets.only(top: 18, right: 16, bottom: 32),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
@@ -513,15 +516,25 @@ class _LocationViewState extends State<LocationView>
                 });
               }
             },
+            onDrawerChanged: (isOpened) {
+              if (isOpened != isDrawer) {
+                setState(() {
+                  isDrawer = isOpened;
+                });
+              }
+            },
           ),
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
-            right: !isDrawer ? 0 : MediaQuery.of(context).size.width * 0.75,
+            right: !isDrawer
+                ? 0
+                : MediaQuery.of(context).size.width > 640
+                    ? 640 * 0.75
+                    : MediaQuery.of(context).size.width * 0.75,
             curve: Curves.ease,
             bottom: MediaQuery.of(context).size.height * 0.25,
             child: GestureDetector(
               onHorizontalDragUpdate: (details) {
-                print(details.delta.dx);
                 if (details.delta.dx > 1) {
                   locationKey.currentState!.openEndDrawer();
                   setState(() {

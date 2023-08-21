@@ -147,7 +147,8 @@ class _GeneralViewState extends State<GeneralView> {
                                           now.year, now.month, now.day),
                                       lastDate: DateTime(now.year + 10),
                                       builder: (context, child) {
-                                        return DatePickerTheme(child: child!);
+                                        return DatePickerThemeWidget(
+                                            child: child!);
                                       });
                               if (selectedDate != null) {
                                 setState(() {
@@ -494,8 +495,6 @@ class _GeneralViewState extends State<GeneralView> {
                 color: bgGray,
                 width: double.infinity,
                 alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(
-                    top: 18, right: 16, left: 16, bottom: 32),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -504,40 +503,48 @@ class _GeneralViewState extends State<GeneralView> {
                         controller.prevStep();
                         Navigator.pop(context);
                       },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            Icons.arrow_back_ios_rounded,
-                            color: prime,
-                            size: 24,
-                          ),
-                          space8,
-                          Text(
-                            prev,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: 18, right: 16, left: 16, bottom: 32),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.arrow_back_ios_rounded,
+                              color: prime,
+                              size: 24,
+                            ),
+                            space8,
+                            Text(
+                              prev,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     GestureDetector(
                       onTap: () {
                         nextStep();
                       },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            next,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          space8,
-                          Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            color: prime,
-                            size: 24,
-                          )
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: 18, right: 16, left: 16, bottom: 32),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                              next,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            space8,
+                            Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              color: prime,
+                              size: 24,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ],

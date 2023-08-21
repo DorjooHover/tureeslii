@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:landlord/shared/constants/colors.dart';
 
-class DatePickerTheme extends StatelessWidget {
-  const DatePickerTheme({super.key, required this.child});
+class DatePickerThemeWidget extends StatelessWidget {
+  const DatePickerThemeWidget({super.key, required this.child});
   final Widget child;
   @override
   Widget build(BuildContext context) {

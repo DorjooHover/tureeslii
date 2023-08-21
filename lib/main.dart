@@ -33,7 +33,32 @@ class MyApp extends StatelessWidget {
         initialBinding: AppBinding(),
         initialRoute: Routes.splash,
         getPages: Routes.routes,
+        builder: (context, child) {
+          return LayoutBuilder(builder: (context, constraints) {
+            if (constraints.maxWidth > 640) {
+              return TabletLayout(child: child!);
+            } else {
+              return child!;
+            }
+          });
+        },
       ),
     );
+  }
+}
+
+class TabletLayout extends StatelessWidget {
+  const TabletLayout({super.key, required this.child});
+  final Widget child;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Center(
+      child: Container(
+        width: 640,
+        alignment: Alignment.center,
+        child: child,
+      ),
+    ));
   }
 }
