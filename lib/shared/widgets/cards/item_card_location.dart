@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
+import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class LocationCard extends StatelessWidget {
@@ -48,15 +50,18 @@ class LocationCard extends StatelessWidget {
                         ],
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(origin),
-                        child: Image.network(
-                          data.postAttachments != null &&
-                                  data.postAttachments?[0].fileThumb != null
-                              ? '$fileUrl${data.postAttachments![0].fileThumb}'
-                              : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-                          fit: BoxFit.cover,
-                        ),
-                      )),
+                          borderRadius: BorderRadius.circular(origin),
+                          child: CachedNetworkImage(
+                            imageUrl: data.postAttachments != null &&
+                                    data.postAttachments?[0].fileThumb != null
+                                ? '$fileUrl${data.postAttachments![0].fileThumb}'
+                                : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(), // Placeholder widget while loading
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error), // Widget to display on error
+                          ))),
                   Positioned(
                       top: 0,
                       left: 0,
@@ -78,9 +83,13 @@ class LocationCard extends StatelessWidget {
                       top: small,
                       left: small,
                       child: GestureDetector(
-                          onTap: ()  {
-                            
-                                 mainController.togglePost(id:data.id!, post: data);
+                          onTap: () {
+                            if (mainController.user != null) {
+                              mainController.togglePost(
+                                  id: data.id!, post: data);
+                            } else {
+                              Get.toNamed(Routes.login);
+                            }
                           },
                           child: Obx(() => SvgPicture.asset(mainController
                                   .savedPosts

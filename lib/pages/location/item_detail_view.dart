@@ -103,7 +103,7 @@ class ItemDetailView extends StatelessWidget {
                                                   : now,
                                           lastDate: DateTime(date.year + 10),
                                           builder: (context, child) {
-                                            return DatePickerTheme(
+                                            return DatePickerThemeWidget(
                                                 child: child!);
                                           });
                                   if (selectedDate != null) {
@@ -171,7 +171,7 @@ class ItemDetailView extends StatelessWidget {
                                           firstDate: end,
                                           lastDate: DateTime(date.year + 10),
                                           builder: (context, child) {
-                                            return DatePickerTheme(
+                                            return DatePickerThemeWidget(
                                                 child: child!);
                                           });
                                   if (selectedDate != null) {

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tureeslii/controllers/auth_controller.dart';
@@ -21,13 +22,17 @@ class AuthView extends StatelessWidget {
           child: Stack(
             children: [
               Positioned(
-                top: 0,
-                bottom: 0,
-                child: Image.network(
-                  'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-                  fit: BoxFit.cover,
-                ),
-              ),
+                  top: 0,
+                  bottom: 0,
+                  child: CachedNetworkImage(
+                    imageUrl:
+                        'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) =>
+                         Center(child: SizedBox(child: CircularProgressIndicator(),),), // Placeholder widget while loading
+                    errorWidget: (context, url, error) =>
+                        Icon(Icons.error), // Widget to display on error
+                  )),
               Positioned(
                   child: Container(
                 color: Colors.black.withOpacity(0.8),
@@ -118,6 +123,7 @@ class AuthView extends StatelessWidget {
                                           onTap: () {
                                             mainController.city.value = e;
                                             Navigator.pop(context);
+                                            Get.toNamed(Routes.main);
                                           },
                                           child: Container(
                                             padding: const EdgeInsets.symmetric(

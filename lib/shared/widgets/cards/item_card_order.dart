@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tureeslii/model/models.dart';
@@ -13,21 +14,21 @@ class OrderCard extends StatelessWidget {
   final RentRequest data;
   @override
   Widget build(BuildContext context) {
-    Color color = Colors.white;
+    // Color color = Colors.white;
 
     bool arrow = false;
     switch (data.status) {
       case 'success':
-        color = green;
+        // color = green;
 
         arrow = true;
         break;
       case 'UNPAID':
-        color = warning;
+        // color = warning;
         arrow = true;
         break;
       case 'danger':
-        color = red;
+        // color = red;
 
         break;
 
@@ -87,16 +88,22 @@ class OrderCard extends StatelessWidget {
                       width: w,
                       height: h,
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(origin),
-                        child: Image.network(
-                          data.post!.postAttachments != null &&
-                                  data.post!.postAttachments?[0].fileThumb !=
-                                      null
-                              ? '$fileUrl${data.post!.postAttachments![0].fileThumb}'
-                              : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                          borderRadius: BorderRadius.circular(origin),
+                          child: CachedNetworkImage(
+                            imageUrl: data.post!.postAttachments != null &&
+                                    data.post!.postAttachments?[0].fileThumb !=
+                                        null
+                                ? '$fileUrl${data.post!.postAttachments![0].fileThumb}'
+                                : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Center(
+                              child: SizedBox(
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error), // Widget to display on error
+                          )),
                     ),
                   );
                 },

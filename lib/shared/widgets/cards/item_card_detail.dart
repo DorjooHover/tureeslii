@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
+import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class ItemDetailCard extends StatefulWidget {
@@ -75,13 +77,17 @@ class _ItemDetailCardState extends State<ItemDetailCard> {
                                       ],
                                     ),
                                     child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.circular(origin),
-                                      child: Image.network(
-                                        '$fileUrl${item.fileThumb}',
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ))),
+                                        borderRadius:
+                                            BorderRadius.circular(origin),
+                                        child: CachedNetworkImage(
+                                          imageUrl: '$fileUrl${item.fileThumb}',
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                           Center(child: SizedBox(child: CircularProgressIndicator(),),),
+                                          errorWidget: (context, url, error) =>
+                                              Icon(Icons
+                                                  .error), // Widget to display on error
+                                        )))),
                           ],
                         ),
                       ),
@@ -132,7 +138,11 @@ class _ItemDetailCardState extends State<ItemDetailCard> {
                         value: '',
                         row: false,
                         onTap: () {
-                          controller.togglePost(id: widget.data.id!);
+                          if (controller.user != null) {
+                            controller.togglePost(id: widget.data.id!);
+                          } else {
+                            Get.toNamed(Routes.login);
+                          }
                         },
                       ),
                     ),

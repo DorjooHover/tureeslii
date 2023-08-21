@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/pages/location/item_detail_view.dart';
 import 'package:tureeslii/pages/no_data.dart';
+import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class BookmarkView extends StatefulWidget {
@@ -34,33 +35,44 @@ class _HomeViewState extends State<BookmarkView> {
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: origin, vertical: 24),
         child: Obx(
-          () => mainController.savedPosts.isNotEmpty
-              ? ListView.builder(
-                  itemBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: origin,
-                    ),
-                    child: BookmarkCard(
-                      onPress: () {
-                        Get.to(
-                            () => ItemDetailView(
-                                  data: mainController.savedPosts[index],
-                                ),
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeIn);
+          () => mainController.user != null
+              ? mainController.savedPosts.isNotEmpty
+                  ? ListView.builder(
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: origin,
+                        ),
+                        child: BookmarkCard(
+                          onPress: () {
+                            Get.to(
+                                () => ItemDetailView(
+                                      data: mainController.savedPosts[index],
+                                    ),
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeIn);
+                          },
+                          data: mainController.savedPosts[index],
+                          active: true,
+                          onBookmark: () {
+                            if (mainController.user != null) {
+                              mainController.togglePost(
+                                  id: mainController.savedPosts[index].id!);
+                            } else {
+                              Get.toNamed(Routes.login);
+                            }
+                          },
+                        ),
+                      ),
+                      itemCount: mainController.savedPosts.length,
+                    )
+                  : const Center(child: NoDataView())
+              : Center(
+                  child: MainButton(
+                      onPressed: () {
+                        Get.toNamed(Routes.login);
                       },
-                      data: mainController.savedPosts[index],
-                      active: true,
-                      onBookmark: () {
-                        mainController.togglePost(
-                            id: mainController.savedPosts[index].id!);
-                        getSavedPost();
-                      },
-                    ),
-                  ),
-                  itemCount: mainController.savedPosts.length,
-                )
-              : const Center(child: NoDataView()),
+                      text: login),
+                ),
         ));
   }
 }

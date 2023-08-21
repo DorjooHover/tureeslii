@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tureeslii/shared/index.dart';
@@ -21,12 +22,15 @@ class ImageDialogWidget extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: Image.network(
-                      '$path',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                      borderRadius: BorderRadius.circular(30),
+                      child: CachedNetworkImage(
+                        imageUrl: path,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            Center(child: SizedBox(child: CircularProgressIndicator(),),),
+                        errorWidget: (context, url, error) =>
+                            Icon(Icons.error), // Widget to display on error
+                      )),
                 ),
               ],
             ),

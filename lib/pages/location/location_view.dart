@@ -68,7 +68,7 @@ class _LocationViewState extends State<LocationView> {
       setState(() {
         isLoading = false;
       });
-    } on DioException catch (e) {
+    } on DioException {
       setState(() {
         isLoading = false;
       });
@@ -180,227 +180,239 @@ class _LocationViewState extends State<LocationView> {
   @override
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
-    return Stack(
-      children: [
-        startLocation != null
-            ? GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition: _kGooglePlex,
-                onMapCreated: (GoogleMapController controller) async {
-                  _controller.complete(controller);
-                  _customInfoWindowController.googleMapController = controller;
-                },
-                markers: {
-                  // Marker(
-                  //   markerId: MarkerId("currentLocation"),
-                  //   position: LatLng(currentLocation!.latitude!,
-                  //       currentLocation!.longitude!),
-                  // ),
-                  ...markers
-                },
-              )
-            : isData
-                ? const Center(
-                    child: Text('Түр хүлээнэ үү...'),
-                  )
-                : Center(
-                    child: Text(
-                        _bodyHeight < 10 && _isDragUp ? 'Зар олдсонгүй' : ""),
-                  ),
-        CustomInfoWindow(
-          controller: _customInfoWindowController,
-          height: 75,
-          width: 150,
-          offset: 50,
-        ),
-        Positioned(
-          left: origin,
-          right: origin,
-          bottom: (selected != -1 && !_isDragUp
-                  ? _maxHeight - 160
-                  : _headerHeight) +
-              26,
-          child: selected != -1
-              ? AnimatedContainer(
-                  duration: const Duration(milliseconds: 600),
-                  curve: Curves.easeOut,
-                  height: selected != -1 ? 160 : 0,
-                  child: Obx(
-                    () => LocationCard(
-                      data: mainController.allPosts
-                          .firstWhere((Post post) => post.id == selected),
-                      onTap: () {
-                        Get.to(() => ItemDetailView(
-                              data: mainController.allPosts
-                                  .firstWhere((post) => post.id == selected),
-                            ));
-                      },
+    return SizedBox(
+      height: _size.height,
+      width: double.infinity,
+      child: Stack(
+        children: [
+          startLocation != null
+              ? GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: _kGooglePlex,
+                  onMapCreated: (GoogleMapController controller) async {
+                    _controller.complete(controller);
+                    _customInfoWindowController.googleMapController =
+                        controller;
+                  },
+                  markers: {
+                    // Marker(
+                    //   markerId: MarkerId("currentLocation"),
+                    //   position: LatLng(currentLocation!.latitude!,
+                    //       currentLocation!.longitude!),
+                    // ),
+                    ...markers
+                  },
+                )
+              : isData
+                  ? const Center(
+                      child: Text('Түр хүлээнэ үү...'),
+                    )
+                  : Center(
+                      child: Text(
+                          _bodyHeight < 10 && _isDragUp ? 'Зар олдсонгүй' : ""),
                     ),
-                  ))
-              : const SizedBox(),
-        ),
-        Positioned(
-          bottom: 0.0,
-          child: AnimatedContainer(
-              constraints: BoxConstraints(
-                maxHeight: _maxHeight,
-                minHeight: _headerHeight,
-              ),
-              curve: Curves.easeOut,
-              height: _bodyHeight,
-              duration: const Duration(milliseconds: 600),
-              child: GestureDetector(
-                onVerticalDragUpdate: (DragUpdateDetails data) {
-                  double _draggedAmount = _size.height - data.globalPosition.dy;
+          CustomInfoWindow(
+            controller: _customInfoWindowController,
+            height: 75,
+            width: 150,
+            offset: 50,
+          ),
+          Positioned(
+            left: origin,
+            right: origin,
+            bottom: (selected != -1 && !_isDragUp
+                    ? _maxHeight - 160
+                    : _headerHeight) +
+                26,
+            child: selected != -1
+                ? AnimatedContainer(
+                    duration: const Duration(milliseconds: 600),
+                    curve: Curves.easeOut,
+                    height: selected != -1 ? 160 : 0,
+                    child: Obx(
+                      () => LocationCard(
+                        data: mainController.allPosts
+                            .firstWhere((Post post) => post.id == selected),
+                        onTap: () {
+                          Get.to(() => ItemDetailView(
+                                data: mainController.allPosts
+                                    .firstWhere((post) => post.id == selected),
+                              ));
+                        },
+                      ),
+                    ))
+                : const SizedBox(),
+          ),
+          Positioned(
+            bottom: 0.0,
+            left: origin,
+            right: origin,
+            child: AnimatedContainer(
+                constraints: BoxConstraints(
+                  maxHeight: _maxHeight,
+                  minHeight: _headerHeight,
+                ),
+                curve: Curves.easeOut,
+                height: _bodyHeight,
+                duration: const Duration(milliseconds: 600),
+                child: GestureDetector(
+                  onVerticalDragUpdate: (DragUpdateDetails data) {
+                    double _draggedAmount =
+                        _size.height - data.globalPosition.dy;
 
-                  if (_isDragUp) {
-                    if (_draggedAmount < 10.0)
-                      setState(() {
-                        _bodyHeight = _draggedAmount;
-                      });
-                    if (_draggedAmount > 10.0)
-                      setState(() {
-                        _bodyHeight = _maxHeight - (selected != -1 ? 160 : 0);
-                      });
-                  } else {
-                    /// the _draggedAmount cannot be higher than maxHeight b/c maxHeight is _dragged Amount + header Height
-                    double _downDragged = _maxHeight - _draggedAmount;
-                    if (_downDragged < 5.0) {
-                      setState(() {
-                        _bodyHeight =
-                            _draggedAmount - (selected != -1 ? 160 : 0);
-                      });
+                    if (_isDragUp) {
+                      if (_draggedAmount < 10.0)
+                        setState(() {
+                          _bodyHeight = _draggedAmount;
+                        });
+                      if (_draggedAmount > 10.0)
+                        setState(() {
+                          _bodyHeight = _maxHeight - (selected != -1 ? 160 : 0);
+                        });
+                    } else {
+                      /// the _draggedAmount cannot be higher than maxHeight b/c maxHeight is _dragged Amount + header Height
+                      double _downDragged = _maxHeight - _draggedAmount;
+                      if (_downDragged < 5.0) {
+                        setState(() {
+                          _bodyHeight =
+                              _draggedAmount - (selected != -1 ? 160 : 0);
+                        });
+                      }
+                      ;
+                      if (_downDragged > 5.0) {
+                        setState(() {
+                          _bodyHeight = 0.0;
+                        });
+                      }
+                      ;
                     }
-                    ;
-                    if (_downDragged > 5.0) {
-                      setState(() {
-                        _bodyHeight = 0.0;
-                      });
-                    }
-                    ;
-                  }
-                },
-                onVerticalDragEnd: (DragEndDetails data) {
-                  setState(() {
-                    _isDragUp = !_isDragUp;
-                  });
-                },
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 40),
-                      width: _size.width,
-                      alignment: Alignment.center,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(20.0),
-                          topLeft: Radius.circular(20.0),
+                  },
+                  onVerticalDragEnd: (DragEndDetails data) {
+                    setState(() {
+                      _isDragUp = !_isDragUp;
+                    });
+                  },
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        width: _size.width,
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(20.0),
+                            topLeft: Radius.circular(20.0),
+                          ),
+                        ),
+                        height: _headerHeight,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            space13,
+                            Container(
+                              width: 50,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                  color: prime,
+                                  borderRadius: BorderRadius.circular(2.5)),
+                            ),
+                            space24,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                MainIconButton(
+                                  onPressed: () {
+                                    Get.to(FilterView(
+                                      func: (List<FilterData> data) {
+                                        setState(() {
+                                          filterData = data;
+                                        });
+                                        addMarkers();
+                                      },
+                                    ),
+                                        transition: Transition.cupertino,
+                                        duration:
+                                            const Duration(milliseconds: 300));
+                                  },
+                                  back: true,
+                                  text: search,
+                                  color: prime,
+                                  child: SvgPicture.asset(iconSearch),
+                                ),
+                                MainIconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      isSort = !isSort;
+                                    });
+                                  },
+                                  back: true,
+                                  text: sort,
+                                  child: SvgPicture.asset(iconSort),
+                                )
+                              ],
+                            )
+                          ],
                         ),
                       ),
-                      height: _headerHeight,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          space13,
-                          Container(
-                            width: 50,
-                            height: 4,
-                            decoration: BoxDecoration(
-                                color: prime,
-                                borderRadius: BorderRadius.circular(2.5)),
-                          ),
-                          space24,
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              MainIconButton(
-                                onPressed: () {
-                                  Get.to(FilterView(
-                                    func: (List<FilterData> data) {
-                                      setState(() {
-                                        filterData = data;
-                                      });
-                                      addMarkers();
-                                    },
+                      Expanded(
+                          child: Obx(
+                        () => mainController.allPosts.isNotEmpty
+                            ? SingleChildScrollView(
+                                child: Container(
+                                  width: _size.width,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: origin, vertical: 12),
+                                  color: Colors.white,
+                                  child: Column(
+                                    children: <Widget>[
+                                      ...mainController.allPosts
+                                          .map((Post post) {
+                                        return Obx(
+                                          () => BookmarkCard(
+                                            onPress: () {
+                                              Get.to(() => ItemDetailView(
+                                                    data: post,
+                                                  ));
+                                            },
+                                            active: mainController.savedPosts
+                                                .where((p0) => p0.id == post.id)
+                                                .isNotEmpty,
+                                            data: post,
+                                            onBookmark: () async {
+                                              await mainController.togglePost(
+                                                  id: post.id!, post: post);
+                                            },
+                                          ),
+                                        );
+                                      }).toList()
+                                    ],
                                   ),
-                                      transition: Transition.cupertino,
-                                      duration:
-                                          const Duration(milliseconds: 300));
-                                },
-                                back: true,
-                                text: search,
-                                color: prime,
-                                child: SvgPicture.asset(iconSearch),
-                              ),
-                              MainIconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    isSort = !isSort;
-                                  });
-                                },
-                                back: true,
-                                text: sort,
-                                child: SvgPicture.asset(iconSort),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                        child: Obx(
-                      () => mainController.allPosts.isNotEmpty
-                          ? SingleChildScrollView(
-                              child: Container(
-                                width: _size.width,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: origin, vertical: 12),
-                                color: Colors.white,
-                                child: Column(
-                                  children: <Widget>[
-                                    ...mainController.allPosts.map((Post post) {
-                                      return Obx(
-                                        () => BookmarkCard(
-                                          onPress: () {
-                                            Get.to(() => ItemDetailView(
-                                                  data: post,
-                                                ));
-                                          },
-                                          active: mainController.savedPosts
-                                              .where((p0) => p0.id == post.id)
-                                              .isNotEmpty,
-                                          data: post,
-                                          onBookmark: () async {
-                                            await mainController.togglePost(
-                                                id: post.id!, post: post);
-                                          },
-                                        ),
-                                      );
-                                    }).toList()
-                                  ],
                                 ),
+                              )
+                            : Center(
+                                child: _bodyHeight > 10
+                                    ? NoDataView()
+                                    : Container(),
                               ),
-                            )
-                          : Center(
-                              child:
-                                  _bodyHeight > 10 ? NoDataView() : Container(),
-                            ),
-                    )),
-                  ],
-                ),
-              )),
-        ),
-        Positioned(
-          bottom: 0,
-          child: AnimatedContainer(
-            height: isSort ? sortMaxHeight : 0.0,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.fastOutSlowIn,
-            child: dragBottomSheet(),
+                      )),
+                    ],
+                  ),
+                )),
           ),
-        ),
-      ],
+          Positioned(
+            bottom: 0,
+            right: 0,
+            left: 0,
+            child: AnimatedContainer(
+              height: isSort ? sortMaxHeight : 0.0,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.fastOutSlowIn,
+              child: dragBottomSheet(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -449,7 +461,7 @@ class _LocationViewState extends State<LocationView> {
                   .map(
                     (e) => GestureDetector(
                       onTap: () {
-                        // mainController.getAllPosts(page, limit, e, filterData);
+                        mainController.getAllPosts(page, limit, e, filterData);
                         setState(() {
                           sortData = e;
                           isSort = !isSort;

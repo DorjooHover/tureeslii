@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:tureeslii/model/models.dart';
@@ -84,15 +85,20 @@ class _OrderAcceptedViewState extends State<OrderAcceptedView> {
                                             ],
                                           ),
                                           child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(origin),
-                                            child: Image.network(
-                                              item.fileThumb != null
-                                                  ? '$fileUrl${item.fileThumb}'
-                                                  : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ))),
+                                              borderRadius:
+                                                  BorderRadius.circular(origin),
+                                              child: CachedNetworkImage(
+                                                imageUrl: item.fileThumb != null
+                                                    ? '$fileUrl${item.fileThumb}'
+                                                    : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                                                fit: BoxFit.cover,
+                                                placeholder: (context, url) =>
+                                                    Center(child: SizedBox(child: CircularProgressIndicator(),),),
+                                                errorWidget: (context, url,
+                                                        error) =>
+                                                    Icon(Icons
+                                                        .error), // Widget to display on error
+                                              )))),
                                 );
                               },
                             );

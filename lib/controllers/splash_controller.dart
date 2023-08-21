@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 // import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,7 +18,6 @@ class SplashController extends GetxController {
     try {
       final isCurrent = await _isCurrentVersion();
       if (isCurrent == null) {
-       
       } else {
         if (isCurrent) {
           _checkAuthStatus();
@@ -29,7 +27,6 @@ class SplashController extends GetxController {
       }
     } on Exception catch (e) {
       print(e);
-      
     }
     super.onInit();
   }
@@ -39,6 +36,7 @@ class SplashController extends GetxController {
     await storage.remove(StorageKeys.token.name);
 
     token.value = null;
+    mainController.user = null;
   }
 
   Future<bool?> _isCurrentVersion() async {

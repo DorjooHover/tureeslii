@@ -20,5 +20,6 @@ export 'items/radio.dart';
 export 'menu_appbar.dart';
 export 'navigationBar.dart';
 export 'otp.dart';
+export 'snackbar.dart';
 export 'social.dart';
 export 'spacer.dart';

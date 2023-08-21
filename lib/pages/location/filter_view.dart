@@ -243,7 +243,7 @@ class _FilterViewState extends State<FilterView> {
                                           now.year, now.month, now.day),
                                       lastDate: DateTime(now.year + 10),
                                       builder: (context, child) {
-                                        return DatePickerTheme(child: child!);
+                                        return DatePickerThemeWidget(child: child!);
                                       });
                               if (selectedDate != null) {
                                 setState(() {

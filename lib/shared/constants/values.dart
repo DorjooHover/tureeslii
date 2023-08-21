@@ -89,19 +89,19 @@ const collaterals = ['Барьцаагүй'];
 // sort
 List<SortData> sortValues = [
   SortData(
-      dir: "price", name: 'Үнэ өсөхөөр', icon: iconIncreasePrice, field: 'ASC'),
+      dir: "ASC", name: 'Үнэ өсөхөөр', icon: iconIncreasePrice, field: 'price'),
   SortData(
-      dir: "price",
+      dir: "DESC",
       name: 'Үнэ буурахаар',
       icon: iconDecreasePrice,
-      field: 'DESC'),
+      field: 'price'),
   SortData(
-      dir: "startDate", name: 'Шинэ эхэндээ', icon: iconNewStart, field: 'ASC'),
+      dir: "ASC", name: 'Шинэ эхэндээ', icon: iconNewStart, field: 'startDate'),
   SortData(
-      dir: "startDate",
+      dir: "DESC",
       name: 'Хуучин эхэндээ',
       icon: iconNewStart,
-      field: 'DESC'),
+      field: 'startDate'),
 ];
 
 // navigation bar

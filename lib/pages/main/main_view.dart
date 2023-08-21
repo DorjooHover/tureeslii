@@ -13,115 +13,75 @@ class MainView extends StatefulWidget {
   State<MainView> createState() => _MainViewState();
 }
 
+List<Widget> views = [
+  const LocationView(),
+  const BookmarkView(),
+  const NotificationView(),
+  const OrderView(),
+  const MenuView(),
+];
+
 class _MainViewState extends State<MainView> {
-  List<Widget> views = [
-    const LocationView(),
-    const BookmarkView(),
-    const NotificationView(),
-    OrderView(),
-    const MenuView(),
-  ];
   int currentIndex = 1;
+  final notificationController = Get.put(NotificationController());
+  final controller = Get.put(MainController());
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(MainController());
-    final notificationController = Get.put(NotificationController());
+    return MainViewWidget(
+      onRefresh: () async {
+        if (currentIndex == 1) {
+          await controller.getSavedPost();
+        }
 
-    return GetBuilder<MainController>(
-      init: MainController(),
-      builder: (controller) => controller.obx(
-          onLoading: const SplashView(),
-          onError: (error) => Stack(
-                children: [
-                  const SplashView(),
-                  Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Align(
-                      child: Material(
-                        borderRadius: BorderRadius.circular(30),
-                        borderOnForeground: true,
-                        child: AnimatedContainer(
-                          margin: const EdgeInsets.all(20),
-                          padding: const EdgeInsets.all(20),
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                          height: 400,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20),
-                            ),
-                          ),
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 16.0),
-                                  child: Text(
-                                    "Check your internet connection and try again",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                                Obx(
-                                  () => ElevatedButton(
-                                    onPressed:
-                                        controller.isLoading.value == true
-                                            ? null
-                                            : () => controller.setupApp(),
-                                    child: const Text("Try again"),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ), (user) {
-        return RefreshIndicator(
-          displacement: 250,
-          backgroundColor: prime,
-          color: second,
-          strokeWidth: 3,
-          triggerMode: RefreshIndicatorTriggerMode.onEdge,
-          onRefresh: () async {
-            if (currentIndex == 1) {
-              await controller.getSavedPost();
-            }
-            if (currentIndex == 2) {
-              await notificationController.getNotification();
-            }
-            if (currentIndex == 3) {
-              await controller.getOrders();
-            }
-          },
-          child: Scaffold(
-            appBar: MainAppBar(
-              currentIndex: currentIndex,
-              height: currentIndex == 4 ? 246 : 63,
-              bgColor: currentIndex != 4 ? Colors.white : bgGray,
-              statusBarColor: currentIndex != 4 ? Colors.white : bgGray,
-            ),
-            body: views[currentIndex],
-            bottomNavigationBar: MainNavigationBar(
-              currentIndex: currentIndex,
-              changeIndex: (value) {
-                setState(() {
-                  currentIndex = value;
-                });
-              },
-            ),
-          ),
-        );
-      }),
+        if (currentIndex == 2 && controller.user != null) {
+          await notificationController.getNotification();
+        }
+        if (currentIndex == 3 && controller.user != null) {
+          await controller.getOrders();
+        }
+      },
+      currentIndex: currentIndex,
+      child: views[currentIndex],
+      changeIndex: (value) {
+        setState(() {
+          currentIndex = value;
+        });
+      },
+    );
+  }
+}
+
+class MainViewWidget extends StatelessWidget {
+  const MainViewWidget(
+      {super.key,
+      required this.onRefresh,
+      required this.currentIndex,
+      required this.child,
+      required this.changeIndex});
+  final Future<void> Function() onRefresh;
+  final int currentIndex;
+  final void Function(int) changeIndex;
+  final Widget child;
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      displacement: 250,
+      backgroundColor: prime,
+      color: second,
+      strokeWidth: 3,
+      triggerMode: RefreshIndicatorTriggerMode.onEdge,
+      onRefresh: onRefresh,
+      child: Scaffold(
+        appBar: MainAppBar(
+          currentIndex: currentIndex,
+          height: currentIndex == 4 ? 246 : 63,
+          bgColor: currentIndex != 4 ? Colors.white : bgGray,
+          statusBarColor: currentIndex != 4 ? Colors.white : bgGray,
+        ),
+        body: child,
+        bottomNavigationBar: MainNavigationBar(
+            currentIndex: currentIndex, changeIndex: changeIndex),
+      ),
     );
   }
 }

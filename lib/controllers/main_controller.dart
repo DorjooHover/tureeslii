@@ -83,13 +83,15 @@ class MainController extends GetxController
 
   // saved posts
   getSavedPost() async {
-    try {
-      final res = await _apiRepository.getSavedPosts();
-      savedPosts.value = res;
+    if (user != null) {
+      try {
+        final res = await _apiRepository.getSavedPosts();
+        savedPosts.value = res;
 
-      return res;
-    } on DioException catch (e) {
-      print(e);
+        return res;
+      } on DioException catch (e) {
+        print(e);
+      }
     }
   }
 
@@ -97,21 +99,23 @@ class MainController extends GetxController
     try {
       bool result = false;
 
-      if (savedPosts.where((post) => post.id == id).isNotEmpty) {
-        savedPosts.removeWhere((element) => element.id == id);
-        await _apiRepository.removeBookmark(id);
-        getSavedPost();
-      } else {
-        if (post != null && post.id != null) {
-          savedPosts.add(post);
-          await _apiRepository.saveBookmark(id);
-          result = true;
+      if (user != null) {
+        if (savedPosts.where((post) => post.id == id).isNotEmpty) {
+          savedPosts.removeWhere((element) => element.id == id);
+          await _apiRepository.removeBookmark(id);
           getSavedPost();
+        } else {
+          if (post != null && post.id != null) {
+            savedPosts.add(post);
+            await _apiRepository.saveBookmark(id);
+            result = true;
+            getSavedPost();
+          }
         }
       }
 
       return result;
-    } on DioException catch (e) {
+    } on DioException {
       rethrow;
     }
   }
@@ -125,7 +129,7 @@ class MainController extends GetxController
         Get.snackbar('Алдаа', res.message ?? '');
       }
       return res.success!;
-    } on Exception catch (e) {
+    } on Exception {
       return false;
     }
   }
@@ -171,24 +175,25 @@ class MainController extends GetxController
 
   Future<void> setupApp() async {
     isLoading.value = true;
-    try {
-      final res = await _apiRepository.getUser();
-      if (res != null) {
-        user = res;
-        change(user, status: RxStatus.success());
-        if (user != null) {
-          allCategory.value = await _apiRepository.getCategories();
-          getSavedPost();
+    if (Get.find<SharedPreferences>().getString(StorageKeys.token.name) !=
+        null) {
+      try {
+        final res = await _apiRepository.getUser();
+        if (res != null) {
+          user = res;
+          change(user, status: RxStatus.success());
         }
+        allCategory.value = await _apiRepository.getCategories();
+        getSavedPost();
+
+        isLoading.value = false;
+      } on DioException {
+        isLoading.value = false;
+
+        Get.find<SharedPreferences>().remove(StorageKeys.token.name);
+        update();
+        Get.toNamed(Routes.auth);
       }
-
-      isLoading.value = false;
-    } on DioException catch (e) {
-      isLoading.value = false;
-
-      Get.find<SharedPreferences>().remove(StorageKeys.token.name);
-      update();
-      Get.toNamed(Routes.auth);
     }
   }
 

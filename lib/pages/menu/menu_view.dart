@@ -14,9 +14,9 @@ class MenuView extends StatefulWidget {
 }
 
 class _MenuViewState extends State<MenuView> {
-  @override
   bool view = true;
   final controller = Get.put(MainController());
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
@@ -27,7 +27,13 @@ class _MenuViewState extends State<MenuView> {
               MenuCard(
                 icon: iconPerson,
                 text: personInfo,
-                onTap: () => Get.toNamed(Routes.profile),
+                onTap: () {
+                  if (controller.user != null) {
+                    Get.toNamed(Routes.profile);
+                  } else {
+                    Get.toNamed(Routes.login);
+                  }
+                },
                 child: Text(
                   login,
                   style: Theme.of(context)

@@ -195,7 +195,7 @@ class _ProfileViewState extends State<ProfileView> {
                                         lastDate: DateTime(
                                             now.year, now.month, now.day),
                                         builder: (context, child) {
-                                          return DatePickerTheme(child: child!);
+                                          return DatePickerThemeWidget(child: child!);
                                         });
                                 if (selectedDate != null) {
                                   setState(() {
