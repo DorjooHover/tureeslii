@@ -65,6 +65,14 @@ class _LocationViewState extends State<LocationView>
       setState(() {
         cityValue = controller.cities[0];
       });
+    } else {
+      controller.getCities().then((value) => {
+            moveLocation(LatLng(controller.cities[0].location![0],
+                controller.cities[0].location![1])),
+            setState(() {
+              cityValue = controller.cities[0];
+            })
+          });
     }
   }
 

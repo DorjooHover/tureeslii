@@ -44,8 +44,9 @@ class MainController extends GetxController
     banks.value = List<String>.from(jsonDecode(res.value!) as List);
   }
 
-  getCities() async {
+  Future<void> getCities() async {
     final res = await _apiRepository.getConfigById('cities');
+    print(res);
     cities.value =
         (jsonDecode(res.value!) as List).map((e) => City.fromJson(e)).toList();
   }
