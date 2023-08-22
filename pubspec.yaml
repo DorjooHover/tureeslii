@@ -45,9 +45,10 @@ dependencies:
   intl: ^0.18.0
   google_maps_flutter: ^2.2.5
   location: ^4.4.0
-  label_marker: ^1.0.1
-  custom_info_window: ^1.0.1
+  flutter_launcher_icons:
+  
   image_picker:
+  cached_network_image: ^3.2.3 
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +64,11 @@ dev_dependencies:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/appLogo.png"
+  remove_alpha_ios: true
 # The following section is specific to Flutter packages.
 flutter:
 

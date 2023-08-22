@@ -132,8 +132,9 @@ class _LocationViewState extends State<LocationView>
       controller.createPost.value!.floor = floorValue;
       controller.createPost.value!.apartmentNo = flatNumberValue;
       controller.createPost.value!.doorNo = doorNumberValue.toString();
-      controller.createPost.value!.long = selectedLocation!.longitude;
-      controller.createPost.value!.lat = selectedLocation!.latitude;
+      controller.createPost.value!.long =
+          selectedLocation!.longitude.toString();
+      controller.createPost.value!.lat = selectedLocation!.latitude.toString();
       controller.nextStep();
       Get.toNamed(Routes.general);
     } else {

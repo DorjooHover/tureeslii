@@ -226,3 +226,5 @@ const String incompleteInfo = 'Мэдээллээ бүрэн оруулна уу
 const String inDayCanNot30Day = 'Өдрөөр түрээслэхэд 30 хоногоос хэтэрч болохгүй';
 const String chooseAnyOptionInRentType = 'Өдрөөр эсвэл сараар түрээслэх сонголт хийнэ үү';
 const String incompleteTitle = 'Гарчигаа оруулна уу';
+const String tryAgain = 'Дахин оролдоно уу';
+const String errorOccurred = 'Алдаа гарлаа';

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:landlord/model/models.dart';
 import 'package:landlord/provider/dio_provider.dart';
+import 'package:landlord/shared/constants/strings.dart';
 
 class ApiRepository {
   ApiRepository({required this.apiProvider});
@@ -12,8 +13,9 @@ class ApiRepository {
   getUser() async {
     try {
       final response = await apiProvider.get('/auth/user');
+      print(response);
       return User.fromJson(response['data']);
-    } on DioException catch (e) {
+    } on DioException {
       rethrow;
     }
   }
@@ -31,14 +33,21 @@ class ApiRepository {
 
       return resStr;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'Алдаа гарлаа');
+      throw Exception(e.response?.data['message'] ?? errorOccurred);
     }
   }
 
   Future<bool> createPost(Post post, List<String> images) async {
     try {
       final data = {
-        "postDate": post.postDate,
+        "lat": post.lat,
+        "long": post.long,
+        "address": post.address,
+        "apartment_no": post.apartmentNo,
+        "door_no": post.doorNo,
+        "startDate": post.startDate,
+        "priceIncluded": post.priceIncluded,
+        "paymentTerm": post.paymentTerm,
         "bedRoom": post.bedroom,
         "livingRoom": post.livingRoom,
         "kitchen": post.kitchen,
@@ -51,10 +60,7 @@ class ApiRepository {
         "heating": post.heating,
         "waterSupply": post.waterSupply,
         "restroom": post.restroom,
-        "images": images,
-        "address": post.address,
-        "lat": post.lat,
-        "long": post.long,
+        "postAttachments": images,
         "city": post.city,
         "district": post.district,
         "state": post.state,
@@ -69,14 +75,14 @@ class ApiRepository {
         "depositTerm": post.depositTerm,
         "elevator": post.elevator,
         "floor": post.floor,
-        "furnitures": post.furnitures,
-        "hasFurniture": post.hasFurniture,
+        "furnitures": post.furnitures ?? [],
+        "categoryId": post.category,
+        "hasFurniture": post.hasFurniture ?? false,
         "kitchenFurniture": post.kitchenFurniture,
         "livingProperty": post.livingProperty,
         "minDurationDaily": post.minDurationDaily,
         "minDurationMonthly": post.minDurationMonthly,
         "monthlyRent": post.monthlyRent,
-        "postAttachments": images,
         "refrigerator": post.refrigerator,
         "stove": post.stove,
         "tvCable": post.tvCable,
@@ -120,7 +126,7 @@ class ApiRepository {
       await apiProvider.post('/auth/register', data: data);
 
       return true;
-    } on DioException catch (e) {
+    } on DioException {
       return false;
     }
   }
@@ -131,7 +137,7 @@ class ApiRepository {
           await apiProvider.post('/auth/forgotpwd', data: {"username": email});
       print(res);
       return true;
-    } on DioException catch (e) {
+    } on DioException {
       return false;
     }
   }
@@ -146,7 +152,7 @@ class ApiRepository {
       };
       await apiProvider.post('/auth/changepwdforgot', data: data);
       return true;
-    } on DioException catch (e) {
+    } on DioException {
       return false;
     }
   }
@@ -164,9 +170,9 @@ class ApiRepository {
         // "password": password
       };
 
-      final res = await apiProvider.put('/user', data: data);
+      await apiProvider.put('/user', data: data);
       return true;
-    } on DioException catch (e) {
+    } on DioException {
       return false;
     }
   }
@@ -186,8 +192,8 @@ class ApiRepository {
         '/auth/requestVerifyCodeMobile',
       );
       return res['success'];
-    } on DioException catch (e) {
-      throw Exception("Алдаа гарлаа");
+    } on DioException {
+      throw Exception(errorOccurred);
     }
   }
 
@@ -196,8 +202,8 @@ class ApiRepository {
     try {
       final res = await apiProvider.post('/auth/verifyMobile', data: data);
       return res['success'];
-    } on DioException catch (e) {
-      throw Exception("Алдаа гарлаа");
+    } on DioException {
+      throw Exception(errorOccurred);
     }
   }
 
@@ -206,8 +212,8 @@ class ApiRepository {
       final data = {"code": code};
       final res = await apiProvider.post('/auth/verifyEmail', data: data);
       return res['success'];
-    } on DioException catch (e) {
-      throw Exception("Алдаа гарлаа");
+    } on DioException {
+      throw Exception(errorOccurred);
     }
   }
 
@@ -222,13 +228,13 @@ class ApiRepository {
         "bankName": bankName,
         "bankAccName": bankAccName,
       };
-
+      print(data);
       final res =
           await apiProvider.post('/user/verificationRequest', data: data);
 
       return res['success'];
-    } on DioException catch (e) {
-      throw Exception("Алдаа гарлаа");
+    } on DioException {
+      throw Exception(errorOccurred);
     }
   }
 
@@ -237,8 +243,8 @@ class ApiRepository {
     try {
       final response = await apiProvider.get('/admin/config/$id');
       return Config.fromJson(response);
-    } on DioException catch (e) {
-      throw Exception("Алдаа гарлаа");
+    } on DioException {
+      throw Exception(errorOccurred);
     }
   }
 
@@ -249,7 +255,7 @@ class ApiRepository {
       return (response['data'] as List)
           .map((e) => Cancelation.fromJson(e))
           .toList();
-    } on DioException catch (e) {
+    } on DioException {
       rethrow;
     }
   }
@@ -262,8 +268,8 @@ class ApiRepository {
       return (response['data'] as List)
           .map((e) => Category.fromJson(e))
           .toList();
-    } on DioException catch (e) {
-      throw Exception("Алдаа гарлаа");
+    } on DioException {
+      throw Exception(errorOccurred);
     }
   }
   // posts
@@ -281,9 +287,9 @@ class ApiRepository {
       return (response['data'] as List).map((e) => Post.fromJson(e)).toList();
     } on DioException catch (e) {
       if (e.response?.data["success"] == false) {
-        throw Exception("Дахии оролдоно уу");
+        throw Exception(tryAgain);
       } else {
-        throw Exception("Алдаа гарлаа");
+        throw Exception(errorOccurred);
       }
     }
   }
@@ -296,9 +302,9 @@ class ApiRepository {
       return (response['data'] as List).map((e) => Post.fromJson(e)).toList();
     } on DioException catch (e) {
       if (e.response?.data["success"] == false) {
-        throw Exception("Дахии оролдоно уу");
+        throw Exception(tryAgain);
       } else {
-        throw Exception("Алдаа гарлаа");
+        throw Exception(errorOccurred);
       }
     }
   }
@@ -306,30 +312,30 @@ class ApiRepository {
   saveBookmark(int postId) async {
     try {
       final data = {"postId": postId};
-      final response =
-          await apiProvider.post('/posts/saveBookmark', data: data);
+
+      await apiProvider.post('/posts/saveBookmark', data: data);
       return true;
     } on DioException catch (e) {
       print(e.response);
       if (e.response?.data["success"] == false) {
-        throw Exception("Дахии оролдоно уу");
+        throw Exception(tryAgain);
       } else {
-        throw Exception("Алдаа гарлаа");
+        throw Exception(errorOccurred);
       }
     }
   }
 
   removeBookmark(int postId) async {
     try {
-      final response = await apiProvider.delete(
+      await apiProvider.delete(
         '/posts/removeBookmark/$postId',
       );
       return true;
     } on DioException catch (e) {
       if (e.response?.data["success"] == false) {
-        throw Exception("Дахии оролдоно уу");
+        throw Exception(tryAgain);
       } else {
-        throw Exception("Алдаа гарлаа");
+        throw Exception(errorOccurred);
       }
     }
   }
@@ -360,8 +366,8 @@ class ApiRepository {
             message: 'Энэ хугацаанд түрээслэх боломжгүй байна.',
             success: false);
       }
-      return ErrorHandler(message: 'Алдаа гарлаа', success: false);
-    } on DioException catch (e) {
+      return ErrorHandler(message: errorOccurred, success: false);
+    } on DioException {
       throw Exception('Алдаа');
     }
   }
@@ -376,12 +382,13 @@ class ApiRepository {
         "filterData": filterData ?? [],
       };
       final response = await apiProvider.post('/posts/getOwnPosts', data: data);
-      return (response as List).map((e) => Post.fromJson(e)).toList();
+
+      return (response['data'] as List).map((e) => Post.fromJson(e)).toList();
     } on DioException catch (e) {
       if (e.response?.data["success"] == false) {
-        throw Exception("Дахии оролдоно уу");
+        throw Exception(tryAgain);
       } else {
-        throw Exception("Алдаа гарлаа");
+        throw Exception(errorOccurred);
       }
     }
   }
@@ -392,8 +399,8 @@ class ApiRepository {
       final response = await apiProvider.get('/notification');
 
       return (response as List).map((e) => Notifications.fromJson(e)).toList();
-    } on DioException catch (e) {
-      throw Exception("Алдаа гарлаа");
+    } on DioException {
+      throw Exception(errorOccurred);
     }
   }
 
@@ -402,8 +409,8 @@ class ApiRepository {
     try {
       final data = {'oldPassword': password, 'password': newPassword};
       return await apiProvider.put('/user/password', data: data);
-    } on DioException catch (e) {
-      throw Exception("Алдаа гарлаа");
+    } on DioException {
+      throw Exception(errorOccurred);
     }
   }
 
@@ -422,7 +429,7 @@ class ApiRepository {
       };
       await apiProvider.put('/user', data: data);
       return true;
-    } on DioException catch (e) {
+    } on DioException {
       return false;
     }
   }

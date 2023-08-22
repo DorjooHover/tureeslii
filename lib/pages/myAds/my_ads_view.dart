@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:landlord/controllers/main_controller.dart';
+import 'package:landlord/model/models.dart';
 import 'package:landlord/pages/pages.dart';
 import 'package:landlord/shared/index.dart';
 
@@ -9,11 +12,31 @@ class MyAdsView extends StatefulWidget {
   State<MyAdsView> createState() => _MyAdsViewState();
 }
 
-final GlobalKey<ScaffoldState> myAdsKey = GlobalKey<ScaffoldState>();
 bool isDrawer = false;
 
 class _MyAdsViewState extends State<MyAdsView> {
   String selectedBank = bankValues[0];
+  final GlobalKey<ScaffoldState> myAdsKey = GlobalKey<ScaffoldState>();
+  final controller = Get.put(MainController());
+  final publishedPost = <Post>[];
+  final unpublishedPost = <Post>[];
+  @override
+  void initState() {
+    super.initState();
+
+    controller.getOwnPost(null, []).then((value) => setPosts());
+  }
+
+  setPosts() {
+    for (var element in controller.ownPost) {
+      if (element.status?.toLowerCase() == postStatus[0]) {
+        publishedPost.add(element);
+      } else {
+        unpublishedPost.add(element);
+      }
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +126,12 @@ class _MyAdsViewState extends State<MyAdsView> {
         ),
         body: TabBarView(
           children: [
-            PublishedView(),
-            EnteredView(),
+            PublishedView(
+              posts: publishedPost,
+            ),
+            EnteredView(
+              posts: unpublishedPost,
+            ),
             NotEnoughView(),
           ],
         ),

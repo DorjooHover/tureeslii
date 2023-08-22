@@ -35,6 +35,9 @@ class MainController extends GetxController
   final verified = <int>[0].obs;
   final currentStep = 0.obs;
   final createPost = Rxn<Post>(Post());
+
+  // own post
+  final ownPost = <Post>[].obs;
   User? get user => rxUser.value;
   set user(value) => rxUser.value = value;
 
@@ -123,7 +126,6 @@ class MainController extends GetxController
       verified.add(currentStep.value + 1);
       currentStep.value = currentStep.value + 1;
     }
-    print(createPost.value?.toJson());
   }
 
   prevStep() {
@@ -138,8 +140,21 @@ class MainController extends GetxController
       for (final element in images) {
         imagesUrl.add(await _apiRepository.uploadFile(element));
       }
-      print(imagesUrl);
-      await _apiRepository.createPost(createPost.value!, imagesUrl);
+
+      await _apiRepository
+          .createPost(createPost.value!, imagesUrl)
+          .then((value) => createPost.value = Post());
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // own post
+  Future<void> getOwnPost(SortData? sortData, List<FilterData> filterData,
+      [int skip = 0, int take = 10]) async {
+    try {
+      ownPost.value =
+          await _apiRepository.getOwnPosts(skip, take, sortData, filterData);
     } catch (e) {
       print(e);
     }
@@ -157,14 +172,14 @@ class MainController extends GetxController
           getCities();
           getCancelation();
           allCategory.value = await _apiRepository.getCategories();
-          print(allCategory);
+          getOwnPost(null, []);
 
           // getSavedPost();
         }
       }
 
       isLoading.value = false;
-    } on DioException catch (e) {
+    } on DioException {
       isLoading.value = false;
 
       Get.find<SharedPreferences>().remove(StorageKeys.token.name);

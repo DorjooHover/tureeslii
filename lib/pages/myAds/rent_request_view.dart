@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:landlord/model/models.dart';
 import 'package:landlord/shared/index.dart';
 
 class RentRequestView extends StatefulWidget {
-  const RentRequestView({super.key});
-
+  const RentRequestView({super.key, required this.data});
+  final Post data;
   @override
   State<RentRequestView> createState() => _RentRequestViewState();
 }
 
-final GlobalKey<ScaffoldState> requestKey = GlobalKey<ScaffoldState>();
 bool drawer = false;
 
 class _RentRequestViewState extends State<RentRequestView> {
+  final GlobalKey<ScaffoldState> requestKey = GlobalKey<ScaffoldState>();
   String selectedBank = bankValues[0];
 
   @override
@@ -43,29 +44,27 @@ class _RentRequestViewState extends State<RentRequestView> {
                 ),
               ),
               space20,
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: origin),
-                child: RentRequestCard(
-                    text:
-                        '2 өрөө, гал тогоо тусдаа орон сууц урт хагацаагаар түрээслэнэ'),
-              ),
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: origin),
+                  child: RentRequestCard(data: widget.data)),
               space2,
-              ...[0, 1, 2, 3]
-                  .map((e) => Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          RequestCard(
-                            text: 'Б.Нэлээн-Уртнэртэйнөхөр',
-                            phoneNumber: 69112233,
-                          ),
-                          if (e != 3)
-                            Divider(
-                              color: navGray,
-                              height: 2,
-                            )
-                        ],
-                      ))
-                  .toList()
+              if (widget.data.rentRequests != null &&
+                  widget.data.rentRequests!.isNotEmpty)
+                ...widget.data.rentRequests!
+                    .map((e) => Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            RequestCard(
+                              data: e
+                            ),
+                            if (e != 3)
+                              Divider(
+                                color: navGray,
+                                height: 2,
+                              )
+                          ],
+                        ))
+                    .toList()
             ],
           ),
         ),

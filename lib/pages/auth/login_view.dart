@@ -14,9 +14,8 @@ class LoginView extends StatefulWidget {
   State<LoginView> createState() => _LoginViewState();
 }
 
-final loginKey = GlobalKey<FormState>();
-
 class _LoginViewState extends State<LoginView> {
+  final loginKey = GlobalKey<FormState>();
   final AuthController controller = Get.find();
   final mainController = Get.put(MainController());
   String username = "";

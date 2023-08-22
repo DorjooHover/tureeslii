@@ -3,12 +3,19 @@ import 'package:landlord/shared/constants/assets.dart';
 import 'package:landlord/shared/constants/strings.dart';
 
 const String conditionUrl = "https://tureeslii.mn/information/TERMS";
+const String fileUrl = "https://tureeslii.mn/files/";
 
 const menuHelp = [
   {'url': '', "text": contractCondition},
   {'url': '', "text": cancelCondition},
   {'url': '', "text": serviceCondition},
   {'url': '', "text": contact},
+];
+
+const postStatus = [
+  'published',
+  'active',
+  'unpublished',
 ];
 
 const filterType = [
@@ -81,8 +88,15 @@ const heatingValues = [
   "Нам даралтьн зуух",
   "Пийшин"
 ];
+const heatingValuesValue = ['central', "electric", "pressure", "furnace"];
 const waterSupplyValues = ['Төвийн', "Гүний худаг", "Зөөврийн"];
+const waterSupplyValuesValue = [
+  'central',
+  "well",
+  "portable",
+];
 const toiletValues = ['Дотор', "Гадна", "Нийтийн"];
+const toiletValuesValue = ['inside', "outside", "public"];
 // room info
 const typeValues = ['Хажуу өрөө', "3 сар", "6 сар"];
 // verification

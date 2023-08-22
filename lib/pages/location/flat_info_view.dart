@@ -26,10 +26,10 @@ class _FlatInfoViewState extends State<FlatInfoView> {
       return;
     }
     controller.createPost.value!.plot = flatArea;
-    controller.createPost.value!.heating = heatingValues[selectedHeating];
+    controller.createPost.value!.heating = heatingValuesValue[selectedHeating];
     controller.createPost.value!.waterSupply =
-        waterSupplyValues[selectedWaterSupply];
-    controller.createPost.value!.restroom = toiletValues[selectedToilet];
+        waterSupplyValuesValue[selectedWaterSupply];
+    controller.createPost.value!.restroom = toiletValuesValue[selectedToilet];
     controller.nextStep();
     Get.toNamed(Routes.roomInfo);
   }

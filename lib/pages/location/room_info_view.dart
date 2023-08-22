@@ -45,6 +45,16 @@ class _RoomInfoViewState extends State<RoomInfoView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (controller.allCategory.isNotEmpty) {
+      setState(() {
+        selectedType = controller.allCategory[0].id!;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Material(
       child: Stack(
@@ -68,7 +78,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
               child: IconButton(
                 onPressed: () {},
                 icon: SvgPicture.asset(
-                  iconGmail,
+                  iconSave,
                   width: 24,
                   height: 24,
                 ),
@@ -106,8 +116,10 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                   iconEnabledColor: gray,
                                   isExpanded: true,
                                   dropdownColor: Colors.white,
-                                  value: controller
-                                      .allCategory[selectedType].name!,
+                                  value: controller.allCategory
+                                      .firstWhere((element) =>
+                                          element.id == selectedType)
+                                      .name!,
                                   hint: Text(choose,
                                       style: Theme.of(context)
                                           .textTheme

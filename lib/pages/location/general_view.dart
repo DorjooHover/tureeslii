@@ -65,6 +65,8 @@ class _GeneralViewState extends State<GeneralView> {
 
     controller.createPost.value!.price = rentPriceMonthValue;
     controller.createPost.value!.priceDaily = rentPriceValue;
+    controller.createPost.value!.minDurationDaily = minimumRentDayValue;
+    controller.createPost.value!.minDurationMonthly = minimumRentMonthValue;
 
     if (electronic) {
       controller.createPost.value!.priceIncluded?.add('electric');
@@ -147,7 +149,8 @@ class _GeneralViewState extends State<GeneralView> {
                                           now.year, now.month, now.day),
                                       lastDate: DateTime(now.year + 10),
                                       builder: (context, child) {
-                                        return DatePickerThemeWidget(child: child!);
+                                        return DatePickerThemeWidget(
+                                            child: child!);
                                       });
                               if (selectedDate != null) {
                                 setState(() {

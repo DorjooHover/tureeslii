@@ -1,27 +1,27 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:landlord/model/models.dart';
 import 'package:landlord/shared/index.dart';
 
 class MyAdsCard extends StatelessWidget {
-  const MyAdsCard(
-      {super.key,
-      required this.text,
-      this.onPressed,
-      required this.number,
-      this.type});
-  final String text;
-  final int number;
-  final String? type;
+  const MyAdsCard({
+    super.key,
+    required this.post,
+    this.onPressed,
+  });
+  final Post post;
+
   final Function()? onPressed;
   @override
   Widget build(BuildContext context) {
     String status = '';
     Color statusColor = Colors.transparent;
-    switch (type) {
+    switch (post.status?.toLowerCase()) {
       case 'rented':
         status = 'Нийтлэгдсэн';
         statusColor = green;
         break;
-      case 'checking':
+      case 'active':
         status = 'Шалгаж байна';
         statusColor = checkingBlack;
         break;
@@ -35,7 +35,7 @@ class MyAdsCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          text,
+          post.title ?? '',
           style: Theme.of(context)
               .textTheme
               .bodyMedium!
@@ -44,25 +44,29 @@ class MyAdsCard extends StatelessWidget {
         space13,
         RichText(
           text: TextSpan(
-            text: 'БЗД - · ',
+            text: '${post.district} - · ',
             style:
                 Theme.of(context).textTheme.labelSmall!.copyWith(color: gray),
             children: <TextSpan>[
               TextSpan(
-                text: 'Орон сууц · ',
+                text: '${post.category?["name"] ?? ''} · ',
               ),
-              TextSpan(text: '2023.01.10'),
+              TextSpan(
+                  text: DateTime.parse(post.postDate!)
+                      .toString()
+                      .substring(0, 10)),
             ],
           ),
         ),
         space6,
         RichText(
           text: TextSpan(
-            text: '${currencyFormat(1250000, false)} ',
+            text:
+                '${currencyFormat(post.monthlyRent! ? post.price! : post.priceDaily!, false)} ',
             style: Theme.of(context).textTheme.titleLarge,
             children: <TextSpan>[
               TextSpan(
-                  text: '₮/сар',
+                  text: '₮/${post.monthlyRent! ? 'сар' : 'хоног'}',
                   style: Theme.of(context)
                       .textTheme
                       .labelLarge!
@@ -76,7 +80,7 @@ class MyAdsCard extends StatelessWidget {
           children: [
             Flexible(
               child: Row(
-                mainAxisAlignment: type != null
+                mainAxisAlignment: post.status == null
                     ? MainAxisAlignment.start
                     : MainAxisAlignment.spaceBetween,
                 children: [
@@ -94,7 +98,7 @@ class MyAdsCard extends StatelessWidget {
                             .copyWith(color: Colors.white),
                         children: <TextSpan>[
                           TextSpan(
-                              text: ': $number',
+                              text: ': ${post.rentRequests?.length ?? 0}',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall!
@@ -115,7 +119,7 @@ class MyAdsCard extends StatelessWidget {
                           .copyWith(color: gray),
                       children: <TextSpan>[
                         TextSpan(
-                            text: ': $number',
+                            text: ': ${post.viewCount ?? 0}',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodySmall!
@@ -214,13 +218,14 @@ class NotEnoughCard extends StatelessWidget {
 class RentRequestCard extends StatelessWidget {
   const RentRequestCard({
     super.key,
-    required this.text,
+    required this.data,
   });
-  final String text;
+  final Post data;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
       padding: EdgeInsets.all(18),
       decoration: BoxDecoration(
           color: Colors.white,
@@ -235,25 +240,39 @@ class RentRequestCard extends StatelessWidget {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: [0, 1, 2, 3, 4, 5]
-                  .map((e) => Container(
-                        margin: EdgeInsets.only(right: e != 5 ? 10 : 0),
-                        child: ClipRRect(
+              children: data.postAttachments?.map((e) {
+                    int i = data.postAttachments?.indexOf(e) ?? 0;
+
+                    return Container(
+                      margin: EdgeInsets.only(
+                          right:
+                              i + 1 != data.postAttachments!.length ? 10 : 0),
+                      width: 50,
+                      height: 50,
+                      child: ClipRRect(
                           borderRadius: BorderRadius.circular(6),
-                          child: Image.network(
-                            'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-                            width: 59,
-                            height: 50,
+                          child: CachedNetworkImage(
+                            imageUrl: '$fileUrl${e.fileThumb}',
                             fit: BoxFit.cover,
-                          ),
-                        ),
-                      ))
-                  .toList(),
+                            placeholder: (context, url) => const Padding(
+                              padding: EdgeInsets.all(4),
+                              child: Center(
+                                child: SizedBox(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => const Icon(
+                                Icons.error), // Widget to display on error
+                          )),
+                    );
+                  }).toList() ??
+                  [],
             ),
           ),
           space16,
           Text(
-            text,
+            data.title ?? '',
             style: Theme.of(context)
                 .textTheme
                 .bodyMedium!
@@ -262,25 +281,29 @@ class RentRequestCard extends StatelessWidget {
           space13,
           RichText(
             text: TextSpan(
-              text: 'БЗД - · ',
+              text: '${data.district ?? ''} - · ',
               style:
                   Theme.of(context).textTheme.labelSmall!.copyWith(color: gray),
               children: <TextSpan>[
                 TextSpan(
-                  text: 'Орон сууц · ',
+                  text: '${data.category?['name'] ?? ''} · ',
                 ),
-                TextSpan(text: '2023.01.10'),
+                TextSpan(
+                    text: DateTime.parse(data.postDate!)
+                        .toString()
+                        .substring(0, 10)),
               ],
             ),
           ),
           space6,
           RichText(
             text: TextSpan(
-              text: '${currencyFormat(1250000, false)} ',
+              text:
+                  '${currencyFormat(data.monthlyRent! ? data.price! : data.priceDaily!, false)} ',
               style: Theme.of(context).textTheme.titleLarge,
               children: <TextSpan>[
                 TextSpan(
-                    text: '₮/сар',
+                    text: '₮/${data.monthlyRent! ? 'сар' : 'хоног'}',
                     style: Theme.of(context)
                         .textTheme
                         .labelLarge!
@@ -295,10 +318,11 @@ class RentRequestCard extends StatelessWidget {
 }
 
 class RequestCard extends StatelessWidget {
-  const RequestCard({super.key, required this.text, required this.phoneNumber});
-  final String text;
-  final int phoneNumber;
-
+  const RequestCard({
+    super.key,
+    required this.data,
+  });
+  final RentRequest data;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -324,7 +348,7 @@ class RequestCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    text,
+                    '${data.user!.firstname!.substring(0, 1)}.${data.user!.lastname}}',
                     style: Theme.of(context)
                         .textTheme
                         .bodyMedium!
@@ -341,7 +365,7 @@ class RequestCard extends StatelessWidget {
                       ),
                       space4,
                       Text(
-                        '$phoneNumber',
+                        data.user?.mobile ?? '',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: black, fontWeight: FontWeight.w400),
                       ),
@@ -361,7 +385,9 @@ class RequestCard extends StatelessWidget {
                   .copyWith(color: black),
               children: <TextSpan>[
                 TextSpan(
-                  text: '6 сар',
+                  text: data.duration! > 30
+                      ? '${(data.duration! ~/ 30)} сар ${(data.duration! % 30)} өдөр}'
+                      : '${data.duration!} өдөр',
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium!
@@ -379,7 +405,7 @@ class RequestCard extends StatelessWidget {
                     child: MainButton(
                   borderRadius: 20,
                   onPressed: () {},
-                  color: red,
+                  color: green,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[

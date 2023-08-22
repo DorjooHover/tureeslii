@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:landlord/bindings/bindings.dart';
+import 'package:landlord/model/models.dart';
 import 'package:landlord/pages/menu/menu_view.dart';
 import 'package:landlord/pages/pages.dart';
 
@@ -151,16 +152,16 @@ class Routes {
         page: () => const MyAdsView(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
-    GetPage(
-        name: published,
-        page: () => const PublishedView(),
-        transition: Transition.fade,
-        transitionDuration: const Duration(milliseconds: 300)),
-    GetPage(
-        name: entered,
-        page: () => const EnteredView(),
-        transition: Transition.fade,
-        transitionDuration: const Duration(milliseconds: 300)),
+    // GetPage(
+    //     name: published,
+    //     page: () => const PublishedView(),
+    //     transition: Transition.fade,
+    //     transitionDuration: const Duration(milliseconds: 300)),
+    // GetPage(
+    //     name: entered,
+    //     page: () => const EnteredView(),
+    //     transition: Transition.fade,
+    //     transitionDuration: const Duration(milliseconds: 300)),
     GetPage(
         name: notEnough,
         page: () => const NotEnoughView(),
@@ -168,7 +169,11 @@ class Routes {
         transitionDuration: const Duration(milliseconds: 300)),
     GetPage(
         name: rentRequest,
-        page: () => const RentRequestView(),
+        page: () {
+          Post res = Get.arguments;
+          print(res);
+          return RentRequestView(data: res);
+        },
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
 

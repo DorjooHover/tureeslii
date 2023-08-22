@@ -40,6 +40,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
     controller.createPost.value!.tvCable = cabel;
     controller.createPost.value!.refrigerator = refrigerator;
     controller.createPost.value!.kitchenFurniture = kitchen;
+    controller.createPost.value!.hasFurniture = hasFurniture;
     if (refrigerator) {
       controller.createPost.value!.furnitures?.add('refrigerator');
     }

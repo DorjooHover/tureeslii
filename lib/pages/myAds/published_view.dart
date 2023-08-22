@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:landlord/model/models.dart';
+import 'package:landlord/pages/no_data.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
 class PublishedView extends StatefulWidget {
-  const PublishedView({super.key});
-
+  const PublishedView({super.key, required this.posts});
+  final List<Post> posts;
   @override
   State<PublishedView> createState() => _PublishedViewState();
 }
@@ -15,45 +17,50 @@ class _PublishedViewState extends State<PublishedView> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Container(
-          height: MediaQuery.of(context).size.height * 0.6 - 50,
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.6 - 66,
           child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ...[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((e) {
-                  return Column(
+            child: widget.posts.isNotEmpty
+                ? Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: origin, vertical: 32),
-                        child: MyAdsCard(
-                            onPressed: () {
-                              Get.toNamed(Routes.rentRequest);
-                            },
-                            text:
-                                '2 өрөө, гал тогоо тусдаа орон сууц урт хагацаагаар түрээслэнэ',
-                            number: e + 1,
-                            type: e % 2 == 0 ? 'rented' : null),
-                      ),
-                      e != 10
-                          ? Divider(
-                              color: navGray,
-                              height: 2,
-                            )
-                          : space32
+                    children: <Widget>[
+                      ...widget.posts.map((e) {
+                        final i = widget.posts.indexOf(e);
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: origin, vertical: 32),
+                              child: MyAdsCard(
+                                onPressed: () {
+                                  Get.toNamed(Routes.rentRequest, arguments: e);
+                                },
+                                post: e,
+                              ),
+                            ),
+                            i + 1 != widget.posts.length
+                                ? const Divider(
+                                    color: navGray,
+                                    height: 2,
+                                  )
+                                : space32
+                          ],
+                        );
+                      }).toList(),
                     ],
-                  );
-                }).toList(),
-              ],
-            ),
+                  )
+                : Center(
+                    child: NoDataView(
+                      height: MediaQuery.of(context).size.height * 0.6 - 66,
+                    ),
+                  ),
           ),
         ),
         Positioned(
             left: 0,
             right: 0,
-            bottom: MediaQuery.of(context).padding.bottom + 32,
+            bottom: MediaQuery.of(context).padding.bottom + origin,
             child: Align(
               alignment: Alignment.center,
               child: MainButton(

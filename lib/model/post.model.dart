@@ -54,12 +54,14 @@ class Post {
   String? city;
   String? district;
   String? state;
-  double? long;
-  double? lat;
+  String? long;
+  String? lat;
   double? plot;
   dynamic category;
+  List<RentRequest>? rentRequests;
   List<PostAttachments>? postAttachments;
   User? user;
+  int? viewCount;
 
   Post(
       {this.id,
@@ -120,6 +122,8 @@ class Post {
       this.plot,
       this.postAttachments,
       this.category,
+      this.viewCount,
+      this.rentRequests,
       this.user});
 
   Post.fromJson(Map<String, dynamic> json) {
@@ -179,11 +183,19 @@ class Post {
     long = json['long'];
     category = json['category'];
     lat = json['lat'];
+    viewCount = json['views_count'];
     plot = double.parse(json['plot'].toString());
     if (json['postAttachments'] != null) {
       postAttachments = <PostAttachments>[];
-      json['postAttachments'].forEach((v) {
-        postAttachments!.add(new PostAttachments.fromJson(v));
+      for (var i = 0; i < json['postAttachments'].length; i++) {
+        postAttachments!
+            .add(PostAttachments.fromJson(json['postAttachments'][i]));
+      }
+    }
+    if (json['rentRequests'] != null) {
+      rentRequests = <RentRequest>[];
+      json['rentRequests'].forEach((v) {
+        rentRequests!.add(RentRequest.fromJson(v));
       });
     }
     user = json['user'] != null ? new User.fromJson(json['user']) : null;
@@ -248,9 +260,13 @@ class Post {
     data['long'] = this.long;
     data['lat'] = this.lat;
     data['plot'] = this.plot;
+    data['views_count'] = this.viewCount;
     if (this.postAttachments != null) {
       data['postAttachments'] =
           this.postAttachments!.map((v) => v.toJson()).toList();
+    }
+    if (rentRequests != null) {
+      data['rentRequest'] = rentRequests!.map((v) => v.toJson()).toList();
     }
     if (this.user != null) {
       data['user'] = this.user!.toJson();

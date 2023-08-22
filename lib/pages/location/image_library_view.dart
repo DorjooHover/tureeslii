@@ -225,7 +225,9 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                 alignment: Alignment.center,
                 child: MainButton(
                   onPressed: () {
-                    choiceType();
+                    controller.createNewPost(images);
+                    Navigator.of(context).pop();
+                    Get.toNamed(Routes.myAds);
                   },
                   borderRadius: 26,
                   disabled: !images.isNotEmpty,
@@ -274,7 +276,7 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                         Navigator.pop(context);
+                        Navigator.pop(context);
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

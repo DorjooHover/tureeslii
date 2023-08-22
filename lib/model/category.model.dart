@@ -33,19 +33,19 @@ class Category {
     if (json['post'] != null) {
       post = <Post>[];
       json['post'].forEach((v) {
-        post!.add(new Post.fromJson(v));
+        post!.add(Post.fromJson(v));
       });
     }
     if (json['userSubsCat'] != null) {
       userSubsCat = <UserSubsCat>[];
       json['userSubsCat'].forEach((v) {
-        userSubsCat!.add(new UserSubsCat.fromJson(v));
+        userSubsCat!.add( UserSubsCat.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = this.id;
     data['name'] = this.name;
     data['description'] = this.description;
