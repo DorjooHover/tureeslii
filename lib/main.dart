@@ -45,21 +45,19 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class TabletLayout extends StatelessWidget {
   const TabletLayout({super.key, required this.child});
-
   final Widget child;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Container(
-          constraints:
-              BoxConstraints(maxWidth: 640), // Set your desired max width
-          child: child,
-        ),
+        body: Center(
+      child: Container(
+        width: 640,
+        alignment: Alignment.center,
+        child: child,
       ),
-    );
+    ));
   }
 }
