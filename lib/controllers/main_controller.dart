@@ -3,19 +3,20 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:landlord/controllers/auth_controller.dart';
 import 'package:landlord/model/models.dart';
 import 'package:landlord/provider/api_prodiver.dart';
+import 'package:landlord/provider/dio_provider.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/constants/enums.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MainController extends GetxController
     with StateMixin<User>, WidgetsBindingObserver {
-  final ApiRepository _apiRepository = Get.find();
-  final authController = Get.put(AuthController(apiRepository: Get.find()));
-
+  ApiRepository apiRepository = ApiRepository(apiProvider: DioProvider());
+  final authController = Get.put(AuthController());
+  final storage = GetStorage();
   final showPerformanceOverlay = false.obs;
   final currentIndex = 0.obs;
   final isLoading = false.obs;
@@ -43,30 +44,29 @@ class MainController extends GetxController
 
   // config
   getBanks() async {
-    final res = await _apiRepository.getConfigById('banks');
+    final res = await apiRepository.getConfigById('banks');
     banks.value = List<String>.from(jsonDecode(res.value!) as List);
   }
 
   Future<void> getCities() async {
-    final res = await _apiRepository.getConfigById('cities');
-    print(res);
+    final res = await apiRepository.getConfigById('cities');
     cities.value =
         (jsonDecode(res.value!) as List).map((e) => City.fromJson(e)).toList();
   }
 
-  getCancelation() async {
-    final res = await _apiRepository.getCancelation();
+  getCancellation() async {
+    final res = await apiRepository.getCancelation();
     cancelTerm.value = res;
   }
 
   // user
   refreshUser() async {
-    user = await _apiRepository.getUser();
+    user = await apiRepository.getUser();
     change(user, status: RxStatus.success());
   }
 
   Future<bool> updateUser(User user) async {
-    final res = await _apiRepository.updateUser(user);
+    final res = await apiRepository.updateUser(user);
     if (res) {
       await refreshUser();
     }
@@ -74,19 +74,19 @@ class MainController extends GetxController
   }
 
   Future<void> sendEmailVerification() async {
-    await _apiRepository.sendEmailVerifyCode();
+    await apiRepository.sendEmailVerifyCode();
   }
 
   Future<bool> getMobileVerification() async {
-    return _apiRepository.getMobileVerifyCode();
+    return apiRepository.getMobileVerifyCode();
   }
 
   Future<bool> sendMobileVerification() async {
-    return _apiRepository.sendMobileVerifyCode(otp.value);
+    return apiRepository.sendMobileVerifyCode(otp.value);
   }
 
   Future<bool> savePersonal(User u) async {
-    bool res = await _apiRepository.savePersonal(User(
+    bool res = await apiRepository.savePersonal(User(
         lastname: u.lastname ?? user!.lastname,
         firstname: u.firstname ?? user!.firstname,
         mobile: u.mobile ?? user!.mobile!,
@@ -108,9 +108,9 @@ class MainController extends GetxController
       bool r = regex.hasMatch(accountName);
 
       if (r) {
-        String front = await _apiRepository.uploadFile(frontImage);
-        String back = await _apiRepository.uploadFile(backImage);
-        final res = await _apiRepository.verificationUser(
+        String front = await apiRepository.uploadFile(frontImage);
+        String back = await apiRepository.uploadFile(backImage);
+        final res = await apiRepository.verificationUser(
             front, back, accountNumber, bankName, accountName);
         return res;
       }
@@ -138,10 +138,10 @@ class MainController extends GetxController
     try {
       List<String> imagesUrl = [];
       for (final element in images) {
-        imagesUrl.add(await _apiRepository.uploadFile(element));
+        imagesUrl.add(await apiRepository.uploadFile(element));
       }
 
-      await _apiRepository
+      await apiRepository
           .createPost(createPost.value!, imagesUrl)
           .then((value) => createPost.value = Post());
     } catch (e) {
@@ -154,7 +154,7 @@ class MainController extends GetxController
       [int skip = 0, int take = 10]) async {
     try {
       ownPost.value =
-          await _apiRepository.getOwnPosts(skip, take, sortData, filterData);
+          await apiRepository.getOwnPosts(skip, take, sortData, filterData);
     } catch (e) {
       print(e);
     }
@@ -163,15 +163,15 @@ class MainController extends GetxController
   Future<void> setupApp() async {
     isLoading.value = true;
     try {
-      final res = await _apiRepository.getUser();
+      final res = await apiRepository.getUser();
       if (res != null) {
         user = res;
         change(user, status: RxStatus.success());
         if (user != null) {
           getBanks();
           getCities();
-          getCancelation();
-          allCategory.value = await _apiRepository.getCategories();
+          getCancellation();
+          allCategory.value = await apiRepository.getCategories();
           getOwnPost(null, []);
 
           // getSavedPost();
@@ -182,7 +182,7 @@ class MainController extends GetxController
     } on DioException {
       isLoading.value = false;
 
-      Get.find<SharedPreferences>().remove(StorageKeys.token.name);
+      storage.remove(StorageKeys.token.name);
       update();
       Get.toNamed(Routes.auth);
     }

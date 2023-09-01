@@ -1,16 +1,17 @@
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:landlord/model/user.dart';
 import 'package:landlord/provider/api_prodiver.dart';
+import 'package:landlord/provider/dio_provider.dart';
 import 'package:landlord/routes.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import './splash_controller.dart' show SplashController;
 import '../../../shared/index.dart';
 
 class AuthController extends GetxController {
-  final ApiRepository apiRepository;
-  AuthController({required this.apiRepository});
-  final prefs = Get.find<SharedPreferences>();
+  ApiRepository apiRepository = ApiRepository(apiProvider: DioProvider());
+
+  final storage = GetStorage();
 
   @override
   onInit() {
@@ -42,8 +43,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> logout() async {
-    final prefs = Get.find<SharedPreferences>();
-    await prefs.remove(StorageKeys.token.name);
+    await storage.remove(StorageKeys.token.name);
 
     Get.find<SplashController>().token.value = null;
   }
@@ -54,8 +54,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> _saveTokens(String token) async {
-    final prefs = Get.find<SharedPreferences>();
-    await prefs.setString(StorageKeys.token.name, token);
+    await storage.write(StorageKeys.token.name, token);
     Get.find<SplashController>().token.value = token;
   }
 }

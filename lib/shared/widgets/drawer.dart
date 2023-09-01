@@ -17,7 +17,7 @@ class MainDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MainController());
-    final authController = Get.put(AuthController(apiRepository: Get.find()));
+    final authController = Get.put(AuthController());
     return Drawer(
       width: MediaQuery.of(context).size.width,
       child: Column(

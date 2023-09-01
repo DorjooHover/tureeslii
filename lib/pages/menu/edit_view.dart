@@ -14,7 +14,7 @@ class SignInView extends StatefulWidget {
 
 class _SignInViewState extends State<SignInView> {
   final editKey = GlobalKey<FormState>();
-  final controller = Get.put(AuthController(apiRepository: Get.find()));
+  final controller = Get.put(AuthController());
   final mainController = Get.put(MainController());
   String passwordValue = "", emailValue = "";
   String lastNamValue = "", firstNameValue = "", phoneValue = "";

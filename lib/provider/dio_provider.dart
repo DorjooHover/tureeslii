@@ -1,12 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../shared/index.dart';
 
 class DioProvider extends GetxService {
   final isProduction = const bool.fromEnvironment('dart.vm.product');
   var dio = Dio();
+  final storage = GetStorage();
   @override
   void onInit() {
     dio.options.baseUrl =
@@ -17,8 +18,7 @@ class DioProvider extends GetxService {
         InterceptorsWrapper(
           onRequest: (options, handler) async {
             // get token from storage
-            final token =
-                Get.find<SharedPreferences>().getString(StorageKeys.token.name);
+            final token = storage.read(StorageKeys.token.name);
             if (token != null) {
               options.headers['Authorization'] = 'Bearer $token';
             } else {}

@@ -6,8 +6,8 @@ import 'package:landlord/pages/pages.dart';
 
 class Routes {
 // routes
-  static String splash = '/splash';
-  static String main = '/';
+  static String splash = '/';
+  static String main = '/main';
   static String bookmark = '/bookmark';
   static String order = '/order';
   static String acceptedOrder = '$order/accepted';
@@ -55,13 +55,14 @@ class Routes {
   static List<GetPage> routes = [
     GetPage(
         name: splash, page: () => const SplashView(), binding: SplashBinding()),
-    GetPage(name: main, page: () => const MainView()),
+    GetPage(name: main, page: () => const MainView(), binding: MainBinging()),
     GetPage(
-        name: auth,
-        page: () => LoginView(),
-        binding: AuthBinding(),
-        transition: Transition.fade,
-        transitionDuration: const Duration(milliseconds: 300)),
+      name: auth,
+      page: () => LoginView(),
+      binding: AuthBinding(),
+      transition: Transition.fade,
+      transitionDuration: const Duration(milliseconds: 300),
+    ),
     // order
     GetPage(
         name: order,

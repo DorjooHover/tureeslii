@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:landlord/binding.dart';
-import 'package:landlord/di.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/theme/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await DenpendencyInjection.init();
+  await GetStorage.init();
+  // await DenpendencyInjection.init();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle());
@@ -22,17 +23,42 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 640),
-      child: GetMaterialApp(
-        title: 'Landlord',
-        theme: MyTheme.light,
-        darkTheme: MyTheme.dark,
-        themeMode: ThemeMode.light,
-        debugShowCheckedModeBanner: false,
-        initialBinding: AppBinding(),
-        initialRoute: Routes.splash,
-        getPages: Routes.routes,
+    return GetMaterialApp(
+      title: 'Landlord',
+      theme: MyTheme.light,
+      darkTheme: MyTheme.dark,
+      themeMode: ThemeMode.light,
+      debugShowCheckedModeBanner: false,
+      initialBinding: AppBinding(),
+      initialRoute: Routes.splash,
+      getPages: Routes.routes,
+      builder: (context, child) {
+        return LayoutBuilder(builder: (context, constraints) {
+          if (constraints.maxWidth > 640) {
+            return TabletLayout(child: child!);
+          } else {
+            return child!;
+          }
+        });
+      },
+    );
+  }
+}
+
+class TabletLayout extends StatelessWidget {
+  const TabletLayout({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Container(
+          constraints:
+              BoxConstraints(maxWidth: 640), // Set your desired max width
+          child: child,
+        ),
       ),
     );
   }
