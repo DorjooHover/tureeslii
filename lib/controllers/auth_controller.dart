@@ -2,14 +2,13 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:landlord/model/user.dart';
 import 'package:landlord/provider/api_prodiver.dart';
-import 'package:landlord/provider/dio_provider.dart';
 import 'package:landlord/routes.dart';
 
 import './splash_controller.dart' show SplashController;
 import '../../../shared/index.dart';
 
 class AuthController extends GetxController {
-  ApiRepository apiRepository = ApiRepository(apiProvider: DioProvider());
+  ApiRepository apiRepository = ApiRepository();
 
   final storage = GetStorage();
 
@@ -34,10 +33,12 @@ class AuthController extends GetxController {
   login(String username, String password) async {
     try {
       User user = await apiRepository.login(username, password);
-      await _saveTokens(user.accessToken!)
+      print(user);
+      await _saveTokens(user.accessToken ?? '')
           .then((value) => Get.toNamed(Routes.main));
       return user;
     } catch (e) {
+      print(e);
       return e;
     }
   }

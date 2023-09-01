@@ -1,20 +1,46 @@
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:landlord/model/models.dart';
-import 'package:landlord/provider/dio_provider.dart';
+import 'package:landlord/shared/constants/enums.dart';
 import 'package:landlord/shared/constants/strings.dart';
 
-class ApiRepository {
-  ApiRepository({required this.apiProvider});
+class ApiRepository extends GetxService {
+  final isProduction = const bool.fromEnvironment('dart.vm.product');
+  var dio = createDio();
+  static var storage = GetStorage();
+  final token = storage.read(StorageKeys.token.name);
+  static Dio createDio() {
+    Dio dio = Dio(BaseOptions(
+      baseUrl: 'https://tureeslii.mn/api',
+    ));
+    dio.interceptors.addAll(
+      [
+        InterceptorsWrapper(
+          onRequest: (options, handler) async {
+            // get token from storage
+            final token = storage.read(StorageKeys.token.name);
 
-  final DioProvider apiProvider;
+            if (token != null) {
+              options.headers['Authorization'] = 'Bearer $token';
+            } else {}
+            return handler.next(options);
+          },
+        ),
+        // RetryOnConnectionChangeInterceptor()
+        // LogInterceptor(responseBody: true),
+      ],
+    );
+    return dio;
+  }
 
   // auth
   getUser() async {
     try {
-      final response = await apiProvider.get('/auth/user');
+      final response = await dio.get('/auth/user');
       print(response);
-      return User.fromJson(response['data']);
+      return User.fromJson(response.data['data']);
     } on DioException {
       rethrow;
     }
@@ -91,7 +117,7 @@ class ApiRepository {
         "title": post.title,
       };
       print(data);
-      final res = await apiProvider.post('/posts', data: data);
+      final res = await dio.post('/posts', data: data);
       print(res);
       return true;
     } on DioException catch (e) {
@@ -103,14 +129,15 @@ class ApiRepository {
   Future<User> login(String username, String password) async {
     try {
       final data = {"username": username, "password": password};
+      print(dio.options.baseUrl);
+      final res = await dio.post('/auth/login', data: data);
 
-      final res = await apiProvider.post('/auth/login', data: data);
-      return User.fromJson(res['data']);
+      return User.fromJson(res.data['data']);
     } on DioException catch (e) {
-      if (e.response!.statusCode == 401 && e.response?.data['message'] != "") {
+      if (e.response?.statusCode == 401 && e.response?.data['message'] != "") {
         throw Exception('Нэвтрэх нэр эсвэл нууц үг буруу байна');
       }
-      if (e.response!.statusCode == 401) {
+      if (e.response?.statusCode == 401) {
         throw Exception('Та Нэвтрэх нэр, нууц үгээ оруулна уу');
       }
       rethrow;
@@ -123,7 +150,7 @@ class ApiRepository {
   ) async {
     try {
       final data = {"password": password, "isCreator": false, "email": email};
-      await apiProvider.post('/auth/register', data: data);
+      await dio.post('/auth/register', data: data);
 
       return true;
     } on DioException {
@@ -133,8 +160,7 @@ class ApiRepository {
 
   Future<bool> forgotPassword(String email) async {
     try {
-      final res =
-          await apiProvider.post('/auth/forgotpwd', data: {"username": email});
+      final res = await dio.post('/auth/forgotpwd', data: {"username": email});
       print(res);
       return true;
     } on DioException {
@@ -150,7 +176,7 @@ class ApiRepository {
         "password_verify": code,
         "email_code": email
       };
-      await apiProvider.post('/auth/changepwdforgot', data: data);
+      await dio.post('/auth/changepwdforgot', data: data);
       return true;
     } on DioException {
       return false;
@@ -170,7 +196,7 @@ class ApiRepository {
         // "password": password
       };
 
-      await apiProvider.put('/user', data: data);
+      await dio.put('/user', data: data);
       return true;
     } on DioException {
       return false;
@@ -179,7 +205,7 @@ class ApiRepository {
 
   Future<bool> sendEmailVerifyCode() async {
     try {
-      await apiProvider.get('/auth/requestVerifyCode');
+      await dio.get('/auth/requestVerifyCode');
       return true;
     } catch (e) {
       return false;
@@ -188,10 +214,10 @@ class ApiRepository {
 
   Future<bool> getMobileVerifyCode() async {
     try {
-      final res = await apiProvider.get(
+      final res = await dio.get(
         '/auth/requestVerifyCodeMobile',
       );
-      return res['success'];
+      return res.data['success'];
     } on DioException {
       throw Exception(errorOccurred);
     }
@@ -200,8 +226,8 @@ class ApiRepository {
   Future<bool> sendMobileVerifyCode(String code) async {
     final data = {'code': code};
     try {
-      final res = await apiProvider.post('/auth/verifyMobile', data: data);
-      return res['success'];
+      final res = await dio.post('/auth/verifyMobile', data: data);
+      return res.data['success'];
     } on DioException {
       throw Exception(errorOccurred);
     }
@@ -210,8 +236,8 @@ class ApiRepository {
   Future<bool> verifyEmailCode(String code) async {
     try {
       final data = {"code": code};
-      final res = await apiProvider.post('/auth/verifyEmail', data: data);
-      return res['success'];
+      final res = await dio.post('/auth/verifyEmail', data: data);
+      return res.data['success'];
     } on DioException {
       throw Exception(errorOccurred);
     }
@@ -229,10 +255,9 @@ class ApiRepository {
         "bankAccName": bankAccName,
       };
       print(data);
-      final res =
-          await apiProvider.post('/user/verificationRequest', data: data);
+      final res = await dio.post('/user/verificationRequest', data: data);
 
-      return res['success'];
+      return res.data['success'];
     } on DioException {
       throw Exception(errorOccurred);
     }
@@ -241,8 +266,8 @@ class ApiRepository {
 // config
   Future<Config> getConfigById(String id) async {
     try {
-      final response = await apiProvider.get('/admin/config/$id');
-      return Config.fromJson(response);
+      final response = await dio.get('/admin/config/$id');
+      return Config.fromJson(response.data);
     } on DioException {
       throw Exception(errorOccurred);
     }
@@ -251,8 +276,8 @@ class ApiRepository {
   // cancel term
   Future<List<Cancelation>> getCancelation() async {
     try {
-      final response = await apiProvider.get('/cancelation/get');
-      return (response['data'] as List)
+      final response = await dio.get('/cancelation/get');
+      return (response.data['data'] as List)
           .map((e) => Cancelation.fromJson(e))
           .toList();
     } on DioException {
@@ -263,9 +288,9 @@ class ApiRepository {
   // category
   Future<List<Category>> getCategories() async {
     try {
-      final response = await apiProvider.get('/category');
+      final response = await dio.get('/category');
 
-      return (response['data'] as List)
+      return (response.data['data'] as List)
           .map((e) => Category.fromJson(e))
           .toList();
     } on DioException {
@@ -283,8 +308,10 @@ class ApiRepository {
         "sortData": sortData ?? {},
         "filterData": filterData ?? [],
       };
-      final response = await apiProvider.post('/posts/getPosts', data: data);
-      return (response['data'] as List).map((e) => Post.fromJson(e)).toList();
+      final response = await dio.post('/posts/getPosts', data: data);
+      return (response.data['data'] as List)
+          .map((e) => Post.fromJson(e))
+          .toList();
     } on DioException catch (e) {
       if (e.response?.data["success"] == false) {
         throw Exception(tryAgain);
@@ -296,10 +323,12 @@ class ApiRepository {
 
   getSavedPosts() async {
     try {
-      final response = await apiProvider.get(
+      final response = await dio.get(
         '/posts/getSavedPosts',
       );
-      return (response['data'] as List).map((e) => Post.fromJson(e)).toList();
+      return (response.data['data'] as List)
+          .map((e) => Post.fromJson(e))
+          .toList();
     } on DioException catch (e) {
       if (e.response?.data["success"] == false) {
         throw Exception(tryAgain);
@@ -313,7 +342,7 @@ class ApiRepository {
     try {
       final data = {"postId": postId};
 
-      await apiProvider.post('/posts/saveBookmark', data: data);
+      await dio.post('/posts/saveBookmark', data: data);
       return true;
     } on DioException catch (e) {
       print(e.response);
@@ -327,7 +356,7 @@ class ApiRepository {
 
   removeBookmark(int postId) async {
     try {
-      await apiProvider.delete(
+      await dio.delete(
         '/posts/removeBookmark/$postId',
       );
       return true;
@@ -348,20 +377,21 @@ class ApiRepository {
         "startDate": startDate,
         "duration": duration,
       };
-      final response = await apiProvider.post('/posts/rentRequest', data: data);
+      final response = await dio.post('/posts/rentRequest', data: data);
       print(response);
-      if (response['success']) {
+      if (response.data['success']) {
         return ErrorHandler(success: true, message: 'Ажмилттай');
       }
-      if (response['message'] == 'please_confirm_email') {
+      if (response.data['message'] == 'please_confirm_email') {
         return ErrorHandler(
             message: 'Имайл хаягаа баталгаажуулна уу.', success: false);
       }
-      if (response['message'] == 'start date error') {
+      if (response.data['message'] == 'start date error') {
         return ErrorHandler(
             message: 'Эхлэх огноо алдаатай байна.', success: false);
       }
-      if (response['message'] == 'Энэ хугацаанд түрээслэх боломжгүй байна') {
+      if (response.data['message'] ==
+          'Энэ хугацаанд түрээслэх боломжгүй байна') {
         return ErrorHandler(
             message: 'Энэ хугацаанд түрээслэх боломжгүй байна.',
             success: false);
@@ -381,9 +411,11 @@ class ApiRepository {
         "sortData": sortData ?? {},
         "filterData": filterData ?? [],
       };
-      final response = await apiProvider.post('/posts/getOwnPosts', data: data);
+      final response = await dio.post('/posts/getOwnPosts', data: data);
 
-      return (response['data'] as List).map((e) => Post.fromJson(e)).toList();
+      return (response.data['data'] as List)
+          .map((e) => Post.fromJson(e))
+          .toList();
     } on DioException catch (e) {
       if (e.response?.data["success"] == false) {
         throw Exception(tryAgain);
@@ -396,7 +428,7 @@ class ApiRepository {
 // notification
   Future<List<Notifications>> getAllNotification() async {
     try {
-      final response = await apiProvider.get('/notification');
+      final response = await dio.get('/notification');
 
       return (response as List).map((e) => Notifications.fromJson(e)).toList();
     } on DioException {
@@ -408,7 +440,8 @@ class ApiRepository {
   Future<void> changePassword(String password, String newPassword) async {
     try {
       final data = {'oldPassword': password, 'password': newPassword};
-      return await apiProvider.put('/user/password', data: data);
+      final res = await dio.put('/user/password', data: data);
+      return res.data;
     } on DioException {
       throw Exception(errorOccurred);
     }
@@ -427,7 +460,7 @@ class ApiRepository {
         "incomeAmount": user.incomeAmount,
         "description": user.description,
       };
-      await apiProvider.put('/user', data: data);
+      await dio.put('/user', data: data);
       return true;
     } on DioException {
       return false;

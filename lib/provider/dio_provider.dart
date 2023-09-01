@@ -19,6 +19,7 @@ class DioProvider extends GetxService {
           onRequest: (options, handler) async {
             // get token from storage
             final token = storage.read(StorageKeys.token.name);
+            print(token);
             if (token != null) {
               options.headers['Authorization'] = 'Bearer $token';
             } else {}

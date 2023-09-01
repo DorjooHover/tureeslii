@@ -52,7 +52,7 @@ class Routes {
   static String noData = '/noData';
 
 // pages
-  static List<GetPage> routes = [
+  static final pages = [
     GetPage(
         name: splash, page: () => const SplashView(), binding: SplashBinding()),
     GetPage(name: main, page: () => const MainView(), binding: MainBinging()),

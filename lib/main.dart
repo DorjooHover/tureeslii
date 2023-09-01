@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialBinding: AppBinding(),
       initialRoute: Routes.splash,
-      getPages: Routes.routes,
+      getPages: Routes.pages,
       builder: (context, child) {
         return LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth > 640) {
@@ -44,7 +44,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 
 class TabletLayout extends StatelessWidget {
   const TabletLayout({super.key, required this.child});

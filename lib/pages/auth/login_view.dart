@@ -21,16 +21,13 @@ class _LoginViewState extends State<LoginView> {
   String username = "";
   String passwordValue = "";
   loginFunc() async {
-    if (loginKey.currentState!.validate()) {
-      // loginKey.currentState!.save();
-      final user = await controller.login(username, passwordValue);
+    final user = await controller.login(username, passwordValue);
 
-      if (user is User) {
-        Get.toNamed(Routes.main);
-        mainController.refreshUser();
-      } else {
-        Get.snackbar('Алдаа', user.toString());
-      }
+    if (user is User) {
+      Get.toNamed(Routes.main);
+      mainController.refreshUser();
+    } else {
+      Get.snackbar('Алдаа', user.toString());
     }
   }
 

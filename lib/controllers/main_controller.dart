@@ -8,13 +8,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:landlord/controllers/auth_controller.dart';
 import 'package:landlord/model/models.dart';
 import 'package:landlord/provider/api_prodiver.dart';
-import 'package:landlord/provider/dio_provider.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/constants/enums.dart';
 
 class MainController extends GetxController
     with StateMixin<User>, WidgetsBindingObserver {
-  ApiRepository apiRepository = ApiRepository(apiProvider: DioProvider());
+  ApiRepository apiRepository = ApiRepository();
   final authController = Get.put(AuthController());
   final storage = GetStorage();
   final showPerformanceOverlay = false.obs;

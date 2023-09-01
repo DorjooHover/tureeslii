@@ -1,38 +1,20 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:landlord/routes.dart';
-
-import '../../../shared/index.dart';
+import 'package:landlord/shared/constants/enums.dart';
 
 class SplashController extends GetxController {
   final token = Rxn<String?>();
   late Worker worker;
-
   final storage = GetStorage();
+
   @override
   void onInit() async {
     try {
       final isCurrent = await _isCurrentVersion();
       if (isCurrent == null) {
-        Get.bottomSheet(
-          Container(
-            height: 100,
-            color: Colors.red,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Center(
-                  child: Text('Check your internet connection and try again'),
-                ),
-                GestureDetector(
-                    onTap: _isCurrentVersion, child: const Text('Try again')),
-              ],
-            ),
-          ),
-        );
       } else {
         if (isCurrent) {
           _checkAuthStatus();
@@ -62,12 +44,8 @@ class SplashController extends GetxController {
 
   Future<bool?> _isCurrentVersion() async {
     try {
-      return kDebugMode;
-    } on DioError catch (e) {
-      if (kDebugMode) {
-        print(e);
-        print(e.message);
-      }
+      return true;
+    } on DioException {
       return null;
     } on Error catch (er) {
       print(er);
