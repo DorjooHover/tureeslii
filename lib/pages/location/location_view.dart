@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:custom_info_window/custom_info_window.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -23,16 +22,20 @@ class LocationView extends StatefulWidget {
 }
 
 class _LocationViewState extends State<LocationView> {
-  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
-
   final mainController = Get.put(MainController());
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
+  static const CameraPosition _kGooglePlex = CameraPosition(
+    target: LatLng(37.42796133580664, -122.085749655962),
+    zoom: 14.4746,
+  );
+  final Map<String, Marker> _markers = {};
+  bool _isLoaded = false;
+  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
   LocationData? currentLocation;
   LatLng? startLocation;
   final Set<Marker> markers = {};
-  CustomInfoWindowController _customInfoWindowController =
-      CustomInfoWindowController();
+
   final double _headerHeight = 100.0;
   final double _maxHeight = 600.0;
   final double sortMaxHeight = 320.0;
@@ -46,6 +49,7 @@ class _LocationViewState extends State<LocationView> {
 
   final isLoading = false.obs;
   List<Post> posts = <Post>[];
+  List<Map<String, dynamic>> data = [];
   bool loading = false;
   int page = 0;
   int limit = 10;
@@ -69,10 +73,6 @@ class _LocationViewState extends State<LocationView> {
     }
   }
 
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
   void getCurrentLocation() async {
     // Location location = Location();
 
@@ -118,16 +118,21 @@ class _LocationViewState extends State<LocationView> {
     });
   }
 
+  GoogleMapController? mapController;
   List<LatLng> locations = [];
-
+  BitmapDescriptor? customMarkerIcon;
   @override
   void initState() {
-    super.initState();
-
     getPosts().then((value) {
       addMarkers();
       getCurrentLocation();
+      // getCustomMarkerIcon().then((icon) {
+      //   setState(() {
+      //     customMarkerIcon = icon;
+      //   });
+      // });
     });
+    super.initState();
   }
 
   void moveCurrentLocation() async {
@@ -152,32 +157,24 @@ class _LocationViewState extends State<LocationView> {
 
     return Stack(
       children: [
-        startLocation != null
-            ? GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition: _kGooglePlex,
-                onMapCreated: (GoogleMapController controller) async {
-                  _controller.complete(controller);
-                  _customInfoWindowController.googleMapController = controller;
-                  // addMarkers();
-                },
-                markers: {
-                  // Marker(
-                  //   markerId: MarkerId("currentLocation"),
-                  //   position: LatLng(currentLocation!.latitude!,
-                  //       currentLocation!.longitude!),
-                  // ),
-                  ...markers
-                },
-              )
-            : Center(
-                child: Text('Түр хүлээнэ үү...'),
-              ),
-        CustomInfoWindow(
-          controller: _customInfoWindowController,
-          height: 75,
-          width: 150,
-          offset: 50,
+        GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: LatLng(37.7749, -122.4194), // Initial map position
+            zoom: 12.0,
+          ),
+          onMapCreated: (controller) {
+            mapController = controller;
+          },
+          markers: customMarkerIcon != null
+              ? Set<Marker>.from([
+                  Marker(
+                    markerId: MarkerId('customMarker'),
+                    position: LatLng(37.7749, -122.4194), // Marker position
+                    icon: customMarkerIcon!, // Use the custom marker icon
+                  ),
+                ])
+              : Set<
+                  Marker>(), // Empty set of markers if custom marker not loaded yet
         ),
         Positioned(
           left: origin,
@@ -435,4 +432,60 @@ class _LocationViewState extends State<LocationView> {
       ),
     );
   }
+
+  // Future<void> _onBuildCompleted() async {
+  //   print('asdf');
+
+  //   for (int i = 0; i < posts.length; i++) {
+  //     print(i);
+  //     Marker marker = await _generateMarkersFromWidgets(posts[i]);
+  //     print(marker);
+
+  //     _markers[marker.markerId.value] = marker;
+  //   }
+
+  //   setState(() {
+  //     _isLoaded = true;
+  //   });
+  // }
 }
+
+// Future<BitmapDescriptor> getCustomMarkerIcon() async {
+//   // Create a new picture (drawable canvas)
+//   final recorder = ui.PictureRecorder();
+//   final canvas = Canvas(
+//       recorder, [Rect()]); // Specify the marker size
+
+//   // Draw your custom marker using the canvas
+//   final paint = Paint()
+//     ..color = Colors.blue // Marker color
+//     ..strokeWidth = 3.0 // Border width
+//     ..style = PaintingStyle.fill;
+
+//   canvas.drawCircle(Offset(24, 24), 24, paint);
+
+//   // End drawing
+//   final picture = recorder.endRecording();
+//   final img = await picture.toImage(48, 48);
+
+//   // Convert the image to byte data
+//   final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+//   final buffer = byteData!.buffer.asUint8List();
+
+//   // Create a BitmapDescriptor from the byte array
+//   return BitmapDescriptor.fromBytes(buffer);
+// }
+
+// Future<Marker> _generateMarkersFromWidgets(Post data) async {
+//   print(GlobalKey().currentContext?.findRenderObject());
+//   // ui.Image image = await boundary.toImage();
+//   // ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+//   print('asdfasdf');
+//   return Marker(markerId: MarkerId(data.id!.toString()));
+//   // return Marker(
+//   //     markerId: MarkerId(data.id!.toString()),
+//   //     position: LatLng(double.parse(data.lat ?? '37.42796133580664'),
+//   //         double.parse(data.long ?? '-122.085749655962')),
+//   //     icon: BitmapDescriptor.fromBytes(
+//   //         byteData?.buffer.asUint8List() ?? ByteData(1).buffer.asUint8List()));
+// }

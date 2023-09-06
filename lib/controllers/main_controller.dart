@@ -100,10 +100,11 @@ class MainController extends GetxController
     }
   }
 
-  Future<bool> rentRequest(int postId, int startDate, int duration) async {
+  Future<bool> rentRequest(
+      int postId, int startDate, int duration, String type) async {
     try {
       ErrorHandler res =
-          await _apiRepository.rentRequest(postId, startDate, duration);
+          await _apiRepository.rentRequest(postId, startDate, duration, type);
       if (!res.success!) {
         Get.snackbar('Алдаа', res.message ?? '');
       }
@@ -151,10 +152,15 @@ class MainController extends GetxController
   Future<void> setupApp() async {
     isLoading.value = true;
     try {
-      user = await _apiRepository.getUser();
-      change(user, status: RxStatus.success());
-
-      isLoading.value = false;
+      final res = await _apiRepository.getUser();
+      if (res != null) {
+        user = res;
+        change(user, status: RxStatus.success());
+        if (user != null) {
+          getSavedPost();
+        }
+        // isLoading.value = false;
+      }
     } on DioException catch (e) {
       isLoading.value = false;
 
@@ -162,7 +168,6 @@ class MainController extends GetxController
 
       update();
     }
-    getSavedPost();
   }
 
   Future<void> sendEmailVerification() async {

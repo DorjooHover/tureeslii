@@ -154,7 +154,7 @@ class ItemDetailView extends StatelessWidget {
                     space32,
                     MainButton(
                       onPressed: () async{
-                        await controller.rentRequest(data.id!, DateTime.now().millisecondsSinceEpoch, 30);
+                        await controller.rentRequest(data.id!, DateTime.now().millisecondsSinceEpoch, 30, 'monthly');
                         Navigator.pop(context);
                       },
                       width: double.infinity,
