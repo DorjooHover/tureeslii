@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:tureeslii/bindings/bindings.dart';
+import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/pages/menu/menu_view.dart';
 import 'package:tureeslii/pages/pages.dart';
 
@@ -55,7 +56,10 @@ class Routes {
         transitionDuration: const Duration(milliseconds: 300)),
     GetPage(
         name: acceptedOrder,
-        page: () => const OrderAcceptedView(),
+        page: () {
+          RentRequest res = Get.arguments;
+          return OrderAcceptedView(data: res);
+        },
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
     // menu
@@ -71,7 +75,7 @@ class Routes {
         transitionDuration: const Duration(milliseconds: 300)),
     GetPage(
         name: changeCity,
-        page: () => const ChangeCityView(),
+        page: () => ChangeCityView(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
     GetPage(
@@ -85,11 +89,11 @@ class Routes {
         page: () => const LocationView(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
-    GetPage(
-        name: locationFilter,
-        page: () => const FilterView(),
-        transition: Transition.fade,
-        transitionDuration: const Duration(milliseconds: 300)),
+    // GetPage(
+    //     name: locationFilter,
+    //     page: () => const FilterView(),
+    //     transition: Transition.fade,
+    //     transitionDuration: const Duration(milliseconds: 300)),
 
     // notification
     GetPage(

@@ -14,28 +14,37 @@ class OrderView extends StatefulWidget {
 class _OrderViewState extends State<OrderView> {
   final controller = Get.put(MainController());
 
+  void initState() {
+    super.initState();
+    controller.getOrders();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: origin),
       child: Obx(
-        () => ListView.builder(
-          itemBuilder: (context, index) => GestureDetector(
-            onTap: () {
-              if (index == 0) {
-                Get.toNamed(Routes.acceptedOrder);
-              }
-            },
-            child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 10,
+        () => controller.myRentRequest.isNotEmpty
+            ? ListView.builder(
+                itemBuilder: (context, index) => GestureDetector(
+                  onTap: () {
+                    if (index == 0) {
+                      Get.toNamed(Routes.acceptedOrder);
+                    }
+                  },
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                      ),
+                      child: OrderCard(
+                        data: controller.myRentRequest[index],
+                      )),
                 ),
-                child: OrderCard(
-                    data: controller.ownPosts[index],
-                    type: index == 0 ? 'success' : 'warning')),
-          ),
-          itemCount: controller.ownPosts.length,
-        ),
+                itemCount: controller.myRentRequest.length,
+              )
+            : const Center(
+                child: Text('Танд хүсэлт байхгүй байна'),
+              ),
       ),
     );
   }

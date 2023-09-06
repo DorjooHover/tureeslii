@@ -20,21 +20,38 @@ class _ProfileViewState extends State<ProfileView> {
   bool product = false;
   String sex = male;
   String workStatus = working;
-  DateTime birthdate = DateTime(2002, 02, 01);
+  String birthdate = "";
   int rentPersonCount = 1;
   String jobTitle = "";
   String professionValue = "";
-  String payType = "";
+  String payType = payTypesValues[0];
   double incomeAmount = 0.0;
   String descriptionValue = "";
   final controller = Get.put(SplashController());
   final mainController = Get.put(MainController());
   @override
   void initState() {
-    // TODO: implement initState
     mainController.refreshUser();
 
+    updateData();
     super.initState();
+  }
+
+  updateData() {
+    if (mainController.user != null) {
+      sex = mainController.user!.gender ?? male;
+      birthdate = mainController.user!.birthdate ?? '';
+      payType = mainController.user!.payType ?? payTypesValues[0];
+      jobTitle = mainController.user!.jobTitle ?? '';
+      descriptionValue = mainController.user!.description ?? '';
+      professionValue = mainController.user!.profession ?? '';
+      rentPersonCount = mainController.user!.rentPersonCount ?? 1;
+      product = mainController.user!.productAdsNotification ?? false;
+      info = mainController.user!.orderNotification ?? false;
+      workStatus = mainController.user!.job ?? working;
+      incomeAmount = mainController.user!.incomeAmount?.toDouble() ?? 0.0;
+      setState(() {});
+    }
   }
 
   @override
@@ -88,6 +105,8 @@ class _ProfileViewState extends State<ProfileView> {
                           ),
                           value: info,
                           onChanged: (value) {
+                            // mainController
+                            //     .updateUser(User(orderNotification: value));
                             setState(() {
                               info = value;
                             });
@@ -106,8 +125,10 @@ class _ProfileViewState extends State<ProfileView> {
                           value: product,
                           onChanged: (value) {
                             setState(() {
-                              info = value;
+                              product = value;
                             });
+                            // mainController.updateUser(
+                            //     User(productAdsNotification: value));
                           },
                         ),
                         space32,
@@ -161,7 +182,47 @@ class _ProfileViewState extends State<ProfileView> {
                         ],
                       ),
                       space13,
-                      AdditionCard(title: birthday, child: Input()),
+                      AdditionCard(
+                          title: birthday,
+                          child: GestureDetector(
+                              onTap: () async {
+                                final DateTime now = DateTime.now();
+                                final DateTime? selectedDate =
+                                    await showDatePicker(
+                                        context: context,
+                                        initialDate: DateTime(now.year - 20),
+                                        firstDate: DateTime(now.year - 200),
+                                        lastDate: DateTime(
+                                            now.year, now.month, now.day),
+                                        builder: (context, child) {
+                                          return CustomDatePicker(child: child!);
+                                        });
+                                if (selectedDate != null) {
+                                  setState(() {
+                                    birthdate = selectedDate.toString();
+                                  });
+                                }
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                height: 50,
+                                alignment: Alignment.centerLeft,
+                                padding: EdgeInsets.symmetric(horizontal: 13),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(5),
+                                  border: Border.all(color: black, width: 1),
+                                ),
+                                child: Text(
+                                  birthdate != ""
+                                      ? birthdate.substring(0, 10)
+                                      : birthdate,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(color: black),
+                                ),
+                              ))),
                       space24,
                       AdditionCard(
                           title: gender,
@@ -180,6 +241,7 @@ class _ProfileViewState extends State<ProfileView> {
                           child: Input(
                             textInputAction: TextInputAction.next,
                             textInputType: TextInputType.number,
+                            labelText: rentPersonCount.toString(),
                             inputFormatter: [
                               FilteringTextInputFormatter.digitsOnly
                             ],
@@ -205,6 +267,7 @@ class _ProfileViewState extends State<ProfileView> {
                       AdditionCard(
                           title: whereWork,
                           child: Input(
+                            labelText: jobTitle,
                             textInputAction: TextInputAction.next,
                             onChange: (p0) {
                               setState(() {
@@ -216,6 +279,7 @@ class _ProfileViewState extends State<ProfileView> {
                       AdditionCard(
                           title: profession,
                           child: Input(
+                            labelText: professionValue,
                             textInputAction: TextInputAction.next,
                             onChange: (p0) {
                               setState(() {
@@ -227,9 +291,17 @@ class _ProfileViewState extends State<ProfileView> {
                       AdditionCard(
                           title: howRent,
                           child: DropDown(
-                              list: ['exp1', 'exp2'],
-                              value: '',
-                              onChanged: (String? v) {})),
+                              list: payTypesMn,
+                              value:
+                                  payTypesMn[payTypesValues.indexOf(payType)],
+                              onChanged: (String? v) {
+                                if (v != null) {
+                                  int i = payTypesMn.indexOf(v);
+                                  setState(() {
+                                    payType = payTypesValues[i];
+                                  });
+                                }
+                              })),
                       space24,
                       AdditionCard(
                           title: incomeRent,
@@ -239,6 +311,7 @@ class _ProfileViewState extends State<ProfileView> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^(\d+)?\.?\d{0,2}'))
                             ],
+                            labelText: incomeAmount.toString(),
                             onChange: (p0) {
                               setState(() {
                                 incomeAmount = double.tryParse(p0) ?? 0.0;
@@ -250,6 +323,7 @@ class _ProfileViewState extends State<ProfileView> {
                           title: briefInformation,
                           child: Input(
                             maxLine: 3,
+                            labelText: descriptionValue,
                             textInputAction: TextInputAction.next,
                             textInputType: TextInputType.multiline,
                             onChange: (p0) {
@@ -263,17 +337,18 @@ class _ProfileViewState extends State<ProfileView> {
                         onPressed: () async {
                           bool res = await controller.mainController.updateUser(
                               User(
-                                  birthdate: birthdate.toString(),
+                                  birthdate: birthdate,
                                   gender: sex,
                                   rentPersonCount: rentPersonCount,
                                   job: workStatus,
                                   jobTitle: jobTitle,
                                   profession: professionValue,
-                                  // payType: payType,
-                                  incomeAmount:
-                                      int.parse(incomeAmount.toString()),
+                                  payType: payType,
+                                  incomeAmount: incomeAmount.toInt(),
                                   description: descriptionValue));
                           if (res) {
+                            updateData();
+                            print(mainController.user?.toJson());
                             Get.snackbar(
                               '',
                               '',
@@ -350,14 +425,14 @@ class MainPersonalWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MainController());
-    void changePasswordSnackbar() {
+    void changePasswordSnackbar(bool res) {
       Get.snackbar(
         '',
         '',
         margin: EdgeInsets.zero,
         snackPosition: SnackPosition.BOTTOM,
         maxWidth: MediaQuery.of(context).size.width,
-        backgroundColor: green,
+        backgroundColor: res ? green : warning,
         animationDuration: const Duration(milliseconds: 300),
         forwardAnimationCurve: Curves.easeOut,
         borderRadius: 0,
@@ -367,7 +442,7 @@ class MainPersonalWidget extends StatelessWidget {
             SvgPicture.asset(iconSuccessWhite),
             space13,
             Text(
-              successSaved,
+              res ? successSaved : incomplete,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     color: Colors.white,
                   ),
@@ -375,6 +450,7 @@ class MainPersonalWidget extends StatelessWidget {
           ],
         ),
       );
+      Navigator.pop(context);
     }
 
     return MenuContainer(
@@ -392,9 +468,10 @@ class MainPersonalWidget extends StatelessWidget {
             title: phone,
             verified: controller.user!.mobileVerified,
             onPressed: () async {
-              bool res = await controller.getMobileVerification();
+              if (controller.user!.mobileVerified != null &&
+                  !controller.user!.mobileVerified!) {
+                await controller.getMobileVerification();
 
-              if (res) {
                 showDialog(
                   context: context,
                   builder: (context) {
@@ -458,8 +535,11 @@ class MainPersonalWidget extends StatelessWidget {
           title: email,
           verified: controller.user!.emailVerified,
           onPressed: () {
-            controller.sendEmailVerification();
-            Get.snackbar('Мэдэгдэл', emailVerificationString);
+            if (controller.user!.emailVerified != null &&
+                !controller.user!.emailVerified!) {
+              controller.sendEmailVerification();
+              Get.snackbar('Мэдэгдэл', emailVerificationString);
+            }
           },
         ),
         space27,
@@ -508,11 +588,13 @@ class MainPersonalWidget extends StatelessWidget {
                             controller.confirmPassword.value = p0;
                           },
                           onSubmitted: (p0) async {
-                            bool res = await controller.changePassword();
-                            if (res) {
-                              changePasswordSnackbar();
-                              Navigator.pop(context);
+                            bool res = false;
+                            if (controller.confirmPassword.value != "" &&
+                                controller.newPassword.value != "" &&
+                                controller.oldPassword.value != "") {
+                              res = await controller.changePassword();
                             }
+                            changePasswordSnackbar(res);
                           },
                         )),
                     space24,
@@ -520,11 +602,13 @@ class MainPersonalWidget extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: MainButton(
                         onPressed: () async {
-                          bool res = await controller.changePassword();
-                          if (res) {
-                            changePasswordSnackbar();
+                          bool res = false;
+                          if (controller.confirmPassword.value != "" &&
+                              controller.newPassword.value != "" &&
+                              controller.oldPassword.value != "") {
+                            res = await controller.changePassword();
                           }
-                          Navigator.pop(context);
+                          changePasswordSnackbar(res);
                         },
                         padding: const EdgeInsets.symmetric(
                             vertical: small, horizontal: 24),

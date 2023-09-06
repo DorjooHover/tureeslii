@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/provider/api_prodiver.dart';
 
@@ -11,7 +10,7 @@ class AuthController extends GetxController {
   final ApiRepository apiRepository;
   AuthController({required this.apiRepository});
   final prefs = Get.find<SharedPreferences>();
-  final city = "Улаанбаатар".obs;
+
   final username = "".obs;
   final password = "".obs;
 

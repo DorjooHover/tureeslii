@@ -22,15 +22,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Tureeslii',
-      theme: MyTheme.light,
-      darkTheme: MyTheme.dark,
-      themeMode: ThemeMode.light,
-      debugShowCheckedModeBanner: false,
-      initialBinding: AppBinding(),
-      initialRoute: Routes.splash,
-      getPages: Routes.routes,
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 640),
+      child: GetMaterialApp(
+        title: 'Tureeslii',
+        theme: MyTheme.light,
+        darkTheme: MyTheme.dark,
+        themeMode: ThemeMode.light,
+        debugShowCheckedModeBanner: false,
+        initialBinding: AppBinding(),
+        initialRoute: Routes.splash,
+        getPages: Routes.routes,
+      ),
     );
   }
 }

@@ -13,7 +13,7 @@ class ApiRepository {
       final response = await apiProvider.get('/auth/user');
       return User.fromJson(response['data']);
     } on DioException catch (e) {
-      print(e);
+      rethrow;
     }
   }
 
@@ -22,7 +22,6 @@ class ApiRepository {
       final data = {"username": username, "password": password};
 
       final res = await apiProvider.post('/auth/login', data: data);
-      print(res);
       return User.fromJson(res['data']);
     } on DioException catch (e) {
       if (e.response!.statusCode == 401 && e.response?.data['message'] != "") {
@@ -132,6 +131,18 @@ class ApiRepository {
     }
   }
 
+  // category
+  Future<List<Category>> getCategories() async {
+    try {
+      final response = await apiProvider.get('/category');
+      return (response['data'] as List)
+          .map((e) => Category.fromJson(e))
+          .toList();
+    } on DioException catch (e) {
+      throw Exception("Алдаа гарлаа");
+    }
+  }
+
   // posts
   Future<List<Post>> getAllPosts(int? skip, int? take, SortData? sortData,
       List<FilterData>? filterData) async {
@@ -143,7 +154,11 @@ class ApiRepository {
         "filterData": filterData ?? [],
       };
       final response = await apiProvider.post('/posts/getPosts', data: data);
-      return (response['data'] as List).map((e) => Post.fromJson(e)).toList();
+      if (response['data'] != null) {
+        return (response['data'] as List).map((e) => Post.fromJson(e)).toList();
+      } else {
+        return [];
+      }
     } on DioException catch (e) {
       if (e.response?.data["success"] == false) {
         throw Exception("Дахии оролдоно уу");
@@ -212,8 +227,9 @@ class ApiRepository {
       };
       final response = await apiProvider.post('/posts/rentRequest', data: data);
       print(response);
+      
       if (response['success']) {
-        return ErrorHandler(success: true, message: 'Ажмилттай');
+        return ErrorHandler(success: true, message: 'Амжилттай');
       }
       if (response['message'] == 'please_confirm_email') {
         return ErrorHandler(
@@ -231,6 +247,10 @@ class ApiRepository {
         return ErrorHandler(
             message: 'Энэ хугацаанд түрээслэх боломжгүй байна.',
             success: false);
+      }
+      if (response['message'] == 'please_fill_additional_infos') {
+        return ErrorHandler(
+            message: 'Таны мэдээлэл дутуу байна.', success: false);
       }
       return ErrorHandler(message: 'Алдаа гарлаа', success: false);
     } on DioException catch (e) {
@@ -252,6 +272,45 @@ class ApiRepository {
     } on DioException catch (e) {
       if (e.response?.data["success"] == false) {
         throw Exception("Дахии оролдоно уу");
+      } else {
+        throw Exception("Алдаа гарлаа");
+      }
+    }
+  }
+
+  Future<List<dynamic>> getPriceRange(FilterData filterData) async {
+    try {
+      final data = {
+        "filterData": filterData,
+      };
+      final response =
+          await apiProvider.post('/posts/getPriceRange', data: data);
+      List<dynamic> copy = response['data'];
+      copy.sort((a, b) => a['price']!.compareTo(b['price']!));
+      return copy;
+    } on DioException catch (e) {
+      throw Exception("Алдаа гарлаа");
+    }
+  }
+
+  // rent request
+  Future<List<RentRequest>> getMyRentRequest(int? skip, int? take,
+      SortData? sortData, List<FilterData>? filterData) async {
+    try {
+      final data = {
+        "skip": skip ?? 0,
+        "take": take ?? 10,
+        "sortData": sortData ?? {},
+        "filterData": filterData ?? [],
+      };
+      final response =
+          await apiProvider.post('/rentreq/myRentRequest', data: data);
+      return (response['data'] as List)
+          .map((e) => RentRequest.fromJson(e))
+          .toList();
+    } on DioException catch (e) {
+      if (e.response?.data["success"] == false) {
+        throw Exception("Дахин оролдоно уу");
       } else {
         throw Exception("Алдаа гарлаа");
       }
@@ -291,6 +350,8 @@ class ApiRepository {
         "payType": user.payType,
         "incomeAmount": user.incomeAmount,
         "description": user.description,
+        "orderNotification": user.orderNotification,
+        "productAdsNotification": user.productAdsNotification
       };
       await apiProvider.put('/user', data: data);
       return true;

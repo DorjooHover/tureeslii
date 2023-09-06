@@ -1,4 +1,5 @@
 // urls
+import 'package:tureeslii/model/error_handler.dart';
 import 'package:tureeslii/shared/constants/assets.dart';
 import 'package:tureeslii/shared/constants/strings.dart';
 
@@ -18,6 +19,8 @@ const cities = [
   'Эрдэнэт',
 ];
 
+const payTypesValues = ['income', 'tetgeleg', 'parents', 'husband_wife'];
+const payTypesMn = ['Цалин/Орлого', 'Тэтгэлэг', 'эцэг/эх', 'эхнэр/нөхөр'];
 const filterType = [
   'Орон сууц',
   'Хажуу өрөө',
@@ -26,32 +29,48 @@ const filterType = [
   "Нийтийн байр",
   "Зуслангийн байр",
 ];
-const filterItemsIncludedFee = [
-  'Байрны мөнгө',
-  'СӨХ',
-  "Цахилгаан",
-  "Интернет",
+List<FilterData> filterItemsIncludedFee = [
+  FilterData(
+      name: 'Байрны мөнгө',
+      qry: 'apartment_fees',
+      field: 'priceIncluded',
+      op: 'LIKE'),
+  FilterData(name: 'СӨХ', qry: 'cox', field: 'priceIncluded', op: 'LIKE'),
+  FilterData(
+      name: 'Цахилгаан', qry: 'electric', field: 'priceIncluded', op: 'LIKE'),
+  FilterData(
+      name: 'Интернет', qry: 'internet', field: 'priceIncluded', op: 'LIKE'),
 ];
 
-const filterOther = [
-  'Цахилгаан халаалт',
-  'Дотор 00',
-  'Тавилгатай',
-  'Гүний худаг',
-  'Тагт',
-  'Цахилгаан шат',
-  'Угаалгын машин',
-  'Зуух',
-  'Хөргөгч',
-  'Гал тогооны тавилга',
-  'Интернет',
-  'Кабелын ТВ',
-  'Эмэгтэй',
-  'Эрэгтэй',
-  'Гэр бүл',
-  'Тэжээвэр амьтан',
-  'Тамхи татах',
-  'Зочин урих',
+List<FilterData> filterOther = [
+  FilterData(
+      name: 'Цахилгаан халаалт', op: "=", qry: 'electric', field: 'heating'),
+  FilterData(name: 'Дотор 00', op: "=", qry: 'inside', field: 'restroom'),
+  FilterData(name: 'Тавилгатай', op: "LIKE", qry: true, field: "hasFurniture"),
+  FilterData(
+      name: 'Гүний худаг', op: "LIKE", qry: 'well', field: 'waterSupply'),
+  FilterData(name: 'Тагт', op: "=", qry: true, field: 'balcony'),
+  FilterData(name: 'Цахилгаан шат', op: "=", qry: true, field: 'elevator'),
+  FilterData(
+      name: 'Угаалгын машин', op: "=", qry: true, field: 'washingMachine'),
+  FilterData(name: 'Зуух', op: "=", qry: true, field: 'stove'),
+  FilterData(name: 'Хөргөгч', op: "=", qry: true, field: 'refrigerator'),
+  FilterData(
+      name: 'Гал тогооны тавилга',
+      op: "=",
+      qry: true,
+      field: 'kitchenFurniture'),
+  FilterData(name: 'Интернет', op: "=", qry: true, field: 'wifi'),
+  FilterData(name: 'Кабелын ТВ', op: "=", qry: true, field: 'tvCable'),
+  FilterData(
+      name: 'Эмэгтэй', op: "LIKE", qry: 'Female', field: 'acceptedTenants'),
+  FilterData(
+      name: 'Эрэгтэй', op: "LIKE", qry: "Male", field: 'acceptedTenants'),
+  FilterData(
+      name: 'Гэр бүл', op: "LIKE", qry: "family", field: 'acceptedGender'),
+  FilterData(name: 'Тэжээвэр амьтан', op: "=", qry: true, field: 'petAllowed'),
+  FilterData(name: 'Тамхи татах', op: "=", qry: true, field: 'smokingAllowed'),
+  FilterData(name: 'Зочин урих', op: "=", qry: true, field: 'guestAllowed'),
 ];
 
 const monthsValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -59,31 +78,30 @@ const monthsValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 const filterVerification = ['Баталгаажсан', 'Онцлох'];
 
 const filterFloor = ['1', '2-5', '5+'];
-const paymentConditionValues = ['1 сар', "3 сар", "6 сар"];
+List<FilterData> paymentConditionValues = [
+  FilterData(name: 'Бүгд', op: '=', field: "paymentTerm"),
+  FilterData(name: '1 сар', op: '=', field: "paymentTerm", qry: "1_month"),
+  FilterData(name: '3 сар', op: '=', field: "paymentTerm", qry: '3_month'),
+  FilterData(name: '6 сар', op: '=', field: "paymentTerm", qry: '6_month'),
+];
 const collaterals = ['Барьцаагүй'];
 
 // sort
-const sortValues = [
-  {
-    'text': 'Үнэ өсөхөөр',
-    'icon': iconIncreasePrice,
-    'is': 'false',
-  },
-  {
-    'text': 'Үнэ буурахаар',
-    'icon': iconDecreasePrice,
-    'is': 'false',
-  },
-  {
-    'text': 'Шинэ эхэндээ',
-    'icon': iconNewStart,
-    'is': 'true',
-  },
-  {
-    'text': 'Хуучин эхэндээ',
-    'icon': iconOldStart,
-    'is': 'false',
-  },
+List<SortData> sortValues = [
+  SortData(
+      dir: "price", name: 'Үнэ өсөхөөр', icon: iconIncreasePrice, field: 'ASC'),
+  SortData(
+      dir: "price",
+      name: 'Үнэ буурахаар',
+      icon: iconDecreasePrice,
+      field: 'DESC'),
+  SortData(
+      dir: "startDate", name: 'Шинэ эхэндээ', icon: iconNewStart, field: 'ASC'),
+  SortData(
+      dir: "startDate",
+      name: 'Хуучин эхэндээ',
+      icon: iconNewStart,
+      field: 'DESC'),
 ];
 
 // navigation bar
@@ -177,6 +195,7 @@ String getWaterSupply(String value) {
       return '';
   }
 }
+
 String getToilet(String value) {
   switch (value) {
     case 'inside':

@@ -9,7 +9,6 @@ import 'package:tureeslii/shared/index.dart';
 class ItemDetailView extends StatelessWidget {
   const ItemDetailView({super.key, required this.data});
   final Post data;
-
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MainController());
@@ -43,9 +42,7 @@ class ItemDetailView extends StatelessWidget {
                   const MenuContainer(child: CalendarCard()),
                   space36,
                   space4,
-                  MoreDetailCard(
-                    data:data            
-                  ),
+                  MoreDetailCard(data: data),
                   space20
                 ],
               ),
@@ -73,6 +70,8 @@ class ItemDetailView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          DateTime date = DateTime.parse(data.startDate!);
+          DateTime now = DateTime.now();
           showDialog(
               context: context,
               builder: (context) {
@@ -87,9 +86,57 @@ class ItemDetailView extends StatelessWidget {
                         children: <Widget>[
                           Flexible(
                             child: AdditionCard(
-                                color: black,
-                                title: startRentDate,
-                                child: const Input()),
+                              color: black,
+                              title: startRentDate,
+                              child: GestureDetector(
+                                onTap: () async {
+                                  final DateTime? selectedDate =
+                                      await showDatePicker(
+                                          context: context,
+                                          initialDate:
+                                              now.difference(date).inDays < 0
+                                                  ? date
+                                                  : now,
+                                          firstDate:
+                                              now.difference(date).inDays < 0
+                                                  ? date
+                                                  : now,
+                                          lastDate: DateTime(date.year + 10),
+                                          builder: (context, child) {
+                                            return CustomDatePicker(
+                                                child: child!);
+                                          });
+                                  if (selectedDate != null) {
+                                    controller.startDate.value =
+                                        selectedDate.toString();
+                                  }
+                                },
+                                child: Container(
+                                    width: double.infinity,
+                                    height: 50,
+                                    alignment: Alignment.centerLeft,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 13),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5),
+                                      border:
+                                          Border.all(color: black, width: 1),
+                                    ),
+                                    child: Obx(
+                                      () => Text(
+                                        controller.startDate.value != ""
+                                            ? controller.startDate.value
+                                                .substring(0, 10)
+                                            : controller.startDate.value,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .copyWith(color: black),
+                                      ),
+                                    )),
+                              ),
+                            ),
                           ),
                           space4,
                           space2,
@@ -102,9 +149,62 @@ class ItemDetailView extends StatelessWidget {
                           space2,
                           Flexible(
                             child: AdditionCard(
-                                color: black,
-                                title: startEndDate,
-                                child: Input()),
+                              color: black,
+                              title: startEndDate,
+                              child: GestureDetector(
+                                onTap: () async {
+                                  DateTime late = now.difference(now).inDays < 0
+                                      ? date
+                                      : now;
+                                  final DateTime end = data.minDurationDaily !=
+                                          null
+                                      ? DateTime(late.year, late.month,
+                                          late.day + data.minDurationDaily!)
+                                      : DateTime(
+                                          late.year,
+                                          late.month + data.minDurationMonthly!,
+                                          late.day);
+                                  final DateTime? selectedDate =
+                                      await showDatePicker(
+                                          context: context,
+                                          initialDate: end,
+                                          firstDate: end,
+                                          lastDate: DateTime(date.year + 10),
+                                          builder: (context, child) {
+                                            return CustomDatePicker(
+                                                child: child!);
+                                          });
+                                  if (selectedDate != null) {
+                                    controller.endDate.value =
+                                        selectedDate.toString();
+                                  }
+                                },
+                                child: Container(
+                                    width: double.infinity,
+                                    height: 50,
+                                    alignment: Alignment.centerLeft,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 13),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5),
+                                      border:
+                                          Border.all(color: black, width: 1),
+                                    ),
+                                    child: Obx(
+                                      () => Text(
+                                        controller.endDate.value != ""
+                                            ? controller.endDate.value
+                                                .substring(0, 10)
+                                            : controller.endDate.value,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .copyWith(color: black),
+                                      ),
+                                    )),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -122,13 +222,27 @@ class ItemDetailView extends StatelessWidget {
                                     .textTheme
                                     .labelLarge!
                                     .copyWith(color: black)),
-                            Text('2 сар 1 өдөр',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(
-                                        color: black,
-                                        fontWeight: FontWeight.bold)),
+                            Obx(
+                              () => Text(
+                                  controller.startDate.value != "" &&
+                                          controller.endDate.value != ""
+                                      ? DateTime.parse(controller
+                                                      .startDate.value)
+                                                  .difference(DateTime.parse(
+                                                      controller.endDate.value))
+                                                  .inDays
+                                                  .abs() >
+                                              30
+                                          ? '${DateTime.parse(controller.startDate.value).difference(DateTime.parse(controller.endDate.value)).inDays.abs() ~/ 30} сар ${DateTime.parse(controller.startDate.value).difference(DateTime.parse(controller.endDate.value)).inDays % 30} өдөр'
+                                          : '${DateTime.parse(controller.startDate.value).difference(DateTime.parse(controller.endDate.value)).inDays.abs()} өдөр'
+                                      : '',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(
+                                          color: black,
+                                          fontWeight: FontWeight.bold)),
+                            )
                           ],
                         ),
                         space20,

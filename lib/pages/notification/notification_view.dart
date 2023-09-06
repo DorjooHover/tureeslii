@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:tureeslii/controllers/notification_controller.dart';
+import 'package:tureeslii/pages/no_data.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class NotificationView extends StatefulWidget {
@@ -19,7 +20,7 @@ class _NotificationViewState extends State<NotificationView> {
     controller.getNotification();
   }
 
-  dispose() {
+  void dispose() {
     super.dispose();
   }
 
@@ -28,22 +29,24 @@ class _NotificationViewState extends State<NotificationView> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Obx(
-        () => ListView.builder(
-          itemBuilder: (context, index) => Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: origin),
-            child: NotificationCard(
-                dot: index % 4 != 0 ? true : false,
-                type: index % 5 == 0
-                    ? 'success'
-                    : index % 5 == 2
-                        ? 'warning'
-                        : index % 5 == 1
-                            ? 'info'
-                            : 'danger'),
-          ),
-          itemCount: controller.notification.length,
-        ),
+        () => controller.notification.isNotEmpty
+            ? ListView.builder(
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 10, horizontal: origin),
+                  child: NotificationCard(
+                      dot: index % 4 != 0 ? true : false,
+                      type: index % 5 == 0
+                          ? 'success'
+                          : index % 5 == 2
+                              ? 'warning'
+                              : index % 5 == 1
+                                  ? 'info'
+                                  : 'danger'),
+                ),
+                itemCount: controller.notification.length,
+              )
+            : const Center(child: NoDataView()),
       ),
     );
   }

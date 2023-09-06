@@ -18,7 +18,7 @@ class OrderStatus extends StatelessWidget {
         color = green;
         text = accepted;
         break;
-      case 'warning':
+      case 'UNPAID':
         color = warning;
         text = requested;
         break;

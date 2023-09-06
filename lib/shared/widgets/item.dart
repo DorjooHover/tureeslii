@@ -48,6 +48,9 @@ class ItemGlassCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: 35,
+        height: 35,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: color.withOpacity(0.8),
           borderRadius: BorderRadius.circular(10),
