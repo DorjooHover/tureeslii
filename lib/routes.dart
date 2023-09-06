@@ -6,8 +6,8 @@ import 'package:tureeslii/pages/pages.dart';
 
 class Routes {
 // routes
-  static String splash = '/splash';
-  static String main = '/';
+  static String splash = '/';
+  static String main = '/main';
   static String bookmark = '/bookmark';
   static String order = '/order';
   static String acceptedOrder = '$order/accepted';
@@ -32,10 +32,10 @@ class Routes {
   static String noData = '/noData';
 
 // pages
-  static List<GetPage> routes = [
+  static final pages = [
     GetPage(
         name: splash, page: () => const SplashView(), binding: SplashBinding()),
-    GetPage(name: main, page: () => const MainView()),
+    GetPage(name: main, page: () => const MainView(), binding: MainBinging()),
     GetPage(
         name: auth,
         page: () => AuthView(),
@@ -45,7 +45,6 @@ class Routes {
     GetPage(
         name: login,
         page: () => const LoginView(),
-        binding: AuthBinding(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
     // order
@@ -100,6 +99,7 @@ class Routes {
         name: notification,
         page: () => const NotificationView(),
         transition: Transition.fade,
+        binding: NotificationBinding(),
         transitionDuration: const Duration(milliseconds: 300)),
     GetPage(
         name: bookmark,

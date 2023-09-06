@@ -3,11 +3,11 @@ import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/provider/api_prodiver.dart';
 
 class NotificationController extends GetxController {
-  final ApiRepository _apiRepository = Get.find();
+  ApiRepository apiRepository = ApiRepository();
 
   final notification = <Notifications>[].obs;
   getNotification() async {
-    final res = await _apiRepository.getAllNotification();
+    final res = await apiRepository.getAllNotification();
     notification.value = res;
   }
 }

@@ -12,7 +12,7 @@ class ForgotPasswordView extends StatefulWidget {
 
 class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   final editKey = GlobalKey<FormState>();
-  final controller = Get.put(AuthController(apiRepository: Get.find()));
+  final controller = Get.put(AuthController());
   String codeValue = "", emailValue = "", passwordValue = "";
   @override
   Widget build(BuildContext context) {
@@ -33,46 +33,53 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-               
-                
-           
-                AdditionCard(title: email, child: Input(textInputAction: TextInputAction.next,onChange: (p0) {
-                    setState(() {
-                      emailValue = p0;
-                    });
-                  },)),
+                AdditionCard(
+                    title: email,
+                    child: Input(
+                      textInputAction: TextInputAction.next,
+                      onChange: (p0) {
+                        setState(() {
+                          emailValue = p0;
+                        });
+                      },
+                    )),
                 space24,
                 MainButton(
                   onPressed: () {
                     controller.forgotPassword(emailValue);
                   },
-                  text:   'Мартсан',
+                  text: 'Мартсан',
                   width: double.infinity,
                 ),
                 space32,
-                AdditionCard(title: password, child: Input(textInputAction: TextInputAction.done,onChange: (p0) {
-                    setState(() {
-                      passwordValue = p0;
-                    });
-                  },
-                 
-                  )) ,
-                  space24,
-                AdditionCard(title: 'code', child: Input(textInputAction: TextInputAction.done,onChange: (p0) {
-                    setState(() {
-                      codeValue = p0;
-                    });
-                  },
-                 
-                  )) 
-                  
-                ,
+                AdditionCard(
+                    title: password,
+                    child: Input(
+                      textInputAction: TextInputAction.done,
+                      onChange: (p0) {
+                        setState(() {
+                          passwordValue = p0;
+                        });
+                      },
+                    )),
+                space24,
+                AdditionCard(
+                    title: 'code',
+                    child: Input(
+                      textInputAction: TextInputAction.done,
+                      onChange: (p0) {
+                        setState(() {
+                          codeValue = p0;
+                        });
+                      },
+                    )),
                 space32,
                 MainButton(
                   onPressed: () {
-               controller.forgotPasswordVerify(passwordValue, codeValue, emailValue);
+                    controller.forgotPasswordVerify(
+                        passwordValue, codeValue, emailValue);
                   },
-                  text:   register,
+                  text: register,
                   width: double.infinity,
                 )
               ],

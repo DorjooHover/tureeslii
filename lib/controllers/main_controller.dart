@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:tureeslii/controllers/auth_controller.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/provider/api_prodiver.dart';
@@ -12,9 +12,9 @@ import 'package:tureeslii/shared/constants/values.dart';
 
 class MainController extends GetxController
     with StateMixin<User>, WidgetsBindingObserver {
-  final ApiRepository _apiRepository = Get.find();
-  final authController = Get.put(AuthController(apiRepository: Get.find()));
-
+  ApiRepository apiRepository = ApiRepository();
+  final authController = Get.put(AuthController());
+  final storage = GetStorage();
   final showPerformanceOverlay = false.obs;
   final currentIndex = 0.obs;
   final isLoading = false.obs;
@@ -51,7 +51,7 @@ class MainController extends GetxController
   Future<void> getOrders() async {
     try {
       List<RentRequest> res =
-          await _apiRepository.getMyRentRequest(0, 10, SortData(), []);
+          await apiRepository.getMyRentRequest(0, 10, SortData(), []);
       myRentRequest.value = res;
     } catch (e) {
       print(e);
@@ -63,7 +63,7 @@ class MainController extends GetxController
   getAllPosts(int page, int limit, SortData sortData,
       List<FilterData> filterData) async {
     try {
-      final res = await _apiRepository.getAllPosts(
+      final res = await apiRepository.getAllPosts(
         page,
         limit,
         sortData,
@@ -78,14 +78,14 @@ class MainController extends GetxController
   }
 
   getPostPriceRange(FilterData filterData) async {
-    return await _apiRepository.getPriceRange(filterData);
+    return await apiRepository.getPriceRange(filterData);
   }
 
   // saved posts
   getSavedPost() async {
     if (user != null) {
       try {
-        final res = await _apiRepository.getSavedPosts();
+        final res = await apiRepository.getSavedPosts();
         savedPosts.value = res;
 
         return res;
@@ -102,12 +102,12 @@ class MainController extends GetxController
       if (user != null) {
         if (savedPosts.where((post) => post.id == id).isNotEmpty) {
           savedPosts.removeWhere((element) => element.id == id);
-          await _apiRepository.removeBookmark(id);
+          await apiRepository.removeBookmark(id);
           getSavedPost();
         } else {
           if (post != null && post.id != null) {
             savedPosts.add(post);
-            await _apiRepository.saveBookmark(id);
+            await apiRepository.saveBookmark(id);
             result = true;
             getSavedPost();
           }
@@ -124,7 +124,7 @@ class MainController extends GetxController
       int postId, String startDate, int duration, String type) async {
     try {
       ErrorHandler res =
-          await _apiRepository.rentRequest(postId, startDate, duration, type);
+          await apiRepository.rentRequest(postId, startDate, duration, type);
       if (!res.success!) {
         Get.snackbar('Алдаа', res.message ?? '');
       }
@@ -138,7 +138,7 @@ class MainController extends GetxController
   Future<bool> changePassword() async {
     try {
       if (newPassword.value == confirmPassword.value) {
-        await _apiRepository.changePassword(
+        await apiRepository.changePassword(
             oldPassword.value, newPassword.value);
         return true;
       } else {
@@ -152,7 +152,7 @@ class MainController extends GetxController
   }
 
   Future<bool> updateUser(User user) async {
-    final res = await _apiRepository.updateUser(user);
+    final res = await apiRepository.updateUser(user);
     if (res) {
       await refreshUser();
     }
@@ -161,7 +161,7 @@ class MainController extends GetxController
 
   Future<bool> savePersonal(
       String lastname, String firstname, String phone) async {
-    bool res = await _apiRepository.savePersonal(lastname, firstname, phone);
+    bool res = await apiRepository.savePersonal(lastname, firstname, phone);
     if (res) {
       refreshUser();
     }
@@ -169,28 +169,27 @@ class MainController extends GetxController
   }
 
   refreshUser() async {
-    user = await _apiRepository.getUser();
+    user = await apiRepository.getUser();
     change(user, status: RxStatus.success());
   }
 
   Future<void> setupApp() async {
     isLoading.value = true;
-    if (Get.find<SharedPreferences>().getString(StorageKeys.token.name) !=
-        null) {
+    if (storage.read(StorageKeys.token.name) != null) {
       try {
-        final res = await _apiRepository.getUser();
+        final res = await apiRepository.getUser();
         if (res != null) {
           user = res;
           change(user, status: RxStatus.success());
         }
-        allCategory.value = await _apiRepository.getCategories();
+        allCategory.value = await apiRepository.getCategories();
         getSavedPost();
 
         isLoading.value = false;
       } on DioException {
         isLoading.value = false;
 
-        Get.find<SharedPreferences>().remove(StorageKeys.token.name);
+        storage.remove(StorageKeys.token.name);
         update();
         Get.toNamed(Routes.auth);
       }
@@ -198,15 +197,15 @@ class MainController extends GetxController
   }
 
   Future<void> sendEmailVerification() async {
-    await _apiRepository.sendEmailVerifyCode();
+    await apiRepository.sendEmailVerifyCode();
   }
 
   Future<bool> getMobileVerification() async {
-    return _apiRepository.getMobileVerifyCode();
+    return apiRepository.getMobileVerifyCode();
   }
 
   Future<bool> sendMobileVerification() async {
-    return _apiRepository.sendMobileVerifyCode(otp.value);
+    return apiRepository.sendMobileVerifyCode(otp.value);
   }
 
   @override

@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 // import 'package:package_info_plus/package_info_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tureeslii/controllers/main_controller.dart';
+
+import 'package:tureeslii/controllers/controllers.dart';
 import 'package:tureeslii/routes.dart';
 
 import '../../../shared/index.dart';
@@ -11,7 +11,7 @@ import '../../../shared/index.dart';
 class SplashController extends GetxController {
   final token = Rxn<String?>();
   late Worker worker;
-  final storage = Get.find<SharedPreferences>();
+  final storage = GetStorage();
   final mainController = Get.put(MainController());
   @override
   void onInit() async {
@@ -32,7 +32,6 @@ class SplashController extends GetxController {
   }
 
   logout() async {
-    final storage = Get.find<SharedPreferences>();
     await storage.remove(StorageKeys.token.name);
 
     token.value = null;
@@ -41,12 +40,8 @@ class SplashController extends GetxController {
 
   Future<bool?> _isCurrentVersion() async {
     try {
-      return kDebugMode;
-    } on DioError catch (e) {
-      if (kDebugMode) {
-        print(e);
-        print(e.message);
-      }
+      return true;
+    } on DioException {
       return null;
     } on Error catch (er) {
       print(er);
@@ -58,24 +53,19 @@ class SplashController extends GetxController {
   /// CHECKING UPDATE VERSION
 
   _checkAuthStatus() async {
-    // await Future.delayed(Duration(milliseconds: 1800));
+    await Future.delayed(Duration(milliseconds: 1800));
     worker = ever<String?>(
       token,
       (tkn) {
         if (tkn != null) {
-          try {
-            Get.toNamed(Routes.main);
-          } catch (e) {
-            Get.toNamed(Routes.auth);
-          }
+          Get.toNamed(Routes.main);
         } else {
           Get.toNamed(Routes.auth);
         }
       },
     );
-    token.value = storage.getString(StorageKeys.token.name);
+    token.value = storage.read(StorageKeys.token.name);
   }
-
   // Future<String> getLocalVersion() async {
   //   PackageInfo packageInfo = await PackageInfo.fromPlatform();
 

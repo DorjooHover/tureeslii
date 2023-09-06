@@ -195,7 +195,8 @@ class _ProfileViewState extends State<ProfileView> {
                                         lastDate: DateTime(
                                             now.year, now.month, now.day),
                                         builder: (context, child) {
-                                          return DatePickerThemeWidget(child: child!);
+                                          return DatePickerThemeWidget(
+                                              child: child!);
                                         });
                                 if (selectedDate != null) {
                                   setState(() {
@@ -464,9 +465,9 @@ class MainPersonalWidget extends StatelessWidget {
         Obx(
           () => ProfileCard(
             icon: true,
-            value: controller.user!.mobile ?? '',
+            value: controller.user?.mobile ?? '',
             title: phone,
-            verified: controller.user!.mobileVerified,
+            verified: controller.user?.mobileVerified,
             onPressed: () async {
               if (controller.user!.mobileVerified != null &&
                   !controller.user!.mobileVerified!) {
@@ -531,9 +532,9 @@ class MainPersonalWidget extends StatelessWidget {
         space27,
         ProfileCard(
           icon: true,
-          value: controller.user!.email!,
+          value: controller.user?.email ?? '',
           title: email,
-          verified: controller.user!.emailVerified,
+          verified: controller.user?.emailVerified,
           onPressed: () {
             if (controller.user!.emailVerified != null &&
                 !controller.user!.emailVerified!) {

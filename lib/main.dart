@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:tureeslii/binding.dart';
-import 'package:tureeslii/di.dart';
 import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/theme/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await DenpendencyInjection.init();
+  await GetStorage.init();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialBinding: AppBinding(),
       initialRoute: Routes.splash,
-      getPages: Routes.routes,
+      getPages: Routes.pages,
       builder: (context, child) {
         return LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth > 640) {
@@ -46,20 +46,17 @@ class MyApp extends StatelessWidget {
 }
 
 class TabletLayout extends StatelessWidget {
-  TabletLayout({required this.child});
-
+  const TabletLayout({super.key, required this.child});
   final Widget child;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Container(
-          constraints:
-              BoxConstraints(maxWidth: 640), // Set your desired max width
-          child: child,
-        ),
+        body: Center(
+      child: Container(
+        width: 640,
+        alignment: Alignment.center,
+        child: child,
       ),
-    );
+    ));
   }
 }
