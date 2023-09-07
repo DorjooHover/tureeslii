@@ -58,6 +58,10 @@ class MainController extends GetxController
     cancelTerm.value = res;
   }
 
+  getCategories() async {
+    allCategory.value = await apiRepository.getCategories();
+  }
+
   // user
   refreshUser() async {
     user = await apiRepository.getUser();
@@ -170,7 +174,7 @@ class MainController extends GetxController
           getBanks();
           getCities();
           getCancellation();
-          allCategory.value = await apiRepository.getCategories();
+          getCategories();
           getOwnPost(null, []);
 
           // getSavedPost();

@@ -38,7 +38,8 @@ class _LoginViewState extends State<LoginView> {
       appBar: MainAppBar(
         bgColor: bgGray,
         statusBarColor: bgGray,
-        back: true,
+        back: false,
+        menu: false,
         logo: false,
       ),
       body: SingleChildScrollView(

@@ -16,6 +16,7 @@ class _PersonalViewState extends State<PersonalView> {
   bool info = true;
   bool product = true;
   final controller = Get.put(MainController());
+  CustomSnackbar snackbar = CustomSnackbar();
   String lastNameValue = "",
       firstNameValue = "",
       phoneValue = "",
@@ -52,6 +53,8 @@ class _PersonalViewState extends State<PersonalView> {
             const EdgeInsets.symmetric(horizontal: origin, vertical: medium),
         width: double.infinity,
         height: MediaQuery.of(context).size.height - 63,
+        margin:
+            EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 80),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -99,7 +102,8 @@ class _PersonalViewState extends State<PersonalView> {
                           if (controller.user!.emailVerified != null &&
                               !controller.user!.emailVerified!) {
                             controller.sendEmailVerification();
-                            Get.snackbar('Мэдэгдэл', emailVerificationString);
+                            snackbar.mainSnackbar(context,
+                                emailVerificationString, SnackbarType.warning);
                           }
                         },
                         child: Padding(
@@ -275,8 +279,8 @@ class _PersonalViewState extends State<PersonalView> {
               ),
               space36,
               MainButton(
-                onPressed: () {
-                  controller.savePersonal(User(
+                onPressed: () async {
+                  bool res = await controller.savePersonal(User(
                       firstname: firstNameValue,
                       lastname: lastNameValue,
                       mobile: phoneValue,
@@ -284,6 +288,8 @@ class _PersonalViewState extends State<PersonalView> {
                       companyName: companyNameValue,
                       orderNotification: info,
                       productAdsNotification: product));
+                  snackbar.mainSnackbar(context, res ? 'Ажмилттай' : 'Алдаа',
+                      res ? SnackbarType.success : SnackbarType.error);
                 },
                 text: request,
                 width: double.infinity,

@@ -66,60 +66,144 @@ class ApiRepository extends GetxService {
   Future<bool> createPost(Post post, List<String> images) async {
     try {
       final data = {
+        // location
         "lat": post.lat,
         "long": post.long,
         "address": post.address,
         "apartment_no": post.apartmentNo,
         "door_no": post.doorNo,
-        "startDate": post.startDate,
-        "priceIncluded": post.priceIncluded,
-        "paymentTerm": post.paymentTerm,
-        "bedRoom": post.bedroom,
-        "livingRoom": post.livingRoom,
-        "kitchen": post.kitchen,
-        "singleBed": post.singleBed,
-        "doubleBed": post.doubleBed,
-        "priceTerm": post.priceTerm,
-        "price": post.price,
-        "description": post.description,
-        "plot": post.plot,
-        "heating": post.heating,
-        "waterSupply": post.waterSupply,
-        "restroom": post.restroom,
-        "postAttachments": images,
         "city": post.city,
         "district": post.district,
         "state": post.state,
-        "acceptedGender": post.acceptedGender,
-        "acceptedTenants": post.acceptedTenants,
-        "petAllowed": post.petAllowed,
-        "guestAllowed": post.guestAllowed,
-        "balcony": post.balcony,
+        "floor": post.floor,
+// general
+        "startDate": post.startDate,
         "cancelTerm": post.cancelTerm,
         "dailyRent": post.dailyRent,
-        "depositRequired": post.depositRequired,
-        "depositTerm": post.depositTerm,
-        "elevator": post.elevator,
-        "floor": post.floor,
-        "furnitures": post.furnitures ?? [],
-        "categoryId": post.category,
-        "hasFurniture": post.hasFurniture ?? false,
-        "kitchenFurniture": post.kitchenFurniture,
-        "livingProperty": post.livingProperty,
+        "price": post.price ?? 0,
+        "priceDaily": post.priceDaily ?? 0,
         "minDurationDaily": post.minDurationDaily,
         "minDurationMonthly": post.minDurationMonthly,
         "monthlyRent": post.monthlyRent,
-        "refrigerator": post.refrigerator,
+        "priceIncluded": post.priceIncluded ?? [],
+        "priceTerm": post.priceTerm,
+        "paymentTerm": post.paymentTerm,
+        "depositRequired": post.depositRequired,
+        "depositTerm": post.depositTerm,
+        "elevator": post.elevator,
+        "furnitures": post.furnitures ?? [],
+        "balcony": post.balcony,
+        "plot": post.plot!.toInt(),
+        "heating": post.heating,
+        "waterSupply": post.waterSupply,
+        "hasFurniture": post.hasFurniture ?? false,
+        "kitchenFurniture": post.kitchenFurniture,
         "stove": post.stove,
         "tvCable": post.tvCable,
         "washingMachine": post.washingMachine,
         "wifi": post.wifi,
         "title": post.title,
+        // room
+        "bedroom": post.bedroom,
+        "livingRoom": post.livingRoom,
+        "kitchen": post.kitchen,
+        "singleBed": post.singleBed,
+        "doubleBed": post.doubleBed,
+        "description": "",
+
+        "acceptedGender": post.acceptedGender,
+        "acceptedTenants": post.acceptedTenants,
+        "petAllowed": post.petAllowed,
+        "guestAllowed": post.guestAllowed,
+        "restroom": post.restroom,
+        "livingProperty": post.livingProperty,
+        "refrigerator": post.refrigerator,
+
+        "smokingAllowed": post.smokingAllowed,
+        "bathroom": post.bathroom,
+        // images
+        "postAttachments": images,
+
+        "categoryId": post.category,
       };
-      print(data);
+
       final res = await dio.post('/posts', data: data);
-      print(res);
-      return true;
+
+      return res.data['success'];
+    } on DioException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> updatePost(Post post, List<String> images) async {
+    try {
+      final data = {
+        "id": post.id,
+        // location
+        "lat": post.lat,
+        "long": post.long,
+        "address": post.address,
+        "apartment_no": post.apartmentNo,
+        "door_no": post.doorNo,
+        "city": post.city,
+        "district": post.district,
+        "state": post.state,
+        "floor": post.floor,
+// general
+        "startDate": post.startDate,
+        "cancelTerm": post.cancelTerm,
+        "dailyRent": post.dailyRent,
+        "price": post.price ?? 0,
+        "priceDaily": post.priceDaily ?? 0,
+        "minDurationDaily": post.minDurationDaily,
+        "minDurationMonthly": post.minDurationMonthly,
+        "monthlyRent": post.monthlyRent,
+        "priceIncluded": post.priceIncluded ?? [],
+        "priceTerm": post.priceTerm,
+        "paymentTerm": post.paymentTerm,
+        "depositRequired": post.depositRequired,
+        "depositTerm": post.depositTerm,
+        "elevator": post.elevator,
+        "furnitures": post.furnitures ?? [],
+        "balcony": post.balcony,
+        "plot": post.plot!.toInt(),
+        "heating": post.heating,
+        "waterSupply": post.waterSupply,
+        "hasFurniture": post.hasFurniture ?? false,
+        "kitchenFurniture": post.kitchenFurniture,
+        "stove": post.stove,
+        "tvCable": post.tvCable,
+        "washingMachine": post.washingMachine,
+        "wifi": post.wifi,
+        "title": post.title,
+        // room
+        "bedroom": post.bedroom,
+        "livingRoom": post.livingRoom,
+        "kitchen": post.kitchen,
+        "singleBed": post.singleBed,
+        "doubleBed": post.doubleBed,
+        "description": "",
+
+        "acceptedGender": post.acceptedGender,
+        "acceptedTenants": post.acceptedTenants,
+        "petAllowed": post.petAllowed,
+        "guestAllowed": post.guestAllowed,
+        "restroom": post.restroom,
+        "livingProperty": post.livingProperty,
+        "refrigerator": post.refrigerator,
+
+        "smokingAllowed": post.smokingAllowed,
+        "bathroom": post.bathroom,
+        // images
+        "postAttachments": images,
+
+        "categoryId": post.category,
+      };
+
+      final res = await dio.post('/posts', data: data);
+
+      return res.data['success'];
     } on DioException catch (e) {
       print(e);
       return false;
@@ -277,6 +361,7 @@ class ApiRepository extends GetxService {
   Future<List<Cancelation>> getCancelation() async {
     try {
       final response = await dio.get('/cancelation/get');
+      print(response);
       return (response.data['data'] as List)
           .map((e) => Cancelation.fromJson(e))
           .toList();

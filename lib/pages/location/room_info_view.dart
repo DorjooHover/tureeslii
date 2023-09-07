@@ -29,7 +29,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
   CustomSnackbar snackbar = CustomSnackbar();
   Future nextStep() async {
     if (titleValue == '') {
-      snackbar.mainSnackbar(context, incompleteTitle, 'error');
+      snackbar.mainSnackbar(context, incompleteTitle, SnackbarType.error);
       return;
     }
     controller.createPost.value!.singleBed = bedOneValue;
@@ -51,6 +51,8 @@ class _RoomInfoViewState extends State<RoomInfoView> {
       setState(() {
         selectedType = controller.allCategory[0].id!;
       });
+    } else {
+      controller.getCategories();
     }
   }
 
@@ -84,198 +86,263 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                 ),
               ),
             ),
-            body: Container(
-              padding: const EdgeInsets.symmetric(horizontal: origin),
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height - 63,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    MenuContainer(
-                        child: Column(
+            body: Stack(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: origin),
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height - 63,
+                  child: SingleChildScrollView(
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        AdditionCard(
-                            title: title,
-                            child: Input(
-                              textInputAction: TextInputAction.next,
-                              onChange: (p0) {
-                                titleValue = p0;
-                              },
-                            )),
-                        space24,
-                        AdditionCard(
-                            title: typeStr,
-                            child: DropDown(
-                              list: const [],
-                              value: '',
-                              child: DropdownButton(
-                                  isDense: true,
-                                  icon: SvgPicture.asset(iconArrowDown),
-                                  iconEnabledColor: gray,
-                                  isExpanded: true,
-                                  dropdownColor: Colors.white,
-                                  value: controller.allCategory
-                                      .firstWhere((element) =>
-                                          element.id == selectedType)
-                                      .name!,
-                                  hint: Text(choose,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .copyWith(color: labelGray)),
-                                  underline: const SizedBox(),
-                                  items: controller.allCategory.map((e) {
-                                    return DropdownMenuItem(
-                                      value: e.name!,
-                                      child: Text(
-                                        e.name!,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(color: black),
-                                      ),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    if (value != null) {
-                                      final i = controller.allCategory
-                                          .indexWhere((element) =>
-                                              element.name == value);
-                                      setState(() {
-                                        selectedType = i;
-                                      });
-                                    }
-                                  }),
-                              onChanged: (value) {},
-                            )),
-                        space24,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: AdditionCard(
-                                  title: kitchenRoom,
-                                  child: Input(
-                                    textInputType: TextInputType.number,
-                                    textInputAction: TextInputAction.next,
-                                    inputFormatter: [
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
-                                    onChange: (p0) {
-                                      setState(() {
-                                        kitchenValue = int.parse(p0);
-                                      });
-                                    },
-                                  )),
-                            ),
-                            space16,
-                            Expanded(
-                              child: AdditionCard(
-                                  title: bathRoom,
-                                  child: Input(
-                                    textInputType: TextInputType.number,
-                                    textInputAction: TextInputAction.next,
-                                    inputFormatter: [
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
-                                    onChange: (p0) {
-                                      setState(() {
-                                        bathRoomValue = int.parse(p0);
-                                      });
-                                    },
-                                  )),
-                            ),
-                          ],
-                        ),
-                        space24,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: AdditionCard(
-                                  title: livingRoom,
-                                  child: Input(
-                                    textInputType: TextInputType.number,
-                                    textInputAction: TextInputAction.next,
-                                    inputFormatter: [
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
-                                    onChange: (p0) {
-                                      setState(() {
-                                        livingRoomValue = int.parse(p0);
-                                      });
-                                    },
-                                  )),
-                            ),
-                            space16,
-                            Expanded(
-                              child: AdditionCard(
-                                  title: bedRoom,
-                                  child: Input(
-                                    textInputType: TextInputType.number,
-                                    textInputAction: TextInputAction.next,
-                                    inputFormatter: [
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
-                                    onChange: (p0) {
-                                      setState(() {
-                                        bedRoomValue = int.parse(p0);
-                                      });
-                                    },
-                                  )),
-                            ),
-                          ],
-                        ),
-                        space24,
-                        if (bedRoomValue > 0)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: AdditionCard(
-                                    title: bedOne,
-                                    child: Input(
-                                      textInputType: TextInputType.number,
-                                      textInputAction: TextInputAction.next,
-                                      inputFormatter: [
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
-                                      onChange: (p0) {
-                                        setState(() {
-                                          bedOneValue = int.parse(p0);
-                                        });
-                                      },
-                                    )),
-                              ),
-                              space16,
-                              Expanded(
-                                child: AdditionCard(
-                                    title: bedTwo,
-                                    child: Input(
-                                      textInputType: TextInputType.number,
-                                      inputFormatter: [
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
-                                      onChange: (p0) {
-                                        setState(() {
-                                          bedTwoValue = int.parse(p0);
-                                        });
-                                      },
-                                      onSubmitted: ((p0) {
-                                        nextStep();
+                      children: [
+                        MenuContainer(
+                            child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            AdditionCard(
+                                title: title,
+                                child: Input(
+                                  textInputAction: TextInputAction.next,
+                                  onChange: (p0) {
+                                    titleValue = p0;
+                                  },
+                                )),
+                            space24,
+                            AdditionCard(
+                                title: typeStr,
+                                child: DropDown(
+                                  list: const [],
+                                  value: '',
+                                  child: DropdownButton(
+                                      isDense: true,
+                                      icon: SvgPicture.asset(iconArrowDown),
+                                      iconEnabledColor: gray,
+                                      isExpanded: true,
+                                      dropdownColor: Colors.white,
+                                      value: controller.allCategory.isNotEmpty
+                                          ? controller.allCategory
+                                              .firstWhere((element) =>
+                                                  element.id == selectedType)
+                                              .name!
+                                          : '',
+                                      hint: Text(choose,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .copyWith(color: labelGray)),
+                                      underline: const SizedBox(),
+                                      items: controller.allCategory.map((e) {
+                                        return DropdownMenuItem(
+                                          value: e.name!,
+                                          child: Text(
+                                            e.name!,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium!
+                                                .copyWith(color: black),
+                                          ),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        if (value != null) {
+                                          final i = controller.allCategory
+                                              .indexWhere((element) =>
+                                                  element.name == value);
+                                          setState(() {
+                                            selectedType = i;
+                                          });
+                                        }
                                       }),
-                                    )),
+                                  onChanged: (value) {},
+                                )),
+                            space24,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: AdditionCard(
+                                      title: kitchenRoom,
+                                      child: Input(
+                                        textInputType: TextInputType.number,
+                                        textInputAction: TextInputAction.next,
+                                        inputFormatter: [
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
+                                        onChange: (p0) {
+                                          setState(() {
+                                            kitchenValue = int.parse(p0);
+                                          });
+                                        },
+                                      )),
+                                ),
+                                space16,
+                                Expanded(
+                                  child: AdditionCard(
+                                      title: bathRoom,
+                                      child: Input(
+                                        textInputType: TextInputType.number,
+                                        textInputAction: TextInputAction.next,
+                                        inputFormatter: [
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
+                                        onChange: (p0) {
+                                          setState(() {
+                                            bathRoomValue = int.parse(p0);
+                                          });
+                                        },
+                                      )),
+                                ),
+                              ],
+                            ),
+                            space24,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: AdditionCard(
+                                      title: livingRoom,
+                                      child: Input(
+                                        textInputType: TextInputType.number,
+                                        textInputAction: TextInputAction.next,
+                                        inputFormatter: [
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
+                                        onChange: (p0) {
+                                          setState(() {
+                                            livingRoomValue = int.parse(p0);
+                                          });
+                                        },
+                                      )),
+                                ),
+                                space16,
+                                Expanded(
+                                  child: AdditionCard(
+                                      title: bedRoom,
+                                      child: Input(
+                                        textInputType: TextInputType.number,
+                                        textInputAction: TextInputAction.next,
+                                        inputFormatter: [
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
+                                        onChange: (p0) {
+                                          setState(() {
+                                            bedRoomValue = int.parse(p0);
+                                          });
+                                        },
+                                      )),
+                                ),
+                              ],
+                            ),
+                            space24,
+                            if (bedRoomValue > 0)
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: AdditionCard(
+                                        title: bedOne,
+                                        child: Input(
+                                          textInputType: TextInputType.number,
+                                          textInputAction: TextInputAction.next,
+                                          inputFormatter: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly
+                                          ],
+                                          onChange: (p0) {
+                                            setState(() {
+                                              bedOneValue = int.parse(p0);
+                                            });
+                                          },
+                                        )),
+                                  ),
+                                  space16,
+                                  Expanded(
+                                    child: AdditionCard(
+                                        title: bedTwo,
+                                        child: Input(
+                                          textInputType: TextInputType.number,
+                                          inputFormatter: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly
+                                          ],
+                                          onChange: (p0) {
+                                            setState(() {
+                                              bedTwoValue = int.parse(p0);
+                                            });
+                                          },
+                                          onSubmitted: ((p0) {
+                                            nextStep();
+                                          }),
+                                        )),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                          ],
+                        )),
+                        space40,
                       ],
-                    )),
-                    space40,
-                  ],
+                    ),
+                  ),
                 ),
-              ),
+                Positioned(
+                    bottom: MediaQuery.of(context).padding.bottom,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      color: bgGray,
+                      width: double.infinity,
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.only(
+                          top: 18, right: 16, left: 16, bottom: 32),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.arrow_back_ios_rounded,
+                                  color: prime,
+                                  size: 24,
+                                ),
+                                space8,
+                                Text(
+                                  prev,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ],
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              nextStep();
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  next,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                space8,
+                                Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  color: prime,
+                                  size: 24,
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+              ],
             ),
             drawerScrimColor: Colors.transparent,
             endDrawer: LocationDrawer(selected: controller.verified),
@@ -287,62 +354,6 @@ class _RoomInfoViewState extends State<RoomInfoView> {
               }
             },
           ),
-          Positioned(
-              bottom: MediaQuery.of(context).padding.bottom,
-              left: 0,
-              right: 0,
-              child: Container(
-                color: bgGray,
-                width: double.infinity,
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(
-                    top: 18, right: 16, left: 16, bottom: 32),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            Icons.arrow_back_ios_rounded,
-                            color: prime,
-                            size: 24,
-                          ),
-                          space8,
-                          Text(
-                            prev,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        nextStep();
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            next,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          space8,
-                          Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            color: prime,
-                            size: 24,
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              )),
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             right: !isDrawer ? 0 : MediaQuery.of(context).size.width * 0.75,

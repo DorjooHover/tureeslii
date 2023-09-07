@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/shared/constants/assets.dart';
 import 'package:landlord/shared/constants/colors.dart';
 import 'package:landlord/shared/constants/spacing.dart';
@@ -19,6 +17,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.child,
       this.actions,
       this.center,
+      this.menu = true,
       this.isDrawer = false,
       this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
       this.bgColor = Colors.white});
@@ -27,6 +26,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool back;
   final double height;
   final bool logo;
+  final bool menu;
   final int? currentIndex;
   final MainAxisAlignment mainAxisAlignment;
   final Widget? child;
@@ -38,7 +38,6 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return AppBar(
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: isDrawer ? bgGray : statusBarColor, // <-- SEE HERE
@@ -50,13 +49,15 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: const SizedBox(),
       actions: actions ??
           [
-            Builder(
-              builder: (context) => IconButton(
-                icon: Icon(Icons.menu_sharp),
-                onPressed: () => Scaffold.of(context).openEndDrawer(),
-                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            if (menu)
+              Builder(
+                builder: (context) => IconButton(
+                  icon: Icon(Icons.menu_sharp),
+                  onPressed: () => Scaffold.of(context).openEndDrawer(),
+                  tooltip:
+                      MaterialLocalizations.of(context).openAppDrawerTooltip,
+                ),
               ),
-            ),
           ],
       titleSpacing: 0,
       leadingWidth: 0,

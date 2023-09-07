@@ -75,7 +75,7 @@ const whomRentValues = [
   'Гадаадын иргэн',
 ];
 const whomRentValuesValue = [
-  'ALL',
+  'All',
   "Male",
   "Female",
   "family",

@@ -22,7 +22,7 @@ class _FlatInfoViewState extends State<FlatInfoView> {
   CustomSnackbar snackbar = CustomSnackbar();
   nextStep() {
     if (flatArea <= 0) {
-      snackbar.mainSnackbar(context, 'Талбайгаа оруулна уу', 'error');
+      snackbar.mainSnackbar(context, 'Талбайгаа оруулна уу', SnackbarType.error);
       return;
     }
     controller.createPost.value!.plot = flatArea;
@@ -64,82 +64,145 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                 ),
               ),
             ),
-            body: Container(
-              padding: const EdgeInsets.symmetric(horizontal: origin),
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height - 63,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    MenuContainer(
-                        child: Column(
+            body: Stack(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: origin),
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height - 63,
+                  margin: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).padding.bottom + 80),
+                  child: SingleChildScrollView(
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        AdditionCard(
-                            title: heating,
-                            child: DropDown(
-                              list: heatingValues,
-                              value: heatingValues[selectedHeating],
-                              onChanged: (value) {
-                                if (value != null) {
-                                  final i = heatingValues.indexOf(value);
-                                  setState(() {
-                                    selectedHeating = i;
-                                  });
-                                }
-                              },
-                            )),
-                        space24,
-                        AdditionCard(
-                            title: waterSupple,
-                            child: DropDown(
-                              list: waterSupplyValues,
-                              value: waterSupplyValues[selectedWaterSupply],
-                              onChanged: (value) {
-                                if (value != null) {
-                                  final i = waterSupplyValues.indexOf(value);
-                                  setState(() {
-                                    selectedWaterSupply = i;
-                                  });
-                                }
-                              },
-                            )),
-                        space24,
-                        AdditionCard(
-                            title: toilet,
-                            child: DropDown(
-                              list: toiletValues,
-                              value: toiletValues[selectedToilet],
-                              onChanged: (value) {
-                                if (value != null) {
-                                  final i = toiletValues.indexOf(value);
-                                  setState(() {
-                                    selectedToilet = i;
-                                  });
-                                }
-                              },
-                            )),
-                        space24,
-                        AdditionCard(
-                            title: area,
-                            child: Input(
-                              textInputType: TextInputType.number,
-                              onSubmitted: (p0) {
-                                nextStep();
-                              },
-                              onChange: (p0) {
-                                setState(() {
-                                  flatArea = double.parse(p0);
-                                });
-                              },
-                            )),
+                      children: [
+                        MenuContainer(
+                            child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            AdditionCard(
+                                title: heating,
+                                child: DropDown(
+                                  list: heatingValues,
+                                  value: heatingValues[selectedHeating],
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      final i = heatingValues.indexOf(value);
+                                      setState(() {
+                                        selectedHeating = i;
+                                      });
+                                    }
+                                  },
+                                )),
+                            space24,
+                            AdditionCard(
+                                title: waterSupple,
+                                child: DropDown(
+                                  list: waterSupplyValues,
+                                  value: waterSupplyValues[selectedWaterSupply],
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      final i =
+                                          waterSupplyValues.indexOf(value);
+                                      setState(() {
+                                        selectedWaterSupply = i;
+                                      });
+                                    }
+                                  },
+                                )),
+                            space24,
+                            AdditionCard(
+                                title: toilet,
+                                child: DropDown(
+                                  list: toiletValues,
+                                  value: toiletValues[selectedToilet],
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      final i = toiletValues.indexOf(value);
+                                      setState(() {
+                                        selectedToilet = i;
+                                      });
+                                    }
+                                  },
+                                )),
+                            space24,
+                            AdditionCard(
+                                title: area,
+                                child: Input(
+                                  textInputType: TextInputType.number,
+                                  onSubmitted: (p0) {
+                                    nextStep();
+                                  },
+                                  onChange: (p0) {
+                                    setState(() {
+                                      flatArea = double.parse(p0);
+                                    });
+                                  },
+                                )),
+                          ],
+                        )),
+                        space40,
                       ],
-                    )),
-                    space40,
-                  ],
+                    ),
+                  ),
                 ),
-              ),
+                Positioned(
+                    bottom: MediaQuery.of(context).padding.bottom,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      color: bgGray,
+                      width: double.infinity,
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.only(
+                          top: 18, right: 16, left: 16, bottom: 32),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.arrow_back_ios_rounded,
+                                  color: prime,
+                                  size: 24,
+                                ),
+                                space8,
+                                Text(
+                                  prev,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ],
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              nextStep();
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  next,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                space8,
+                                Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  color: prime,
+                                  size: 24,
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+              ],
             ),
             drawerScrimColor: Colors.transparent,
             endDrawer: LocationDrawer(selected: controller.verified),
@@ -151,62 +214,6 @@ class _FlatInfoViewState extends State<FlatInfoView> {
               }
             },
           ),
-          Positioned(
-              bottom: MediaQuery.of(context).padding.bottom,
-              left: 0,
-              right: 0,
-              child: Container(
-                color: bgGray,
-                width: double.infinity,
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(
-                    top: 18, right: 16, left: 16, bottom: 32),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            Icons.arrow_back_ios_rounded,
-                            color: prime,
-                            size: 24,
-                          ),
-                          space8,
-                          Text(
-                            prev,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        nextStep();
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            next,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          space8,
-                          Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            color: prime,
-                            size: 24,
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              )),
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             right: !isDrawer ? 0 : MediaQuery.of(context).size.width * 0.75,

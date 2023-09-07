@@ -217,86 +217,88 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
               }
             },
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: MediaQuery.of(context).padding.bottom + 80,
-            child: Align(
-                alignment: Alignment.center,
-                child: MainButton(
-                  onPressed: () {
-                    controller.createNewPost(images);
-                    Navigator.of(context).pop();
-                    Get.toNamed(Routes.myAds);
-                  },
-                  borderRadius: 26,
-                  disabled: !images.isNotEmpty,
-                  disabledColor: disableColor,
+          if (!isDrawer)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: MediaQuery.of(context).padding.bottom + 80,
+              child: Align(
+                  alignment: Alignment.center,
+                  child: MainButton(
+                    onPressed: () async {
+                      await controller.createNewPost(images);
+                      Navigator.of(context).pop();
+                      Get.toNamed(Routes.myAds);
+                    },
+                    borderRadius: 26,
+                    disabled: !images.isNotEmpty,
+                    disabledColor: disableColor,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              color: Colors.white),
+                          alignment: Alignment.center,
+                          child: Icon(
+                            Icons.add,
+                            color: images.isNotEmpty ? prime : disableColor,
+                            size: 20,
+                          ),
+                        ),
+                        space20,
+                        Text(
+                          adAdd,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(color: Colors.white),
+                        )
+                      ],
+                    ),
+                  )),
+            ),
+          if (!isDrawer)
+            Positioned(
+                bottom: MediaQuery.of(context).padding.bottom,
+                left: 0,
+                right: 0,
+                child: Container(
+                  color: bgGray,
+                  width: double.infinity,
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.only(
+                      top: 18, right: 16, left: 16, bottom: 32),
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            color: Colors.white),
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.add,
-                          color: images.isNotEmpty ? prime : disableColor,
-                          size: 20,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.arrow_back_ios_rounded,
+                              color: prime,
+                              size: 24,
+                            ),
+                            space8,
+                            Text(
+                              prev,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
                         ),
                       ),
-                      space20,
-                      Text(
-                        adAdd,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium!
-                            .copyWith(color: Colors.white),
-                      )
                     ],
                   ),
                 )),
-          ),
-          Positioned(
-              bottom: MediaQuery.of(context).padding.bottom,
-              left: 0,
-              right: 0,
-              child: Container(
-                color: bgGray,
-                width: double.infinity,
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(
-                    top: 18, right: 16, left: 16, bottom: 32),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            Icons.arrow_back_ios_rounded,
-                            color: prime,
-                            size: 24,
-                          ),
-                          space8,
-                          Text(
-                            prev,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              )),
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             right: !isDrawer ? 0 : MediaQuery.of(context).size.width * 0.75,

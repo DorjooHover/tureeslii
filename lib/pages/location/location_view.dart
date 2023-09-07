@@ -102,10 +102,10 @@ class _LocationViewState extends State<LocationView>
   LatLng? selectedLocation;
   City? cityValue;
   String stateValue = '';
-  String districtValue = "";
+  int districtValue = 1;
   String flatNumberValue = "";
   int floorValue = 1;
-  int doorNumberValue = 0;
+  String doorNumberValue = "";
   String addressValue = '';
   final controller = Get.put(MainController());
   CustomSnackbar snackbar = CustomSnackbar();
@@ -114,7 +114,7 @@ class _LocationViewState extends State<LocationView>
       snackbar.mainSnackbar(
         context,
         locationErrorStr,
-        'error',
+        SnackbarType.error,
       );
       return;
     }
@@ -124,11 +124,11 @@ class _LocationViewState extends State<LocationView>
         districtValue != '' &&
         floorValue != -1 &&
         flatNumberValue != '' &&
-        doorNumberValue != -1) {
+        doorNumberValue != '') {
       controller.createPost.value!.address = addressValue;
       controller.createPost.value!.city = cityValue!.name!;
       controller.createPost.value!.state = stateValue;
-      controller.createPost.value!.district = districtValue;
+      controller.createPost.value!.district = districtValue.toString();
       controller.createPost.value!.floor = floorValue;
       controller.createPost.value!.apartmentNo = flatNumberValue;
       controller.createPost.value!.doorNo = doorNumberValue.toString();
@@ -141,7 +141,7 @@ class _LocationViewState extends State<LocationView>
       snackbar.mainSnackbar(
         context,
         incompleteInfo,
-        'error',
+        SnackbarType.error,
       );
       return;
     }
@@ -149,6 +149,7 @@ class _LocationViewState extends State<LocationView>
 
   @override
   bool get wantKeepAlive => true;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -382,9 +383,16 @@ class _LocationViewState extends State<LocationView>
                                                 child: Input(
                                                     textInputAction:
                                                         TextInputAction.next,
+                                                    textInputType:
+                                                        TextInputType.number,
+                                                    inputFormatter: [
+                                                      FilteringTextInputFormatter
+                                                          .digitsOnly
+                                                    ],
                                                     onChange: (p0) {
                                                       setState(() {
-                                                        districtValue = p0;
+                                                        districtValue =
+                                                            int.parse(p0);
                                                         isDrag = true;
                                                       });
                                                     }))),
@@ -430,19 +438,18 @@ class _LocationViewState extends State<LocationView>
                                             child: AdditionCard(
                                                 title: doorNumber,
                                                 child: Input(
-                                                    textInputType:
-                                                        TextInputType.number,
-                                                    inputFormatter: [
-                                                      FilteringTextInputFormatter
-                                                          .digitsOnly
-                                                    ],
+                                                    // textInputType:
+                                                    //     TextInputType.number,
+                                                    // inputFormatter: [
+                                                    //   FilteringTextInputFormatter
+                                                    //       .digitsOnly
+                                                    // ],
                                                     textInputAction:
                                                         TextInputAction.next,
                                                     onChange: (p0) {
                                                       setState(() {
                                                         isDrag = true;
-                                                        doorNumberValue =
-                                                            int.parse(p0);
+                                                        doorNumberValue = p0;
                                                       });
                                                     }))),
                                       ],
