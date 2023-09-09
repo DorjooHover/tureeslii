@@ -22,7 +22,8 @@ class _FlatInfoViewState extends State<FlatInfoView> {
   CustomSnackbar snackbar = CustomSnackbar();
   nextStep() {
     if (flatArea <= 0) {
-      snackbar.mainSnackbar(context, 'Талбайгаа оруулна уу', SnackbarType.error);
+      snackbar.mainSnackbar(
+          context, 'Талбайгаа оруулна уу', SnackbarType.error);
       return;
     }
     controller.createPost.value!.plot = flatArea;
@@ -67,7 +68,7 @@ class _FlatInfoViewState extends State<FlatInfoView> {
             body: Stack(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: origin),
+                  padding: EdgeInsets.symmetric(horizontal: origin),
                   width: double.infinity,
                   height: MediaQuery.of(context).size.height - 63,
                   margin: EdgeInsets.only(
@@ -154,7 +155,7 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                       color: bgGray,
                       width: double.infinity,
                       alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.only(
+                      padding: EdgeInsets.only(
                           top: 18, right: 16, left: 16, bottom: 32),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

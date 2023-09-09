@@ -22,7 +22,7 @@ const String emailRegister = 'Email бүртгэл';
 
 const String changeCity = 'Хот солих';
 const String help = 'Тусламж';
-const String contractCondition = 'Гэрэээний нөхцөл';
+const String contractCondition = 'Гэрээний нөхцөл';
 const String cancelCondition = 'Цуцлах нөхцөл';
 const String serviceCondition = 'Үйлчилгээний нөхцөл';
 const String contact = 'Холбоо барих';

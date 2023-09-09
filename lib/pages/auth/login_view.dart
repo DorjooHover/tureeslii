@@ -20,6 +20,7 @@ class _LoginViewState extends State<LoginView> {
   final mainController = Get.put(MainController());
   String username = "";
   String passwordValue = "";
+  bool showPassword = false;
   loginFunc() async {
     final user = await controller.login(username, passwordValue);
 
@@ -68,7 +69,7 @@ class _LoginViewState extends State<LoginView> {
                   },
                 ),
                 space32,
-                space8,
+                // space8,
                 Text(
                   password,
                   style: Theme.of(context)
@@ -78,13 +79,22 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 space8,
                 Input(
-                  obscureText: true,
+                  obscureText: showPassword,
                   maxLine: 1,
                   onChange: (p0) {
                     setState(() {
                       passwordValue = p0;
                     });
                   },
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          showPassword = !showPassword;
+                        });
+                      },
+                      icon: Icon(showPassword
+                          ? Icons.visibility
+                          : Icons.visibility_off)),
                   onSubmitted: (p0) {
                     loginFunc();
                   },

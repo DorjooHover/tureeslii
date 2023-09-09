@@ -9,7 +9,9 @@ import 'package:landlord/theme/theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
-  // await DenpendencyInjection.init();
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return const Material();
+  };
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle());
