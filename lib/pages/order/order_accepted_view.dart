@@ -93,7 +93,12 @@ class _OrderAcceptedViewState extends State<OrderAcceptedView> {
                                                     : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
                                                 fit: BoxFit.cover,
                                                 placeholder: (context, url) =>
-                                                    Center(child: SizedBox(child: CircularProgressIndicator(),),),
+                                                    Center(
+                                                  child: SizedBox(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  ),
+                                                ),
                                                 errorWidget: (context, url,
                                                         error) =>
                                                     Icon(Icons
@@ -147,7 +152,8 @@ class _OrderAcceptedViewState extends State<OrderAcceptedView> {
                               style: Theme.of(context).textTheme.displaySmall,
                               children: <TextSpan>[
                                 TextSpan(
-                                    text: '₮/сар',
+                                    text:
+                                        '₮/${widget.data.post!.monthlyRent! ? 'сар' : 'өдөр'}',
                                     style: Theme.of(context)
                                         .textTheme
                                         .labelLarge!

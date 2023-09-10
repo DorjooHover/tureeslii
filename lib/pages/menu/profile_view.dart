@@ -27,8 +27,12 @@ class _ProfileViewState extends State<ProfileView> {
   String payType = payTypesValues[0];
   double incomeAmount = 0.0;
   String descriptionValue = "";
+
+  bool additionView = true;
   final controller = Get.put(SplashController());
   final mainController = Get.put(MainController());
+
+  CustomSnackbar snackbar = CustomSnackbar();
   @override
   void initState() {
     mainController.refreshUser();
@@ -178,210 +182,203 @@ class _ProfileViewState extends State<ProfileView> {
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
-                          SvgPicture.asset(iconArrowUp)
+                          IconButton(
+                            icon: SvgPicture.asset(
+                                additionView ? iconArrowUp : iconArrowDown),
+                            onPressed: () {
+                              setState(() {
+                                additionView = !additionView;
+                              });
+                            },
+                          )
                         ],
                       ),
-                      space13,
-                      AdditionCard(
-                          title: birthday,
-                          child: GestureDetector(
-                              onTap: () async {
-                                final DateTime now = DateTime.now();
-                                final DateTime? selectedDate =
-                                    await showDatePicker(
-                                        context: context,
-                                        initialDate: DateTime(now.year - 20),
-                                        firstDate: DateTime(now.year - 200),
-                                        lastDate: DateTime(
-                                            now.year, now.month, now.day),
-                                        builder: (context, child) {
-                                          return DatePickerThemeWidget(
-                                              child: child!);
+                      if (additionView)
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            space13,
+                            AdditionCard(
+                                title: birthday,
+                                child: GestureDetector(
+                                    onTap: () async {
+                                      final DateTime now = DateTime.now();
+                                      final DateTime? selectedDate =
+                                          await showDatePicker(
+                                              context: context,
+                                              initialDate:
+                                                  DateTime(now.year - 20),
+                                              firstDate:
+                                                  DateTime(now.year - 200),
+                                              lastDate: DateTime(
+                                                  now.year, now.month, now.day),
+                                              builder: (context, child) {
+                                                return DatePickerThemeWidget(
+                                                    child: child!);
+                                              });
+                                      if (selectedDate != null) {
+                                        setState(() {
+                                          birthdate = selectedDate.toString();
                                         });
-                                if (selectedDate != null) {
-                                  setState(() {
-                                    birthdate = selectedDate.toString();
-                                  });
+                                      }
+                                    },
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 50,
+                                      alignment: Alignment.centerLeft,
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 13),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(5),
+                                        border:
+                                            Border.all(color: black, width: 1),
+                                      ),
+                                      child: Text(
+                                        birthdate != ""
+                                            ? birthdate.substring(0, 10)
+                                            : birthdate,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .copyWith(color: black),
+                                      ),
+                                    ))),
+                            space24,
+                            AdditionCard(
+                                title: gender,
+                                child: RowRadio(
+                                  groupValue: sex,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      sex = value!;
+                                    });
+                                  },
+                                  list: [male, female],
+                                )),
+                            space24,
+                            AdditionCard(
+                                title: family,
+                                child: Input(
+                                  textInputAction: TextInputAction.next,
+                                  textInputType: TextInputType.number,
+                                  labelText: rentPersonCount.toString(),
+                                  inputFormatter: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  onChange: (p0) {
+                                    setState(() {
+                                      rentPersonCount = int.tryParse(p0) ?? 1;
+                                    });
+                                  },
+                                )),
+                            space24,
+                            AdditionCard(
+                                title: isWork,
+                                child: RowRadio(
+                                  groupValue: workStatus,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      workStatus = value!;
+                                    });
+                                  },
+                                  list: [working, studying],
+                                )),
+                            space24,
+                            AdditionCard(
+                                title: whereWork,
+                                child: Input(
+                                  labelText: jobTitle,
+                                  textInputAction: TextInputAction.next,
+                                  onChange: (p0) {
+                                    setState(() {
+                                      jobTitle = p0;
+                                    });
+                                  },
+                                )),
+                            space24,
+                            AdditionCard(
+                                title: profession,
+                                child: Input(
+                                  labelText: professionValue,
+                                  textInputAction: TextInputAction.next,
+                                  onChange: (p0) {
+                                    setState(() {
+                                      professionValue = p0;
+                                    });
+                                  },
+                                )),
+                            space24,
+                            AdditionCard(
+                                title: howRent,
+                                child: DropDown(
+                                    list: payTypesMn,
+                                    value: payTypesMn[
+                                        payTypesValues.indexOf(payType)],
+                                    onChanged: (String? v) {
+                                      if (v != null) {
+                                        int i = payTypesMn.indexOf(v);
+                                        setState(() {
+                                          payType = payTypesValues[i];
+                                        });
+                                      }
+                                    })),
+                            space24,
+                            AdditionCard(
+                                title: incomeRent,
+                                child: Input(
+                                  textInputAction: TextInputAction.next,
+                                  inputFormatter: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'^(\d+)?\.?\d{0,2}'))
+                                  ],
+                                  labelText: incomeAmount.toString(),
+                                  onChange: (p0) {
+                                    setState(() {
+                                      incomeAmount = double.tryParse(p0) ?? 0.0;
+                                    });
+                                  },
+                                )),
+                            space24,
+                            AdditionCard(
+                                title: briefInformation,
+                                child: Input(
+                                  maxLine: 3,
+                                  labelText: descriptionValue,
+                                  textInputAction: TextInputAction.next,
+                                  textInputType: TextInputType.multiline,
+                                  onChange: (p0) {
+                                    setState(() {
+                                      descriptionValue = p0;
+                                    });
+                                  },
+                                )),
+                            space24,
+                            MainButton(
+                              onPressed: () async {
+                                bool res = await controller.mainController
+                                    .updateUser(User(
+                                        birthdate: birthdate,
+                                        gender: sex,
+                                        rentPersonCount: rentPersonCount,
+                                        job: workStatus,
+                                        jobTitle: jobTitle,
+                                        profession: professionValue,
+                                        payType: payType,
+                                        incomeAmount: incomeAmount.toInt(),
+                                        description: descriptionValue));
+                                if (res) {
+                                  updateData();
+                                  snackbar.mainSnackbar(context, "Амжилттай",
+                                      SnackBarTypes.success);
                                 }
                               },
-                              child: Container(
-                                width: double.infinity,
-                                height: 50,
-                                alignment: Alignment.centerLeft,
-                                padding: EdgeInsets.symmetric(horizontal: 13),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(color: black, width: 1),
-                                ),
-                                child: Text(
-                                  birthdate != ""
-                                      ? birthdate.substring(0, 10)
-                                      : birthdate,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(color: black),
-                                ),
-                              ))),
-                      space24,
-                      AdditionCard(
-                          title: gender,
-                          child: RowRadio(
-                            groupValue: sex,
-                            onChanged: (value) {
-                              setState(() {
-                                sex = value!;
-                              });
-                            },
-                            list: [male, female],
-                          )),
-                      space24,
-                      AdditionCard(
-                          title: family,
-                          child: Input(
-                            textInputAction: TextInputAction.next,
-                            textInputType: TextInputType.number,
-                            labelText: rentPersonCount.toString(),
-                            inputFormatter: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            onChange: (p0) {
-                              setState(() {
-                                rentPersonCount = int.tryParse(p0) ?? 1;
-                              });
-                            },
-                          )),
-                      space24,
-                      AdditionCard(
-                          title: isWork,
-                          child: RowRadio(
-                            groupValue: workStatus,
-                            onChanged: (value) {
-                              setState(() {
-                                workStatus = value!;
-                              });
-                            },
-                            list: [working, studying],
-                          )),
-                      space24,
-                      AdditionCard(
-                          title: whereWork,
-                          child: Input(
-                            labelText: jobTitle,
-                            textInputAction: TextInputAction.next,
-                            onChange: (p0) {
-                              setState(() {
-                                jobTitle = p0;
-                              });
-                            },
-                          )),
-                      space24,
-                      AdditionCard(
-                          title: profession,
-                          child: Input(
-                            labelText: professionValue,
-                            textInputAction: TextInputAction.next,
-                            onChange: (p0) {
-                              setState(() {
-                                professionValue = p0;
-                              });
-                            },
-                          )),
-                      space24,
-                      AdditionCard(
-                          title: howRent,
-                          child: DropDown(
-                              list: payTypesMn,
-                              value:
-                                  payTypesMn[payTypesValues.indexOf(payType)],
-                              onChanged: (String? v) {
-                                if (v != null) {
-                                  int i = payTypesMn.indexOf(v);
-                                  setState(() {
-                                    payType = payTypesValues[i];
-                                  });
-                                }
-                              })),
-                      space24,
-                      AdditionCard(
-                          title: incomeRent,
-                          child: Input(
-                            textInputAction: TextInputAction.next,
-                            inputFormatter: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'^(\d+)?\.?\d{0,2}'))
-                            ],
-                            labelText: incomeAmount.toString(),
-                            onChange: (p0) {
-                              setState(() {
-                                incomeAmount = double.tryParse(p0) ?? 0.0;
-                              });
-                            },
-                          )),
-                      space24,
-                      AdditionCard(
-                          title: briefInformation,
-                          child: Input(
-                            maxLine: 3,
-                            labelText: descriptionValue,
-                            textInputAction: TextInputAction.next,
-                            textInputType: TextInputType.multiline,
-                            onChange: (p0) {
-                              setState(() {
-                                descriptionValue = p0;
-                              });
-                            },
-                          )),
-                      space24,
-                      MainButton(
-                        onPressed: () async {
-                          bool res = await controller.mainController.updateUser(
-                              User(
-                                  birthdate: birthdate,
-                                  gender: sex,
-                                  rentPersonCount: rentPersonCount,
-                                  job: workStatus,
-                                  jobTitle: jobTitle,
-                                  profession: professionValue,
-                                  payType: payType,
-                                  incomeAmount: incomeAmount.toInt(),
-                                  description: descriptionValue));
-                          if (res) {
-                            updateData();
-                            print(mainController.user?.toJson());
-                            Get.snackbar(
-                              '',
-                              '',
-                              margin: EdgeInsets.zero,
-                              snackPosition: SnackPosition.BOTTOM,
-                              maxWidth: MediaQuery.of(context).size.width,
-                              backgroundColor: green,
-                              animationDuration:
-                                  const Duration(milliseconds: 300),
-                              forwardAnimationCurve: Curves.easeOut,
-                              borderRadius: 0,
-                              messageText: Container(),
-                              titleText: Row(
-                                children: <Widget>[
-                                  SvgPicture.asset(iconSuccessWhite),
-                                  space13,
-                                  Text(
-                                    successSaved,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall!
-                                        .copyWith(color: Colors.white),
-                                  )
-                                ],
-                              ),
-                            );
-                          }
-                        },
-                        padding: const EdgeInsets.symmetric(
-                            vertical: small, horizontal: 24),
-                        text: save,
-                      )
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: small, horizontal: 24),
+                              text: save,
+                            )
+                          ],
+                        )
                     ],
                   ))
                 ],
@@ -426,33 +423,8 @@ class MainPersonalWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MainController());
-    void changePasswordSnackbar(bool res) {
-      Get.snackbar(
-        '',
-        '',
-        margin: EdgeInsets.zero,
-        snackPosition: SnackPosition.BOTTOM,
-        maxWidth: MediaQuery.of(context).size.width,
-        backgroundColor: res ? green : warning,
-        animationDuration: const Duration(milliseconds: 300),
-        forwardAnimationCurve: Curves.easeOut,
-        borderRadius: 0,
-        messageText: Container(),
-        titleText: Row(
-          children: <Widget>[
-            SvgPicture.asset(iconSuccessWhite),
-            space13,
-            Text(
-              res ? successSaved : incomplete,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Colors.white,
-                  ),
-            )
-          ],
-        ),
-      );
-      Navigator.pop(context);
-    }
+
+    CustomSnackbar snackbar = CustomSnackbar();
 
     return MenuContainer(
         child: Column(
@@ -498,7 +470,8 @@ class MainPersonalWidget extends StatelessWidget {
                                 successVerified(context);
                               }
                             } else {
-                              Get.snackbar('Алдаа', "Дутуу байна");
+                              snackbar.mainSnackbar(context, "Дутуу байна",
+                                  SnackBarTypes.warning);
                             }
                           },
                           width: double.infinity,
@@ -539,7 +512,8 @@ class MainPersonalWidget extends StatelessWidget {
             if (controller.user!.emailVerified != null &&
                 !controller.user!.emailVerified!) {
               controller.sendEmailVerification();
-              Get.snackbar('Мэдэгдэл', emailVerificationString);
+              snackbar.mainSnackbar(
+                  context, emailVerificationString, SnackBarTypes.warning);
             }
           },
         ),
@@ -595,7 +569,13 @@ class MainPersonalWidget extends StatelessWidget {
                                 controller.oldPassword.value != "") {
                               res = await controller.changePassword();
                             }
-                            changePasswordSnackbar(res);
+
+                            snackbar.mainSnackbar(
+                                context,
+                                res ? 'Амжилттай' : 'Нууц үг таарахгүй байна.',
+                                res
+                                    ? SnackBarTypes.success
+                                    : SnackBarTypes.warning);
                           },
                         )),
                     space24,
@@ -609,7 +589,12 @@ class MainPersonalWidget extends StatelessWidget {
                               controller.oldPassword.value != "") {
                             res = await controller.changePassword();
                           }
-                          changePasswordSnackbar(res);
+                          snackbar.mainSnackbar(
+                              context,
+                              res ? 'Амжилттай' : 'Нууц үг таарахгүй байна.',
+                              res
+                                  ? SnackBarTypes.success
+                                  : SnackBarTypes.warning);
                         },
                         padding: const EdgeInsets.symmetric(
                             vertical: small, horizontal: 24),

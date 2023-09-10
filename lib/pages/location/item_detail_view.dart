@@ -9,6 +9,7 @@ import 'package:tureeslii/shared/index.dart';
 class ItemDetailView extends StatelessWidget {
   const ItemDetailView({super.key, required this.data});
   final Post data;
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MainController());
@@ -268,7 +269,7 @@ class ItemDetailView extends StatelessWidget {
                     space32,
                     MainButton(
                       onPressed: () async {
-                        await controller.rentRequest(
+                        bool res = await controller.rentRequest(
                             data.id!,
                             controller.endDate.value,
                             DateTime.parse(controller.startDate.value)
@@ -284,7 +285,14 @@ class ItemDetailView extends StatelessWidget {
                                     30
                                 ? 'monthly'
                                 : 'daily');
-                        Navigator.pop(context);
+                        if (res) {
+                          Navigator.pop(context);
+                        } else {
+                          CustomSnackbar snackbar = CustomSnackbar();
+
+                          snackbar.mainSnackbar(
+                              context, 'Алдаа', SnackBarTypes.error);
+                        }
                       },
                       width: double.infinity,
                       text: request,

@@ -17,6 +17,7 @@ export 'items/checkbox.dart';
 export 'items/dropdown.dart';
 export 'items/input.dart';
 export 'items/radio.dart';
+export 'loader.dart';
 export 'menu_appbar.dart';
 export 'navigationBar.dart';
 export 'otp.dart';

@@ -6,9 +6,7 @@ import 'package:tureeslii/controllers/auth_controller.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/provider/api_prodiver.dart';
 import 'package:tureeslii/routes.dart';
-import 'package:tureeslii/shared/constants/enums.dart';
-import 'package:tureeslii/shared/constants/strings.dart';
-import 'package:tureeslii/shared/constants/values.dart';
+import 'package:tureeslii/shared/index.dart';
 
 class MainController extends GetxController
     with StateMixin<User>, WidgetsBindingObserver {
@@ -53,6 +51,7 @@ class MainController extends GetxController
       List<RentRequest> res =
           await apiRepository.getMyRentRequest(0, 10, SortData(), []);
       myRentRequest.value = res;
+      print(res);
     } catch (e) {
       print(e);
     }
@@ -126,7 +125,7 @@ class MainController extends GetxController
       ErrorHandler res =
           await apiRepository.rentRequest(postId, startDate, duration, type);
       if (!res.success!) {
-        Get.snackbar('Алдаа', res.message ?? '');
+        return false;
       }
       return res.success!;
     } on Exception {
@@ -142,7 +141,7 @@ class MainController extends GetxController
             oldPassword.value, newPassword.value);
         return true;
       } else {
-        Get.snackbar('Алдаа', 'Нууц үг таарахгүй байна');
+        
         return false;
       }
     } on DioException catch (e) {

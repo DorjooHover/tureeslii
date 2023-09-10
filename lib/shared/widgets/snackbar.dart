@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:tureeslii/shared/constants/colors.dart';
+import 'package:tureeslii/shared/constants/enums.dart';
 import 'package:tureeslii/shared/constants/spacing.dart';
 
 class CustomSnackbar {
   mainSnackbar(
     BuildContext context,
     String text,
-    String type,
+    SnackBarTypes type,
   ) {
     Color color = green;
     IconData icon = Icons.check;
     bool keyboard = WidgetsBinding.instance.window.viewInsets.bottom > 0;
     switch (type) {
-      case 'error':
+      case SnackBarTypes.error:
         color = red;
         icon = Icons.error;
         break;
-      case 'warning':
+      case SnackBarTypes.warning:
         color = warning;
         icon = Icons.info;
         break;

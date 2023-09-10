@@ -8,8 +8,10 @@ class FilterView extends StatefulWidget {
   const FilterView({
     super.key,
     required this.func,
+    required this.price
   });
   final Function(List<FilterData>) func;
+  final List<dynamic> price;
 
   @override
   State<FilterView> createState() => _FilterViewState();
@@ -138,11 +140,11 @@ class _FilterViewState extends State<FilterView> {
 
   start() async {
     reset();
-    List<dynamic> res = await controller.getPostPriceRange(FilterData());
-    if (res.length > 1) {
+    
+    if (widget.price.length > 1) {
       setState(() {
-        startPaymentValue = double.parse(res.first['price'].toString());
-        endPaymentValue = double.parse(res.last['price'].toString());
+        startPaymentValue = double.parse(widget.price.first['price'].toString());
+        endPaymentValue = double.parse(widget.price.last['price'].toString());
         sliderMax = endPaymentValue;
       });
     }
@@ -243,7 +245,8 @@ class _FilterViewState extends State<FilterView> {
                                           now.year, now.month, now.day),
                                       lastDate: DateTime(now.year + 10),
                                       builder: (context, child) {
-                                        return DatePickerThemeWidget(child: child!);
+                                        return DatePickerThemeWidget(
+                                            child: child!);
                                       });
                               if (selectedDate != null) {
                                 setState(() {

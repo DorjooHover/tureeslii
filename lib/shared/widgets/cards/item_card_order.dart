@@ -135,7 +135,8 @@ class OrderCard extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleLarge,
                       children: <TextSpan>[
                         TextSpan(
-                            text: '₮/сар',
+                            text:
+                                '₮/${data.post!.monthlyRent! ? 'сар' : 'өдөр'}',
                             style: Theme.of(context)
                                 .textTheme
                                 .labelLarge!

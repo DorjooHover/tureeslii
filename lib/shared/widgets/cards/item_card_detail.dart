@@ -170,14 +170,14 @@ class _ItemDetailCardState extends State<ItemDetailCard> {
               left: 20,
               child: RichText(
                 text: TextSpan(
-                  text: '${currencyFormat(widget.data.price!, false)} ',
+                  text: '${currencyFormat(widget.data.monthlyRent! ? widget.data.price ?? 0.0 : widget.data.priceDaily ?? 0.0, false)} ',
                   style: Theme.of(context)
                       .textTheme
                       .titleLarge!
                       .copyWith(color: Colors.white),
                   children: <TextSpan>[
                     TextSpan(
-                        text: '₮/сар',
+                        text: '₮/${widget.data.monthlyRent! ? 'сар' : 'өдөр'}',
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
                             color: Colors.white, fontWeight: FontWeight.w400)),
                   ],

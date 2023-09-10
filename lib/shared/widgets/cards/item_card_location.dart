@@ -184,14 +184,15 @@ class LocationCard extends StatelessWidget {
                     space16,
                     RichText(
                       text: TextSpan(
-                        text: '${currencyFormat(data.price!, false)} ',
+                        text:
+                            '${currencyFormat(data.monthlyRent! ? data.price ?? 0.0 : data.priceDaily ?? 0.0, false)} ',
                         style: Theme.of(context)
                             .textTheme
                             .bodyMedium!
                             .copyWith(fontWeight: FontWeight.bold),
                         children: <TextSpan>[
                           TextSpan(
-                              text: '₮/сар',
+                              text: '₮/${data.monthlyRent! ? 'сар' : 'өдөр'}',
                               style: Theme.of(context)
                                   .textTheme
                                   .labelLarge!

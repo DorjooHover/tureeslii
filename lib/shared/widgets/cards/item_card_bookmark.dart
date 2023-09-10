@@ -179,11 +179,12 @@ class _BookmarkCardState extends State<BookmarkCard> {
             children: [
               RichText(
                 text: TextSpan(
-                  text: '${currencyFormat(widget.data.price ?? 0.0, false)} ',
+                  text:
+                      '${currencyFormat(widget.data.monthlyRent! ? widget.data.price ?? 0.0 : widget.data.priceDaily ?? 0.0, false)} ',
                   style: Theme.of(context).textTheme.titleLarge,
                   children: <TextSpan>[
                     TextSpan(
-                        text: '₮/сар',
+                        text: '₮/${widget.data.monthlyRent! ? 'сар' : 'өдөр'}',
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
                             color: gray, fontWeight: FontWeight.w400)),
                   ],

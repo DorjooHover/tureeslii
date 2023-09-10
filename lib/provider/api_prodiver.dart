@@ -350,7 +350,9 @@ class ApiRepository extends GetxService {
     try {
       final response = await dio.get('/notification');
 
-      return (response as List).map((e) => Notifications.fromJson(e)).toList();
+      return (response.data as List)
+          .map((e) => Notifications.fromJson(e))
+          .toList();
     } on DioException {
       throw Exception("Алдаа гарлаа");
     }

@@ -47,11 +47,11 @@ class _LocationViewState extends State<LocationView> {
 
   bool isLoading = false;
 
-  bool loading = false;
   int page = 0;
   int limit = 10;
   SortData sortData = SortData();
   List<FilterData> filterData = <FilterData>[];
+  List<dynamic>? price;
   Future<void> getPosts() async {
     setState(() {
       isLoading = true;
@@ -63,7 +63,9 @@ class _LocationViewState extends State<LocationView> {
         sortData,
         filterData,
       );
-
+      List<dynamic> res = await mainController.getPostPriceRange(FilterData());
+      price = res;
+      setState(() {});
       addMarkers();
       setState(() {
         isLoading = false;
@@ -185,7 +187,7 @@ class _LocationViewState extends State<LocationView> {
       width: double.infinity,
       child: Stack(
         children: [
-          startLocation != null
+          startLocation != null && !isLoading
               ? GoogleMap(
                   mapType: MapType.normal,
                   initialCameraPosition: _kGooglePlex,
@@ -204,9 +206,7 @@ class _LocationViewState extends State<LocationView> {
                   },
                 )
               : isData
-                  ? const Center(
-                      child: Text('Түр хүлээнэ үү...'),
-                    )
+                  ? const CustomLoader()
                   : Center(
                       child: Text(
                           _bodyHeight < 10 && _isDragUp ? 'Зар олдсонгүй' : ""),
@@ -295,7 +295,7 @@ class _LocationViewState extends State<LocationView> {
                   child: Column(
                     children: <Widget>[
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        padding: EdgeInsets.symmetric(horizontal: 20),
                         width: _size.width,
                         alignment: Alignment.center,
                         decoration: const BoxDecoration(
@@ -322,15 +322,17 @@ class _LocationViewState extends State<LocationView> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 MainIconButton(
-                                  onPressed: () {
-                                    Get.to(FilterView(
-                                      func: (List<FilterData> data) {
-                                        setState(() {
-                                          filterData = data;
-                                        });
-                                        addMarkers();
-                                      },
-                                    ),
+                                  onPressed: () async {
+                                    Get.to(
+                                        FilterView(
+                                          func: (List<FilterData> data) {
+                                            setState(() {
+                                              filterData = data;
+                                            });
+                                            addMarkers();
+                                          },
+                                          price: price ?? [],
+                                        ),
                                         transition: Transition.cupertino,
                                         duration:
                                             const Duration(milliseconds: 300));

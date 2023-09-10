@@ -28,7 +28,7 @@ class _LoginViewState extends State<LoginView> {
 
   final AuthController controller = Get.find();
   final mainController = Get.put(MainController());
-
+  CustomSnackbar snackbar = CustomSnackbar();
   loginFunc() async {
     if (loginKey.currentState!.validate()) {
       // loginKey.currentState!.save();
@@ -38,7 +38,7 @@ class _LoginViewState extends State<LoginView> {
         Get.toNamed(Routes.main);
         mainController.refreshUser();
       } else {
-        Get.snackbar('Алдаа', user.toString());
+        snackbar.mainSnackbar(context, user.toString(), SnackBarTypes.error);
       }
     }
   }

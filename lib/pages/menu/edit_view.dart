@@ -17,6 +17,8 @@ class _SignInViewState extends State<SignInView> {
   final mainController = Get.put(MainController());
   String passwordValue = "", emailValue = "";
   String lastNamValue = "", firstNameValue = "", phoneValue = "";
+
+  CustomSnackbar snackbar = CustomSnackbar();
   @override
   void initState() {
     super.initState();
@@ -99,10 +101,13 @@ class _SignInViewState extends State<SignInView> {
                                       lastNamValue, firstNameValue, phoneValue);
 
                                   if (res) {
-                                    Get.snackbar(
-                                        'Амжилттай', "Амжилттай хадгаллаа");
+                                    snackbar.mainSnackbar(
+                                        context,
+                                        "Амжилттай хадгаллаа",
+                                        SnackBarTypes.success);
                                   } else {
-                                    Get.snackbar('Алдаа', "");
+                                    snackbar.mainSnackbar(
+                                        context, "Алдаа", SnackBarTypes.error);
                                   }
                                   Navigator.of(context).pop();
                                 },
@@ -145,9 +150,11 @@ class _SignInViewState extends State<SignInView> {
                       bool res = await mainController.savePersonal(
                           lastNamValue, firstNameValue, phoneValue);
                       if (res) {
-                        Get.snackbar('Амжилттай', "Амжилттай хадгаллаа");
+                        snackbar.mainSnackbar(context, "Амжилттай хадгаллаа",
+                            SnackBarTypes.success);
                       } else {
-                        Get.snackbar('Алдаа', "");
+                        snackbar.mainSnackbar(
+                            context, "Алдаа", SnackBarTypes.error);
                       }
                     } else {
                       controller.registerEmail(emailValue, passwordValue);
