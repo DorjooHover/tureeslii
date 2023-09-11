@@ -172,7 +172,7 @@ class Routes {
         name: rentRequest,
         page: () {
           Post res = Get.arguments;
-          print(res);
+         
           return RentRequestView(data: res);
         },
         transition: Transition.fade,

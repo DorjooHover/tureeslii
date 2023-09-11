@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:landlord/binding.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/theme/theme.dart';
@@ -27,7 +28,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Landlord',
-      theme: MyTheme.light,
+      theme: MyTheme.light.copyWith(
+          textTheme: GoogleFonts.montserratTextTheme(MyTheme.light.textTheme)),
       darkTheme: MyTheme.dark,
       themeMode: ThemeMode.light,
       debugShowCheckedModeBanner: false,

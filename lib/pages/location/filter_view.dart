@@ -9,7 +9,6 @@ class FilterView extends StatefulWidget {
 }
 
 class _FilterViewState extends State<FilterView> {
-  @override
   String date = byMonth;
   bool collateral = false;
   List<String> type = [];
@@ -21,6 +20,7 @@ class _FilterViewState extends State<FilterView> {
   String floorValue = filterFloor[0];
   double startPaymentValue = 200000;
   double endPaymentValue = 4500000;
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgGray,

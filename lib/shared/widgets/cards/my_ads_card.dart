@@ -15,17 +15,18 @@ class MyAdsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String status = '';
+
     Color statusColor = Colors.transparent;
     switch (post.status?.toLowerCase()) {
-      case 'rented':
+      case 'active':
         status = 'Нийтлэгдсэн';
         statusColor = green;
         break;
-      case 'active':
+      case 'rented':
         status = 'Шалгаж байна';
         statusColor = checkingBlack;
         break;
-      case 'returned':
+      case 'rejected':
         status = 'Буцаагдсан';
         statusColor = returnedRed;
         break;
@@ -78,6 +79,7 @@ class MyAdsCard extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // if (status == 'active')
             Flexible(
               child: Row(
                 mainAxisAlignment: post.status == null
@@ -133,19 +135,31 @@ class MyAdsCard extends StatelessWidget {
             ),
             if (status != '')
               Flexible(
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: statusColor,
-                      borderRadius: BorderRadius.circular(15)),
-                  height: 26,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    status,
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Colors.white, fontWeight: FontWeight.w400),
+                  child: Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        color: statusColor,
+                        borderRadius: BorderRadius.circular(15)),
+                    height: 26,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      status,
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Colors.white, fontWeight: FontWeight.w400),
+                    ),
                   ),
-                ),
-              )
+                  space10,
+                  if (post.status?.toLowerCase() == "rejected")
+                    Text(
+                      fakeInfo,
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelLarge!
+                          .copyWith(color: gray, fontWeight: FontWeight.w300),
+                    )
+                ],
+              ))
           ],
         )
       ],

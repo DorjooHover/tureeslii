@@ -163,6 +163,15 @@ class MainController extends GetxController
     }
   }
 
+  // rent request
+  Future<List<RentRequest>> getRentRequestById(int id) async {
+    try {
+      return await apiRepository.getRentRequestById(id);
+    } catch (e) {
+      return [];
+    }
+  }
+
   Future<void> setupApp() async {
     isLoading.value = true;
     try {

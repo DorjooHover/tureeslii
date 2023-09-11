@@ -211,6 +211,7 @@ const String agree = 'Зөвшөөрөх';
 const String decline = 'Татгалзах';
 const String emailVerificationString = 'Та имайл хаягаа шалгана уу.';
 const String slogan = 'Ая тухтай байдлыг амар хялбараар';
+const String fakeInfo = 'Мэдээлэл худлаа оруулсан';
 
 // drawer
 const String verificationDrawer = 'Баталгаажуулалт';

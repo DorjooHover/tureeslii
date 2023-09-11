@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:landlord/controllers/auth_controller.dart';
 import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/model/models.dart';
+import 'package:landlord/pages/auth/forgot_password_view.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
@@ -20,7 +21,8 @@ class _LoginViewState extends State<LoginView> {
   final mainController = Get.put(MainController());
   String username = "";
   String passwordValue = "";
-  bool showPassword = false;
+  bool showPassword = true;
+  CustomSnackbar snackbar = CustomSnackbar();
   loginFunc() async {
     final user = await controller.login(username, passwordValue);
 
@@ -28,7 +30,7 @@ class _LoginViewState extends State<LoginView> {
       Get.toNamed(Routes.main);
       mainController.refreshUser();
     } else {
-      Get.snackbar('Алдаа', user.toString());
+      snackbar.mainSnackbar(context, user.toString(), SnackbarType.error);
     }
   }
 
@@ -103,7 +105,9 @@ class _LoginViewState extends State<LoginView> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.to(() => ForgotPasswordView());
+                    },
                     child: Text(
                       forgotPassword,
                       style: Theme.of(context)

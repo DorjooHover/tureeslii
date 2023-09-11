@@ -149,7 +149,6 @@ class _LocationViewState extends State<LocationView>
 
   @override
   bool get wantKeepAlive => true;
-  
 
   @override
   Widget build(BuildContext context) {
@@ -438,12 +437,12 @@ class _LocationViewState extends State<LocationView>
                                             child: AdditionCard(
                                                 title: doorNumber,
                                                 child: Input(
-                                                    // textInputType:
-                                                    //     TextInputType.number,
-                                                    // inputFormatter: [
-                                                    //   FilteringTextInputFormatter
-                                                    //       .digitsOnly
-                                                    // ],
+                                                    textInputType:
+                                                        TextInputType.number,
+                                                    inputFormatter: [
+                                                      FilteringTextInputFormatter
+                                                          .digitsOnly
+                                                    ],
                                                     textInputAction:
                                                         TextInputAction.next,
                                                     onChange: (p0) {

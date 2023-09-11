@@ -38,7 +38,6 @@ dependencies:
   get: ^4.6.5
   connectivity_plus: ^4.0.1
   dio: ^5.2.1+1
-  shared_preferences: ^2.1.2
   url_launcher: ^6.1.11
   flutter_svg: ^2.0.4
   carousel_slider: ^4.2.1
@@ -46,7 +45,7 @@ dependencies:
   google_maps_flutter: ^2.2.5
   location: ^5.0.3
   flutter_launcher_icons:
-  
+  google_fonts: ^5.1.0
   image_picker:
   cached_network_image: ^3.2.3 
   get_storage: ^2.1.1

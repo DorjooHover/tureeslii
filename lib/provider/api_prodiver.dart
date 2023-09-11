@@ -338,7 +338,7 @@ class ApiRepository extends GetxService {
         "bankName": bankName,
         "bankAccName": bankAccName,
       };
-      print(data);
+
       final res = await dio.post('/user/verificationRequest', data: data);
 
       return res.data['success'];
@@ -361,7 +361,7 @@ class ApiRepository extends GetxService {
   Future<List<Cancelation>> getCancelation() async {
     try {
       final response = await dio.get('/cancelation/get');
-      print(response);
+
       return (response.data['data'] as List)
           .map((e) => Cancelation.fromJson(e))
           .toList();
@@ -463,7 +463,7 @@ class ApiRepository extends GetxService {
         "duration": duration,
       };
       final response = await dio.post('/posts/rentRequest', data: data);
-      print(response);
+
       if (response.data['success']) {
         return ErrorHandler(success: true, message: 'Ажмилттай');
       }
@@ -482,6 +482,20 @@ class ApiRepository extends GetxService {
             success: false);
       }
       return ErrorHandler(message: errorOccurred, success: false);
+    } on DioException {
+      throw Exception('Алдаа');
+    }
+  }
+
+  Future<List<RentRequest>> getRentRequestById(int id) async {
+    try {
+      final response = await dio.get(
+        '/rentreq/getByPost/$id',
+      );
+
+      return (response.data as List)
+          .map((e) => RentRequest.fromJson(e))
+          .toList();
     } on DioException {
       throw Exception('Алдаа');
     }
