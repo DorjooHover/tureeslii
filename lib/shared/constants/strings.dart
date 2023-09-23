@@ -96,6 +96,10 @@ const String isLiveTogether = 'Түрээслүүлэгч цуг амьдрах 
 // global
 const String or = 'Эсвэл';
 const String payment = 'Төлбөр';
+const String pay = 'Төлбөр төлөх';
+const String payValue = 'Төлөх дүн';
+const String back = 'Буцах';
+const String checkPayment = 'Төлөлт шалгах';
 const String typeStr = 'Төрөл';
 const String yearStr = 'он';
 const String other = 'Бусад';
@@ -123,6 +127,7 @@ const String deleteAccount = 'Бүртгэл устгах';
 const String settings = 'тохиргоо';
 const String additionInfo = 'Нэмэлт мэдээлэл';
 const String time = 'Хугацаа';
+const String landlord = 'Түрээслэгч';
 const String day = 'өдөр';
 const String month = 'сар';
 

@@ -322,6 +322,7 @@ class ApiRepository extends GetxService {
     }
   }
 
+  // Future<bool> getPayment
   // rent request
   Future<List<RentRequest>> getMyRentRequest(int? skip, int? take,
       SortData? sortData, List<FilterData>? filterData) async {
@@ -342,6 +343,21 @@ class ApiRepository extends GetxService {
       } else {
         throw Exception("Алдаа гарлаа");
       }
+    }
+  }
+
+  Future<bool> checkPayment(String invoiceId) async {
+    try {
+      final response = await dio
+          .get('/posts/qpay/checkPromo', queryParameters: {"id": invoiceId});
+
+      if (response.data['status'] == "PAID") {
+        return true;
+      } else {
+        return false;
+      }
+    } on DioException catch (e) {
+      return false;
     }
   }
 

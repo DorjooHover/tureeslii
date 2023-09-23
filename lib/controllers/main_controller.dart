@@ -133,6 +133,10 @@ class MainController extends GetxController
     }
   }
 
+  Future<bool> checkPayment(String invoiceId) async {
+    return await apiRepository.checkPayment(invoiceId);
+  }
+
 // profile
   Future<bool> changePassword() async {
     try {
@@ -141,7 +145,6 @@ class MainController extends GetxController
             oldPassword.value, newPassword.value);
         return true;
       } else {
-        
         return false;
       }
     } on DioException catch (e) {

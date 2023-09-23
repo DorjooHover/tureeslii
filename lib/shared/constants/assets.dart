@@ -1,4 +1,5 @@
 const images = 'assets/images/';
+const banks = 'assets/images/banks/';
 const icons = 'assets/icons/';
 const nav = 'assets/icons/navigationBar/';
 const detail = 'assets/icons/detail/';
@@ -103,3 +104,19 @@ const navOrder = '${nav}order.svg';
 const navOrderActive = '${nav}orderActive.svg';
 const navMenu = '${nav}account.svg';
 const navMenuActive = '${nav}accountActive.svg';
+
+// banks
+const bankKhan = '${banks}khan.png';
+const bankNi = '${banks}ni.jpeg';
+const bankBogd = '${banks}bogd.jpg';
+const bankKhas = '${banks}khas.jpg';
+const bankTrans = '${banks}trans.jpg';
+const bankArd = '${banks}ard.png';
+const bankChinggis = '${banks}chinggis.png';
+const bankM = '${banks}m.png';
+const bankMostMoney = '${banks}mostMoney.png';
+const bankQPay = '${banks}qpay.png';
+const bankSocialPay = '${banks}socialPay.png';
+const bankState = '${banks}state.png';
+const bankTdb = '${banks}tdb.png';
+const bankCapitron = '${banks}capitron.png';

@@ -25,7 +25,7 @@ const List<String> scopes = <String>[
 class _LoginViewState extends State<LoginView> {
   String username = '';
   String passwordValue = '';
-
+  bool showPassword = true;
   final AuthController controller = Get.find();
   final mainController = Get.put(MainController());
   CustomSnackbar snackbar = CustomSnackbar();
@@ -38,7 +38,8 @@ class _LoginViewState extends State<LoginView> {
         Get.toNamed(Routes.main);
         mainController.refreshUser();
       } else {
-        snackbar.mainSnackbar(context, user.toString(), SnackBarTypes.error);
+        snackbar.mainSnackbar(context,
+            user.toString().replaceAll("Exception:", ""), SnackBarTypes.error);
       }
     }
   }
@@ -89,16 +90,22 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 space8,
                 Input(
-                  obscureText: true,
+                  obscureText: showPassword,
                   maxLine: 1,
                   onChange: (p0) {
                     setState(() {
                       passwordValue = p0;
                     });
                   },
-                  onSubmitted: (p0) {
-                    loginFunc();
-                  },
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          showPassword = !showPassword;
+                        });
+                      },
+                      icon: Icon(!showPassword
+                          ? Icons.visibility
+                          : Icons.visibility_off)),
                 ),
                 space16,
                 Align(

@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:tureeslii/model/models.dart';
+import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class OrderAcceptedView extends StatefulWidget {
@@ -12,9 +14,22 @@ class OrderAcceptedView extends StatefulWidget {
 }
 
 class _OrderAcceptedViewState extends State<OrderAcceptedView> {
+  double finalPrice = 0.0;
+  RentRequest data = RentRequest();
   @override
   void initState() {
     super.initState();
+    setState(() {
+      data = widget.data;
+    });
+    int duration = widget.data.duration! > 30
+        ? widget.data.duration! ~/ 30
+        : widget.data.duration!;
+    double fee = widget.data.fee!.toDouble();
+    double total = (widget.data.price! * duration).toDouble();
+    setState(() {
+      finalPrice = total + fee;
+    });
   }
 
   final CarouselController carouselController = CarouselController();
@@ -32,12 +47,11 @@ class _OrderAcceptedViewState extends State<OrderAcceptedView> {
         child: Stack(
           children: [
             Container(
-              height: MediaQuery.of(context).size.height -
-                  MediaQuery.of(context).padding.top -
-                  origin,
-              padding: const EdgeInsets.symmetric(horizontal: origin),
+              height: MediaQuery.of(context).size.height,
+              padding: const EdgeInsets.only(
+                  left: origin, right: origin, bottom: large),
               margin: EdgeInsets.only(
-                  bottom: 160 + MediaQuery.of(context).padding.bottom),
+                  bottom: 80 + MediaQuery.of(context).padding.bottom),
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
@@ -148,7 +162,7 @@ class _OrderAcceptedViewState extends State<OrderAcceptedView> {
                           child: RichText(
                             text: TextSpan(
                               text:
-                                  '${currencyFormat(widget.data.totalPrice?.toDouble() ?? 0.0, false)} ',
+                                  '${currencyFormat(widget.data.price?.toDouble() ?? 0.0, false)} ',
                               style: Theme.of(context).textTheme.displaySmall,
                               children: <TextSpan>[
                                 TextSpan(
@@ -179,90 +193,226 @@ class _OrderAcceptedViewState extends State<OrderAcceptedView> {
                             .bodyMedium!
                             .copyWith(color: black),
                       ),
+                    Container(
+                        padding: const EdgeInsets.only(
+                            left: 20, right: 20, top: 22, bottom: origin),
+                        decoration: BoxDecoration(
+                            color: data.paidDate != null ? green : orange,
+                            borderRadius: BorderRadius.circular(11)),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  time,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelLarge!
+                                      .copyWith(fontWeight: FontWeight.w400),
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    text: widget.data.duration! > 0
+                                        ? "${widget.data.duration! ~/ 30} $month "
+                                        : '',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text: widget.data.duration! % 30 > 0
+                                            ? "${widget.data.duration! % 30} $day "
+                                            : '',
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                            space16,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  widget.data.startDate!
+                                      .substring(0, 10)
+                                      .replaceAll('-', '.'),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelLarge!
+                                      .copyWith(fontWeight: FontWeight.w400),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: small),
+                                    width: double.infinity,
+                                    height: 1,
+                                    color: Colors.white,
+                                    alignment: Alignment.center,
+                                  ),
+                                ),
+                                Text(
+                                  widget.data.endDate!
+                                      .substring(0, 10)
+                                      .replaceAll('-', '.'),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelLarge!
+                                      .copyWith(fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                            if (data.paidDate == null) space32,
+                            if (data.paidDate == null)
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    payment,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge!
+                                        .copyWith(fontWeight: FontWeight.w400),
+                                  ),
+                                  Text(
+                                    "${currencyFormat(widget.data.totalPrice!.toDouble(), true)}₮",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),
+                                  )
+                                ],
+                              ),
+                            space24,
+                            Flexible(
+                                child: MainButton(
+                              onPressed: () {
+                                Get.toNamed(Routes.qpay,
+                                    arguments: widget.data);
+                              },
+                              width: double.infinity,
+                              color: Colors.white,
+                              contentColor: orange,
+                              child: Text(
+                                pay,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                        color: orange,
+                                        fontWeight: FontWeight.w400),
+                              ),
+                            ))
+                          ],
+                        )),
+                    // space32,
+                    // Container(
+                    //   width: double.infinity,
+                    //   padding: EdgeInsets.symmetric(
+                    //       vertical: origin, horizontal: 20),
+                    //   decoration: BoxDecoration(
+                    //       color: Colors.white,
+                    //       borderRadius: BorderRadius.circular(11),
+                    //       boxShadow: [
+                    //         BoxShadow(
+                    //             blurRadius: 15,
+                    //             spreadRadius: 0,
+                    //             offset: Offset(4, 0),
+                    //             color: Colors.black.withOpacity(0.1)),
+                    //         BoxShadow(
+                    //             blurRadius: 15,
+                    //             spreadRadius: 0,
+                    //             offset: Offset(0, 0),
+                    //             color: Colors.black.withOpacity(0.1))
+                    //       ]),
+                    //   child: Column(
+                    //     children: <Widget>[
+                    //       Text(
+                    //         landlord,
+                    //         style: Theme.of(context)
+                    //             .textTheme
+                    //             .headlineSmall!
+                    //             .copyWith(
+                    //                 color: Color(0xff9C9C9C),
+                    //                 fontWeight: FontWeight.bold),
+                    //       ),
+                    //       space10,
+                    //       // Row(
+                    //       //   children: <Widget>[
+                    //       //     ClipRRect(
+                    //       //       borderRadius: BorderRadius.circular(100),
+                    //       //       child: CachedNetworkImage(
+                    //       //           width: 70,
+                    //       //           height: 70,
+                    //       //           fit: BoxFit.cover,
+                    //       //           imageUrl: widget.data.user!.profilePic != ""
+                    //       //               ? "$fileUrl${widget.data.user!.profilePic}"
+                    //       //               : "https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1972&q=80"),
+                    //       //     ),
+                    //       //     space20,
+                    //       //     Column(
+                    //       //       mainAxisSize: MainAxisSize.min,
+                    //       //       children: <Widget>[
+                    //       //         Text(widget.data.user!.firstname!)
+                    //       //       ],
+                    //       //     )
+                    //       //   ],
+                    //       // )
+                    //     ],
+                    //   ),
+                    // )
                   ],
                 ),
               ),
             ),
-            Positioned(
-                top: large,
-                left: origin,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      padding: const EdgeInsets.all(small),
-                      backgroundColor: Colors.white,
-                      shape: const CircleBorder()),
-                  child: const Icon(
-                    Icons.arrow_back_ios_new,
-                    color: gray,
-                    size: 24,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                )),
-            Positioned(
-              bottom: MediaQuery.of(context).padding.bottom + 49 + 56,
-              left: origin,
-              right: origin,
-              child: Container(
-                  padding: const EdgeInsets.only(
-                      left: 20, right: 20, top: 22, bottom: origin),
-                  decoration: BoxDecoration(
-                      color: orange,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(11),
-                          topRight: Radius.circular(11))),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        time,
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelLarge!
-                            .copyWith(fontWeight: FontWeight.w400),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          text: widget.data.duration! > 0
-                              ? "${widget.data.duration! ~/ 30} $month "
-                              : '',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: widget.data.duration! % 30 > 0
-                                  ? "${widget.data.duration! % 30} $day "
-                                  : '',
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
+            if (data.paidDate == null)
+              Positioned(
+                  top: large,
+                  left: origin,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        padding: const EdgeInsets.all(small),
+                        backgroundColor: Colors.white,
+                        shape: const CircleBorder()),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: gray,
+                      size: 24,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   )),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom + 34,
-                    top: 15,
-                    left: origin,
-                    right: origin),
-                child: MainButton(
-                  onPressed: () {},
-                  text: 'Нүүж орох',
+            if (data.paidDate == null)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).padding.bottom + 34,
+                      top: 15,
+                      left: origin,
+                      right: origin),
+                  child: MainButton(
+                    onPressed: () {
+                      Get.toNamed(Routes.qpay, arguments: widget.data);
+                    },
+                    text: 'Нүүж орох',
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

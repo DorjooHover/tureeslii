@@ -103,6 +103,23 @@ List<SortData> sortValues = [
       icon: iconNewStart,
       field: 'startDate'),
 ];
+// banks
+const bankValues = [
+  {'url': '', "img": bankQPay},
+  {'url': 'khanbank://q?qPay_QRcode=', "img": bankKhan},
+  {'url': 'statebank://q?qPay_QRcode=', "img": bankState},
+  {'url': 'xacbank://q?qPay_QRcode=', "img": bankKhas},
+  {'url': 'tdbbank://q?qPay_QRcode=', "img": bankTdb},
+  {'url': '', "img": bankSocialPay},
+  {'url': 'most://q?qPay_QRcode=', "img": bankMostMoney},
+  {'url': 'nibank://q?qPay_QRcode=', "img": bankNi},
+  {'url': 'ckbank://q?qPay_QRcode=', "img": bankChinggis},
+  {'url': 'capitronbank://q?qPay_QRcode=', "img": bankCapitron},
+  {'url': 'bogdbank://q?qPay_QRcode=', "img": bankBogd},
+  {'url': '', "img": bankTrans},
+  {'url': '', "img": bankM},
+  {'url': '', "img": bankArd},
+];
 
 // navigation bar
 const navbar = [

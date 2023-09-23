@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:tureeslii/bindings/bindings.dart';
 import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/pages/menu/menu_view.dart';
+import 'package:tureeslii/pages/order/qpay_view.dart';
 import 'package:tureeslii/pages/pages.dart';
 
 class Routes {
@@ -10,6 +11,7 @@ class Routes {
   static String main = '/main';
   static String bookmark = '/bookmark';
   static String order = '/order';
+  static String qpay = '/order/qpay';
   static String acceptedOrder = '$order/accepted';
   // menu
   static String menu = '/menu';
@@ -54,6 +56,14 @@ class Routes {
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
     GetPage(
+        name: qpay,
+        page: () {
+          RentRequest res = Get.arguments;
+          return QPayView(data: res);
+        },
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+    GetPage(
         name: acceptedOrder,
         page: () {
           RentRequest res = Get.arguments;
@@ -88,6 +98,7 @@ class Routes {
         page: () => const LocationView(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
+
     // GetPage(
     //     name: locationFilter,
     //     page: () => const FilterView(),

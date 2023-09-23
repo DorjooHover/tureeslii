@@ -39,7 +39,7 @@ class AuthController extends GetxController {
       _saveTokens(user.accessToken!);
 
       return user;
-    } catch (e) {
+  } catch (e) {
       print(e);
       return e;
     }

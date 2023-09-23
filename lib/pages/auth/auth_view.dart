@@ -28,8 +28,11 @@ class AuthView extends StatelessWidget {
                     imageUrl:
                         'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
                     fit: BoxFit.cover,
-                    placeholder: (context, url) =>
-                         Center(child: SizedBox(child: CircularProgressIndicator(),),), // Placeholder widget while loading
+                    placeholder: (context, url) => Center(
+                      child: SizedBox(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ), // Placeholder widget while loading
                     errorWidget: (context, url, error) =>
                         Icon(Icons.error), // Widget to display on error
                   )),
@@ -40,32 +43,39 @@ class AuthView extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: 24),
-                    alignment: Alignment.topRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Get.toNamed(Routes.login);
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          Text(
-                            login,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(color: Colors.white),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      SizedBox(),
+                      Container(
+                        margin: EdgeInsets.only(top: 24),
+                        alignment: Alignment.topRight,
+                        child: TextButton(
+                          onPressed: () {
+                            Get.toNamed(Routes.login);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(
+                                login,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(color: Colors.white),
+                              ),
+                              space8,
+                              const Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.white,
+                                size: 24,
+                              )
+                            ],
                           ),
-                          space8,
-                          const Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.white,
-                            size: 24,
-                          )
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                   Column(
                     mainAxisSize: MainAxisSize.min,
