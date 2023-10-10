@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:tureeslii/model/models.dart';
 import 'package:tureeslii/shared/constants/colors.dart';
 import 'package:tureeslii/shared/constants/spacing.dart';
 import 'package:tureeslii/shared/constants/strings.dart';
 import 'package:tureeslii/shared/constants/values.dart';
 
 class CalendarCard extends StatelessWidget {
-  const CalendarCard({super.key});
+  const CalendarCard({super.key, required this.post});
+  final Post post;
   @override
   Widget build(BuildContext context) {
     List<int> years = [2023, 2024];
+
     List<DateTime> selected = [DateTime(2023, 7), DateTime(2023, 8)];
     return Column(mainAxisSize: MainAxisSize.min, children: [
       ...years.map((year) {

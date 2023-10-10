@@ -258,7 +258,7 @@ class ApiRepository extends GetxService {
       final response = await dio.post('/posts/rentRequest', data: data);
 
       if (response.data['success']) {
-        return ErrorHandler(success: true, message: 'Амжилттай');
+        return ErrorHandler(success: true, message: 'Амжилттай', data: response.data['data'], qr: response.data['qr'] );
       }
       if (response.data['message'] == 'please_confirm_email') {
         return ErrorHandler(
@@ -283,7 +283,8 @@ class ApiRepository extends GetxService {
             message: 'Таны мэдээлэл дутуу байна.', success: false);
       }
       return ErrorHandler(message: 'Алдаа гарлаа', success: false);
-    } on DioException {
+    } on DioException catch(e) {
+      
       throw Exception('Алдаа');
     }
   }
@@ -348,6 +349,7 @@ class ApiRepository extends GetxService {
 
   Future<bool> checkPayment(String invoiceId) async {
     try {
+
       final response = await dio
           .get('/posts/qpay/checkPromo', queryParameters: {"id": invoiceId});
 
@@ -356,7 +358,7 @@ class ApiRepository extends GetxService {
       } else {
         return false;
       }
-    } on DioException catch (e) {
+    } on DioException  {
       return false;
     }
   }

@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:tureeslii/controllers/main_controller.dart';
 import 'package:tureeslii/model/models.dart';
+import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/index.dart';
 
 class ItemDetailView extends StatelessWidget {
@@ -12,6 +13,7 @@ class ItemDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  
     final controller = Get.put(MainController());
     return Scaffold(
       appBar: AppBar(
@@ -40,7 +42,7 @@ class ItemDetailView extends StatelessWidget {
                   ),
                   space36,
                   space4,
-                  const MenuContainer(child: CalendarCard()),
+                   MenuContainer(child: CalendarCard(post: data)),
                   space36,
                   space4,
                   MoreDetailCard(data: data),
@@ -116,8 +118,8 @@ class ItemDetailView extends StatelessWidget {
                                     width: double.infinity,
                                     height: 50,
                                     alignment: Alignment.centerLeft,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 13),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 13),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(5),
@@ -234,7 +236,7 @@ class ItemDetailView extends StatelessWidget {
                                                   .inDays
                                                   .abs() >
                                               30
-                                          ? '${DateTime.parse(controller.startDate.value).difference(DateTime.parse(controller.endDate.value)).inDays.abs() ~/ 30} сар ${DateTime.parse(controller.startDate.value).difference(DateTime.parse(controller.endDate.value)).inDays % 30} өдөр'
+                                          ? '${DateTime.parse(controller.startDate.value).difference(DateTime.parse(controller.endDate.value)).inDays.abs() ~/ 30} сар ${DateTime.parse(controller.startDate.value).difference(DateTime.parse(controller.endDate.value)).inDays.abs() % 30} өдөр'
                                           : '${DateTime.parse(controller.startDate.value).difference(DateTime.parse(controller.endDate.value)).inDays.abs()} өдөр'
                                       : '',
                                   style: Theme.of(context)
@@ -255,47 +257,66 @@ class ItemDetailView extends StatelessWidget {
                                     .textTheme
                                     .labelLarge!
                                     .copyWith(color: black)),
-                            Text('${currencyFormat(data.price!, true)}₮',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(
-                                        color: prime,
-                                        fontWeight: FontWeight.bold)),
+                            Obx(
+                              () => Text(
+                                  '${currencyFormat(controller.startDate.value != '' && controller.endDate.value != '' ? (DateTime.parse(controller.startDate.value).difference(DateTime.parse(controller.endDate.value)).inDays.abs() > 30) ? data.price! * (DateTime.parse(controller.startDate.value).difference(DateTime.parse(controller.endDate.value)).inDays.abs() ~/ 30) : data.priceDaily! * (DateTime.parse(controller.startDate.value).difference(DateTime.parse(controller.endDate.value)).inDays.abs()) : 0, true)}₮',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(
+                                          color: prime,
+                                          fontWeight: FontWeight.bold)),
+                            )
                           ],
                         ),
                       ],
                     )),
                     space32,
-                    MainButton(
-                      onPressed: () async {
-                        bool res = await controller.rentRequest(
-                            data.id!,
-                            controller.endDate.value,
-                            DateTime.parse(controller.startDate.value)
-                                .difference(
-                                    DateTime.parse(controller.endDate.value))
-                                .inDays
-                                .abs(),
-                            DateTime.parse(controller.startDate.value)
-                                        .difference(DateTime.parse(
-                                            controller.endDate.value))
-                                        .inDays
-                                        .abs() >
-                                    30
-                                ? 'monthly'
-                                : 'daily');
-                        if (res) {
-                          Navigator.pop(context);
-                        } else {
+                    Obx(
+                      () => MainButton(
+                        onPressed: () async {
                           CustomSnackbar snackbar = CustomSnackbar();
+                          if(controller.startDate.value != '' && controller.endDate.value != '') {
 
-                          snackbar.mainSnackbar(
-                              context, 'Алдаа', SnackBarTypes.error);
-                        }
-                      },
-                      width: double.infinity,
-                      text: request,
+                       
+                          final res = await controller.rentRequest(
+                              data.id!,
+                              controller.endDate.value,
+                              DateTime.parse(controller.startDate.value)
+                                  .difference(
+                                      DateTime.parse(controller.endDate.value))
+                                  .inDays
+                                  .abs(),
+                              DateTime.parse(controller.startDate.value)
+                                          .difference(DateTime.parse(
+                                              controller.endDate.value))
+                                          .inDays
+                                          .abs() >
+                                      30
+                                  ? 'monthly'
+                                  : 'daily');
+                                  if (res.success!)
+                                    {
+                                    
+                                      
+                                      Get.toNamed(Routes.qpay, arguments: [res.qr, RentRequest(
+                                        id: res.data['id'],
+                                        status: res.data['status'],
+                                        totalPrice: res.data['totalPrice'],
+                                        paidDate: res.data['paidDate'],
+                                        qpayInvoiceId: res.data['qpayInvoiceId']
+                                      )]);
+                                    }
+                                  else
+                                    {
+                                      snackbar.mainSnackbar(
+                                          context, 'Алдаа', SnackBarTypes.error);
+                                    }   }
+                        },
+                        width: double.infinity,
+                        text: request,
+                        loading: controller.loading.value,
+                      ),
                     ),
                     space64,
                   ],

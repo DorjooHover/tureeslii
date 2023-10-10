@@ -4,9 +4,10 @@ class ErrorHandler {
   String? error;
   int? statusCode;
   dynamic data;
+  dynamic qr;
 
   ErrorHandler(
-      {this.success, this.message, this.data, this.error, this.statusCode});
+      {this.success, this.message, this.data, this.error, this.statusCode, this.qr});
 
   ErrorHandler.fromJson(Map<String, dynamic> json) {
     success = json['success'];
@@ -14,6 +15,7 @@ class ErrorHandler {
     data = json['data'];
     error = json['error'];
     statusCode = json['statusCode'];
+    qr = json['qr'];
   }
 
   Map<String, dynamic> toJson() {
@@ -23,6 +25,7 @@ class ErrorHandler {
     data['error'] = error;
     data['data'] = this.data;
     data['statusCode'] = statusCode;
+    data['qr'] = qr;
 
     return data;
   }

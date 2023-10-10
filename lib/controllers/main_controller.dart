@@ -119,17 +119,22 @@ class MainController extends GetxController
     }
   }
 
-  Future<bool> rentRequest(
+  Future<ErrorHandler>   rentRequest(
       int postId, String startDate, int duration, String type) async {
     try {
+      loading.value = true;
       ErrorHandler res =
           await apiRepository.rentRequest(postId, startDate, duration, type);
+              
+      loading.value = false;
+   
       if (!res.success!) {
-        return false;
+        return ErrorHandler(success: false);
       }
-      return res.success!;
+      return res;
     } on Exception {
-      return false;
+      loading.value = false;
+      return ErrorHandler(success: false);
     }
   }
 

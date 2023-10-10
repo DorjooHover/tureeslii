@@ -71,7 +71,7 @@ class MainViewWidget extends StatelessWidget {
       strokeWidth: 3,
       triggerMode: RefreshIndicatorTriggerMode.onEdge,
       onRefresh: onRefresh,
-      child: Scaffold(
+      child: ScaffoldMessenger(child: Scaffold(
         appBar: MainAppBar(
           currentIndex: currentIndex,
           height: currentIndex == 4 ? 246 : 63,
@@ -81,7 +81,7 @@ class MainViewWidget extends StatelessWidget {
         body: child,
         bottomNavigationBar: MainNavigationBar(
             currentIndex: currentIndex, changeIndex: changeIndex),
-      ),
+      ),)
     );
   }
 }

@@ -64,12 +64,13 @@ class _LocationViewState extends State<LocationView> {
         filterData,
       );
       List<dynamic> res = await mainController.getPostPriceRange(FilterData());
-      price = res;
-      setState(() {});
-      addMarkers();
+      
       setState(() {
+        price = res;
         isLoading = false;
       });
+      addMarkers();
+    
     } on DioException {
       setState(() {
         isLoading = false;

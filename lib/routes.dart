@@ -58,8 +58,9 @@ class Routes {
     GetPage(
         name: qpay,
         page: () {
-          RentRequest res = Get.arguments;
-          return QPayView(data: res);
+          QPay qpay = QPay.fromJson(Get.arguments[0]);
+          RentRequest rentRequest = Get.arguments[1]; 
+          return QPayView(price: rentRequest.totalPrice!.toDouble(), invoiceId: rentRequest.qpayInvoiceId!, qpay: qpay);
         },
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),

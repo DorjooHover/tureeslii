@@ -1,14 +1,24 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:tureeslii/controllers/controllers.dart';
 import 'package:tureeslii/model/models.dart';
+import 'package:tureeslii/routes.dart';
 import 'package:tureeslii/shared/index.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class QPayView extends StatelessWidget {
-  const QPayView({super.key, required this.data});
-  final RentRequest data;
+  const QPayView(
+      {super.key,
+      required this.price,
+      required this.qpay,
+      required this.invoiceId});
+  final double price;
+  final String invoiceId;
+  final QPay qpay;
   @override
   Widget build(BuildContext context) {
     CustomSnackbar snackbar = CustomSnackbar();
@@ -51,7 +61,8 @@ class QPayView extends StatelessWidget {
         ),
       ),
       backgroundColor: bgGray,
-      body: Padding(
+      body: Container(
+        height: MediaQuery.of(context).size.height,
         padding:
             const EdgeInsets.symmetric(horizontal: origin, vertical: large),
         child: Stack(
@@ -76,7 +87,7 @@ class QPayView extends StatelessWidget {
                                   fontWeight: FontWeight.bold, color: black),
                         ),
                         Text(
-                          "${currencyFormat(data.totalPrice!.toDouble(), true)}₮",
+                          "${currencyFormat(price, true)}₮",
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium!
@@ -99,21 +110,36 @@ class QPayView extends StatelessWidget {
                         childAspectRatio: 1,
                         crossAxisSpacing: 40,
                         mainAxisSpacing: 40),
-                    itemCount: bankValues.length,
+                    itemCount: qpay.urls?.length ?? 0,
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () async {
                           final Uri url =
-                              Uri.parse(bankValues[index]["url"].toString());
-
-                          if (!await launchUrl(url)) {
-                            throw Exception('Could not launch $url');
+                              Uri.parse(qpay.urls![index].link.toString());
+                          try {
+                            await launchUrl(url);
+                          } catch (e) {
+                            snackbar.mainSnackbar(
+                                context,
+                                'Та ${qpay.urls![index].name} апп-аа татна уу',
+                                SnackBarTypes.warning);
+                            // Uri store = Uri.parse(
+                            //   Platform.isAndroid
+                            //       ? "market://details?id=${qpay.urls![index].link?.split(':')[0]}"
+                            //       : "https://apps.apple.com/app/id${qpay.urls![index].link?.split(':')[0]}",
+                            // );
+                            // await launchUrl(store);
                           }
                         },
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
-                            bankValues[index]["img"].toString(),
+                          child: CachedNetworkImage(
+                            imageUrl: qpay.urls![index].logo.toString(),
+                            placeholder: (context, url) => Center(
+                              child: SizedBox(
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
                           ),
                         ),
                       );
@@ -144,16 +170,19 @@ class QPayView extends StatelessWidget {
                           (MediaQuery.of(context).size.width - large - origin) /
                               2,
                       onPressed: () async {
-                        bool res =
-                            await controller.checkPayment(data.qpayInvoiceId!);
-                        if (res) {
-                          Navigator.pop(context);
-                        } else {
-                          snackbar.mainSnackbar(
-                              context,
-                              "Төлбөр төлөгдөөгүй байна",
-                              SnackBarTypes.warning);
-                        }
+                        await controller
+                            .checkPayment(invoiceId)
+                            .then((value) => {
+                                  if (value)
+                                    {Get.toNamed(Routes.main)}
+                                  else
+                                    {
+                                      snackbar.mainSnackbar(
+                                          context,
+                                          "Төлбөр төлөгдөөгүй байна",
+                                          SnackBarTypes.warning)
+                                    }
+                                });
                       },
                       text: checkPayment,
                     )
