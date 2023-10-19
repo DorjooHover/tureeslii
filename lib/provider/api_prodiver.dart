@@ -39,7 +39,7 @@ class ApiRepository extends GetxService {
   getUser() async {
     try {
       final response = await dio.get('/auth/user');
-      print(response);
+
       return User.fromJson(response.data['data']);
     } on DioException {
       rethrow;
@@ -54,7 +54,7 @@ class ApiRepository extends GetxService {
           .add(await http.MultipartFile.fromPath('image', image!.path));
 
       final res = await request.send();
-      // print(res);
+
       String resStr = await res.stream.bytesToString();
 
       return resStr;
@@ -140,7 +140,7 @@ class ApiRepository extends GetxService {
     try {
       final data = {
         "id": post.id,
-        // location
+       // location
         "lat": post.lat,
         "long": post.long,
         "address": post.address,
@@ -196,12 +196,12 @@ class ApiRepository extends GetxService {
         "smokingAllowed": post.smokingAllowed,
         "bathroom": post.bathroom,
         // images
-        "postAttachments": images,
+        "postAttachments": images.isEmpty ? post.postAttachments : images,
 
         "categoryId": post.category,
       };
 
-      final res = await dio.post('/posts', data: data);
+      final res = await dio.put('/posts', data: data);
 
       return res.data['success'];
     } on DioException catch (e) {
@@ -210,10 +210,21 @@ class ApiRepository extends GetxService {
     }
   }
 
+
+  Future<ErrorHandler> deletePost(String id) async {
+    try {
+      final res = await dio.delete('/posts/$id') ;
+     return  ErrorHandler.fromJson(res.data);
+     
+    } catch (e) {
+return ErrorHandler(success: false);
+    }
+  }
+
   Future<User> login(String username, String password) async {
     try {
       final data = {"username": username, "password": password};
-      print(dio.options.baseUrl);
+   
       final res = await dio.post('/auth/login', data: data);
 
       return User.fromJson(res.data['data']);
@@ -245,7 +256,7 @@ class ApiRepository extends GetxService {
   Future<bool> forgotPassword(String email) async {
     try {
       final res = await dio.post('/auth/forgotpwd', data: {"username": email});
-      print(res);
+ 
       return true;
     } on DioException {
       return false;

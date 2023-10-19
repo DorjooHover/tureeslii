@@ -51,27 +51,68 @@ class _LocationViewState extends State<LocationView>
   }
 
   GlobalKey<ScaffoldState> locationKey = GlobalKey<ScaffoldState>();
-
+bool isDrawer = false;
+  LatLng? selectedLocation;
+  City? cityValue;
+  String stateValue = '';
+   String districtValue = '';
+  String flatNumberValue = "";
+  int floorValue = 1;
+  String doorNumberValue = "";
+  String addressValue = '';
+  final controller = Get.put(MainController());
   @override
   void initState() {
     super.initState();
 
-    if (currentLocation == null) {
+   
+
+    if(controller.createPost.value?.id != null) {
+      
+      setState(() {
+        selectedLocation = LatLng(double.parse(controller.createPost.value!.lat!), double.parse(controller.createPost.value!.long!));
+        currentLocation = LocationData.fromMap({"latitude" : double.parse(controller.createPost.value!.lat!), 
+    "longitude" : double.parse(controller.createPost.value!.long!)});
+        cityValue = controller.cities.where((p0) => p0.name == controller.createPost.value!.city!).first;
+        stateValue = controller.createPost.value!.state!;
+        districtValue = controller.createPost.value!.district! ;
+        flatNumberValue = controller.createPost.value!.apartmentNo!;
+        floorValue = controller.createPost.value!.floor!;
+        doorNumberValue = controller.createPost.value!.doorNo!;
+        addressValue = controller.createPost.value!.address!;
+      });
+    } else {
+
+       if (currentLocation == null) {
+       
       getCurrentLocation();
     }
+    }
     if (controller.cities.isNotEmpty) {
+  
+      if(controller.createPost.value?.id == null) {
       moveLocation(LatLng(controller.cities[0].location![0],
           controller.cities[0].location![1]));
       setState(() {
         cityValue = controller.cities[0];
       });
-    } else {
+
+      } else {
+             moveLocation(LatLng(double.parse(controller.createPost.value!.lat!), double.parse(controller.createPost.value!.long!)));
+      }
+    } 
+    else {
       controller.getCities().then((value) => {
-            moveLocation(LatLng(controller.cities[0].location![0],
-                controller.cities[0].location![1])),
-            setState(() {
-              cityValue = controller.cities[0];
-            })
+           if(controller.createPost.value?.id == null) {
+      moveLocation(LatLng(controller.cities[0].location![0],
+          controller.cities[0].location![1])),
+      setState(() {
+        cityValue = controller.cities[0];
+      })
+
+      } else {
+             moveLocation(LatLng(double.parse(controller.createPost.value!.lat!), double.parse(controller.createPost.value!.long!)))
+      }
           });
     }
   }
@@ -98,16 +139,7 @@ class _LocationViewState extends State<LocationView>
     );
   }
 
-  bool isDrawer = false;
-  LatLng? selectedLocation;
-  City? cityValue;
-  String stateValue = '';
-  int districtValue = 1;
-  String flatNumberValue = "";
-  int floorValue = 1;
-  String doorNumberValue = "";
-  String addressValue = '';
-  final controller = Get.put(MainController());
+  
   CustomSnackbar snackbar = CustomSnackbar();
   Future nextStep() async {
     if (selectedLocation == null) {
@@ -174,7 +206,16 @@ class _LocationViewState extends State<LocationView>
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () {},
+                onPressed: () async{
+                  await controller.updatePost([]).then((value) {
+                    if(value) {
+                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                    } else {
+                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                    }
+                  });
+                  
+                },
                 icon: SvgPicture.asset(
                   iconSave,
                   width: 24,
@@ -362,11 +403,14 @@ class _LocationViewState extends State<LocationView>
                                             child: AdditionCard(
                                                 title: district,
                                                 child: Input(
+                                                  value: districtValue,
                                                   textInputAction:
                                                       TextInputAction.next,
                                                   onChange: (p0) {
                                                     setState(() {
-                                                      stateValue = p0;
+                                                       districtValue =
+                                                           p0;
+                                                   
                                                       isDrag = true;
                                                     });
                                                   },
@@ -380,6 +424,7 @@ class _LocationViewState extends State<LocationView>
                                             child: AdditionCard(
                                                 title: committee,
                                                 child: Input(
+                                                  value: stateValue ,
                                                     textInputAction:
                                                         TextInputAction.next,
                                                     textInputType:
@@ -390,8 +435,7 @@ class _LocationViewState extends State<LocationView>
                                                     ],
                                                     onChange: (p0) {
                                                       setState(() {
-                                                        districtValue =
-                                                            int.parse(p0);
+                                                          stateValue = p0;
                                                         isDrag = true;
                                                       });
                                                     }))),
@@ -400,6 +444,7 @@ class _LocationViewState extends State<LocationView>
                                             child: AdditionCard(
                                                 title: floor,
                                                 child: Input(
+                                                  value: floorValue != -1 ? floorValue.toString() : '',
                                                     textInputType:
                                                         TextInputType.number,
                                                     inputFormatter: [
@@ -409,11 +454,13 @@ class _LocationViewState extends State<LocationView>
                                                     textInputAction:
                                                         TextInputAction.next,
                                                     onChange: (p0) {
-                                                      setState(() {
+                                                      if(p0.isNotEmpty) {
+                                                        setState(() {
                                                         isDrag = true;
                                                         floorValue =
-                                                            int.parse(p0);
+                                                            int.parse(p0) ;
                                                       });
+                                                      }
                                                     }))),
                                       ],
                                     ),
@@ -422,8 +469,10 @@ class _LocationViewState extends State<LocationView>
                                       children: <Widget>[
                                         Expanded(
                                             child: AdditionCard(
+                                              
                                                 title: flatNumber,
                                                 child: Input(
+                                                  value: flatNumberValue ,
                                                     textInputAction:
                                                         TextInputAction.next,
                                                     onChange: (p0) {
@@ -437,6 +486,7 @@ class _LocationViewState extends State<LocationView>
                                             child: AdditionCard(
                                                 title: doorNumber,
                                                 child: Input(
+                                                  value: doorNumberValue,
                                                     textInputType:
                                                         TextInputType.number,
                                                     inputFormatter: [
@@ -463,6 +513,7 @@ class _LocationViewState extends State<LocationView>
                                         child: AdditionCard(
                                             title: address,
                                             child: Input(
+                                              value: addressValue,
                                               maxLine: 5,
                                               onChange: (p0) {
                                                 setState(() {

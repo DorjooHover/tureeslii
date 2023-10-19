@@ -25,6 +25,22 @@ class _ConditionViewState extends State<ConditionView> {
 
   String selectedWhomRent = whomRentValues[0];
   int personCount = 1;
+  @override
+  void initState() {
+    super.initState();
+    if(controller.createPost.value?.id != null) {
+      setState(() {
+        personCount = controller.createPost.value!.acceptedTenants! ;
+    pet = controller.createPost.value!.petAllowed! ;
+invite=     controller.createPost.value!.guestAllowed!;
+    smoke = controller.createPost.value!.smokingAllowed! ;
+    isLive = controller.createPost.value!.livingProperty!;
+    int whomRentIndex = whomRentValuesValue.indexOf(controller.createPost.value!.acceptedGender!);
+    selectedWhomRent =
+        whomRentValues[whomRentIndex];
+      });
+    }
+  }
 
   nextStep() {
     controller.createPost.value!.acceptedTenants = personCount;
@@ -38,6 +54,7 @@ class _ConditionViewState extends State<ConditionView> {
     controller.nextStep();
     Get.toNamed(Routes.flatFeature);
   }
+  CustomSnackbar snackbar = CustomSnackbar();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +78,13 @@ class _ConditionViewState extends State<ConditionView> {
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () {},
+                onPressed: () async {await controller.updatePost([]).then((value) {
+                    if(value) {
+                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                    } else {
+                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                    }
+                  });},
                 icon: SvgPicture.asset(
                   iconSave,
                   width: 24,
@@ -102,6 +125,7 @@ class _ConditionViewState extends State<ConditionView> {
                             AdditionCard(
                                 title: personNumber,
                                 child: Input(
+                                  value: personCount.toString(),
                                   textInputType: TextInputType.number,
                                   inputFormatter: [
                                     FilteringTextInputFormatter.digitsOnly

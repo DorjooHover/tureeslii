@@ -31,6 +31,26 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
   bool chair = false;
   bool sofa = false;
   bool cabinet = false;
+  @override
+  void initState() {
+    super.initState();
+    elevator = controller.createPost.value!.elevator!;
+    balcony = controller.createPost.value!.balcony! ;
+    internet = controller.createPost.value!.wifi! ;
+    oven = controller.createPost.value!.stove! ;
+    washing = controller.createPost.value!.washingMachine! ;
+    cabel = controller.createPost.value!.tvCable! ;
+    refrigerator = controller.createPost.value!.refrigerator! ;
+    kitchen = controller.createPost.value!.kitchenFurniture! ;
+    hasFurniture = controller.createPost.value!.hasFurniture! ;
+refrigerator = controller.createPost.value!.furnitures?.contains('refrigerator') ?? false;
+drawer = controller.createPost.value!.furnitures?.contains('drawer') ?? false;
+table = controller.createPost.value!.furnitures?.contains('table') ?? false;
+sofa = controller.createPost.value!.furnitures?.contains('sofa') ?? false;
+cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false;
+
+
+  }
   nextStep() {
     controller.createPost.value!.elevator = elevator;
     controller.createPost.value!.balcony = balcony;
@@ -62,7 +82,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
     controller.nextStep();
     Get.toNamed(Routes.flatInfo);
   }
-
+CustomSnackbar snackbar = CustomSnackbar();
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -85,7 +105,15 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () {},
+                onPressed: () async  {
+                  await controller.updatePost([]).then((value) {
+                    if(value) {
+                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                    } else {
+                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                    }
+                  });
+                },
                 icon: SvgPicture.asset(
                   iconSave,
                   width: 24,

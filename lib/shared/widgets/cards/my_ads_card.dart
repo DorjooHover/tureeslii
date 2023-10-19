@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:landlord/controllers/controllers.dart';
 import 'package:landlord/model/models.dart';
+import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
 class MyAdsCard extends StatelessWidget {
@@ -14,6 +17,8 @@ class MyAdsCard extends StatelessWidget {
   final Function()? onPressed;
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(MainController());
+    CustomSnackbar snackbar = CustomSnackbar();
     String status = '';
 
     Color statusColor = Colors.transparent;
@@ -76,10 +81,11 @@ class MyAdsCard extends StatelessWidget {
           ),
         ),
         space32,
+        
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // if (status == 'active')
+            if (post.status?.toLowerCase() != 'rejected')
             Flexible(
               child: Row(
                 mainAxisAlignment: post.status == null
@@ -133,7 +139,8 @@ class MyAdsCard extends StatelessWidget {
                 ],
               ),
             ),
-            if (status != '')
+            
+            if ( status != '')
               Flexible(
                   child: Row(
                 children: [
@@ -161,7 +168,76 @@ class MyAdsCard extends StatelessWidget {
                 ],
               ))
           ],
-        )
+        ),
+        space16,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                MainButton(onPressed: () {
+
+
+controller.createPost.value = post;
+Get.toNamed(Routes.location);
+
+
+                }, text: edit, padding: const EdgeInsets.symmetric(horizontal: large), ),
+                MainButton(onPressed: () {
+                   showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertContainer(
+                                  child: [
+                                    Text(
+                                      deletePost,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall!
+                                          .copyWith(color: black),
+                                    ),
+                                    space32,
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        MainButton(
+                                      onPressed: () async {
+                                        Navigator.pop(context);
+                                      },
+                               
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: small, horizontal: 24),
+                                      text: no,
+                                    ),
+                                    MainButton(
+                                      onPressed: () async {
+                                        ErrorHandler res  = await controller.deletePost(post.id.toString());
+                                        Navigator.pop(context);
+                                        if (res.success!) {
+snackbar.mainSnackbar(context, res.message!, SnackbarType.success);
+controller.ownPost.value = controller.ownPost.where((e) => e.id != post.id).toList();
+                                        } else {
+snackbar.mainSnackbar(context, res.message!, SnackbarType.warning);
+
+                                        }
+                                      },
+                               color: red,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: small, horizontal: 24),
+                                      text: yes,
+                                    ),
+                                      ],
+                                    )
+                                
+                                    ,
+                                    space36
+                                  ],
+                                );
+                              },
+                            );
+                }, text: delete, color: red, padding: const EdgeInsets.symmetric(horizontal: large),),
+                // MainButton(onPressed: () {}, text: 'asdf',)
+              ],
+            ),
+            
       ],
     );
   }

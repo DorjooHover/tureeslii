@@ -188,6 +188,10 @@ const String phone = 'Утас';
 const String oldPassword = 'Хуучин нууц үг';
 const String newPassword = 'Шинэ нууц үг';
 const String edit = 'Засах';
+const String delete = 'Устгах';
+const String no = 'Үгүй';
+const String yes = 'Тийм';
+const String successDeleted = 'Амжилттай устгалаа.';
 
 const String deleteAccount = 'Бүртгэл устгах';
 const String settings = 'тохиргоо';
@@ -212,6 +216,7 @@ const String decline = 'Татгалзах';
 const String emailVerificationString = 'Та имайл хаягаа шалгана уу.';
 const String slogan = 'Ая тухтай байдлыг амар хялбараар';
 const String fakeInfo = 'Мэдээлэл худлаа оруулсан';
+const String deletePost = 'Зар устгах уу';
 
 // drawer
 const String verificationDrawer = 'Баталгаажуулалт';

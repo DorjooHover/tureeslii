@@ -127,10 +127,10 @@ class _MyAdsViewState extends State<MyAdsView> {
         body: TabBarView(
           children: [
             PublishedView(
-              posts: publishedPost,
+    
             ),
             EnteredView(
-              posts: unpublishedPost,
+           
             ),
             NotEnoughView(),
           ],

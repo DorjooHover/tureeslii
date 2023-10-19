@@ -20,6 +20,18 @@ class _FlatInfoViewState extends State<FlatInfoView> {
   int selectedHeating = 0, selectedWaterSupply = 0, selectedToilet = 0;
   double flatArea = 0.0;
   CustomSnackbar snackbar = CustomSnackbar();
+  @override
+  void initState() {
+    super.initState();
+    
+   setState(() {
+      flatArea = controller.createPost.value!.plot!;
+    selectedHeating = heatingValuesValue.indexOf(controller.createPost.value!.heating!);
+    selectedWaterSupply = waterSupplyValuesValue.indexOf(controller.createPost.value!.waterSupply!);
+    selectedToilet = toiletValuesValue.indexOf(controller.createPost.value!.restroom!) ;
+
+   });
+  }
   nextStep() {
     if (flatArea <= 0) {
       snackbar.mainSnackbar(
@@ -57,7 +69,15 @@ class _FlatInfoViewState extends State<FlatInfoView> {
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () {},
+                onPressed: () async {
+                  await controller.updatePost([]).then((value) {
+                    if(value) {
+                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                    } else {
+                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                    }
+                  });
+                },
                 icon: SvgPicture.asset(
                   iconSave,
                   width: 24,
@@ -130,6 +150,7 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                             AdditionCard(
                                 title: area,
                                 child: Input(
+                                  value: flatArea.toString(),
                                   textInputType: TextInputType.number,
                                   onSubmitted: (p0) {
                                     nextStep();

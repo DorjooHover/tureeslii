@@ -35,6 +35,42 @@ class _GeneralViewState extends State<GeneralView> {
       selectedBailCondition = bailConditionValues[0];
   int selectedCancelCondition = 0;
   CustomSnackbar snackbar = CustomSnackbar();
+
+   void initState() {
+    super.initState();
+    if (controller.cancelTerm.isNotEmpty) {
+      selectedCancelCondition = controller.cancelTerm.first.id!;
+    } else {
+      controller.getCancellation();
+    }
+if(controller.createPost.value?.id != null) {
+   
+      setState(() {
+        isDay = controller.createPost.value!.dailyRent!;
+        //  selectedCancelCondition =  int.tryParse(controller.createPost.value!.cancelTerm) ??  controller.cancelTerm.first.id!;
+   startRentDateValue  =  controller.createPost.value!.startDate!.substring(0, 10) ;
+    bailMoney = controller.createPost.value!.depositRequired! ;
+    isMonth = controller.createPost.value!.monthlyRent! ;
+    rentPriceMonthValue = controller.createPost.value!.price! ;
+    rentPriceValue = controller.createPost.value!.priceDaily! ;
+    minimumRentDayValue = controller.createPost.value!.minDurationDaily ! ;
+    minimumRentMonthValue = controller.createPost.value!.minDurationMonthly! ;
+    
+    final paymentCondIndex = paymentConditionValuesValue
+        .indexWhere((element) => element == controller.createPost.value?.paymentTerm);
+    selectedPaymentCondition = paymentConditionValues[paymentCondIndex];
+    final bailCondIndex = bailConditionValuesValue.indexWhere((element) => element == controller.createPost.value?.depositTerm);
+    selectedBailCondition = bailConditionValues[bailCondIndex];
+    final contractCondIndex = contractConditionValuesValue.indexWhere((element) => element == controller.createPost.value?.priceTerm);
+    selectedContractCondition = contractConditionValues[contractCondIndex];
+
+
+    
+        });
+    }
+
+    
+  }
   Future nextStep() async {
     if (!isDay && !isMonth) {
       snackbar.mainSnackbar(
@@ -90,14 +126,7 @@ class _GeneralViewState extends State<GeneralView> {
     Get.toNamed(Routes.condition);
   }
 
-  void initState() {
-    super.initState();
-    if (controller.cancelTerm.isNotEmpty) {
-      selectedCancelCondition = controller.cancelTerm.first.id!;
-    } else {
-      controller.getCancellation();
-    }
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +150,15 @@ class _GeneralViewState extends State<GeneralView> {
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () {},
+                onPressed: () async {
+                  await controller.updatePost([]).then((value) {
+                    if(value) {
+                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                    } else {
+                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                    }
+                  });
+                },
                 icon: SvgPicture.asset(
                   iconSave,
                   width: 24,
@@ -257,6 +294,7 @@ class _GeneralViewState extends State<GeneralView> {
                               AdditionCard(
                                   title: rentPrice,
                                   child: Input(
+                                    value:rentPriceValue.toString(),
                                     textInputType: TextInputType.number,
                                     textInputAction: TextInputAction.next,
                                     onChange: (p0) {
@@ -270,6 +308,7 @@ class _GeneralViewState extends State<GeneralView> {
                               AdditionCard(
                                   title: minimumRentDay,
                                   child: Input(
+                                    value: minimumRentDayValue.toString(),
                                     textInputType: TextInputType.number,
                                     textInputAction: TextInputAction.next,
                                     inputFormatter: [
@@ -312,6 +351,7 @@ class _GeneralViewState extends State<GeneralView> {
                               AdditionCard(
                                   title: rentPrice,
                                   child: Input(
+                                    value: rentPriceMonthValue.toString(),
                                     textInputType: TextInputType.number,
                                     textInputAction: TextInputAction.next,
                                     onChange: (p0) {
@@ -326,6 +366,7 @@ class _GeneralViewState extends State<GeneralView> {
                               AdditionCard(
                                   title: minimumRentMonth,
                                   child: Input(
+                                    value: minimumRentMonthValue.toString(),
                                     textInputType: TextInputType.number,
                                     textInputAction: TextInputAction.next,
                                     onChange: (p0) {

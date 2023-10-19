@@ -54,6 +54,20 @@ class _RoomInfoViewState extends State<RoomInfoView> {
     } else {
       controller.getCategories();
     }
+
+    setState(() {
+      bedOneValue =  controller.createPost.value!.singleBed == null ? 0 : controller.createPost.value!.singleBed!;
+    bedTwoValue =  controller.createPost.value!.singleBed == null ? 0 : controller.createPost.value!.doubleBed!;
+    bedRoomValue =  controller.createPost.value!.singleBed == null ? 0 : controller.createPost.value!.bedroom!;
+    bathRoomValue =  controller.createPost.value!.singleBed == null ? 0 : controller.createPost.value!.bathroom!;
+    livingRoomValue =  controller.createPost.value!.singleBed == null ? 0 : controller.createPost.value!.livingRoom!;
+    kitchenValue =  controller.createPost.value!.singleBed == null ? 0 : controller.createPost.value!.kitchen!;
+    selectedType = controller.createPost.value!.category!['id'];
+    controller.createPost.value!.category = controller.createPost.value!.category['id'];
+    titleValue = controller.createPost.value!.title!;
+    });
+   
+
   }
 
   @override
@@ -78,7 +92,15 @@ class _RoomInfoViewState extends State<RoomInfoView> {
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () {},
+                onPressed: () async {
+                  await controller.updatePost([]).then((value) {
+                    if(value) {
+                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                    } else {
+                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                    }
+                  });
+                },
                 icon: SvgPicture.asset(
                   iconSave,
                   width: 24,
@@ -103,6 +125,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                             AdditionCard(
                                 title: title,
                                 child: Input(
+                                  value: titleValue,
                                   textInputAction: TextInputAction.next,
                                   onChange: (p0) {
                                     titleValue = p0;
@@ -164,14 +187,17 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                   child: AdditionCard(
                                       title: kitchenRoom,
                                       child: Input(
+                                         value: kitchenValue.toString(),
                                         textInputType: TextInputType.number,
                                         textInputAction: TextInputAction.next,
                                         inputFormatter: [
                                           FilteringTextInputFormatter.digitsOnly
                                         ],
                                         onChange: (p0) {
-                                          setState(() {
-                                            kitchenValue = int.parse(p0);
+                                          
+                                            setState(() {
+                                            kitchenValue = int.tryParse(p0) ?? 0;
+                                            
                                           });
                                         },
                                       )),
@@ -181,6 +207,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                   child: AdditionCard(
                                       title: bathRoom,
                                       child: Input(
+                                        value: bathRoomValue.toString(),
                                         textInputType: TextInputType.number,
                                         textInputAction: TextInputAction.next,
                                         inputFormatter: [
@@ -188,7 +215,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                         ],
                                         onChange: (p0) {
                                           setState(() {
-                                            bathRoomValue = int.parse(p0);
+                                            bathRoomValue = int.tryParse(p0) ?? 0;
                                           });
                                         },
                                       )),
@@ -203,6 +230,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                   child: AdditionCard(
                                       title: livingRoom,
                                       child: Input(
+                                        value: livingRoomValue.toString(),
                                         textInputType: TextInputType.number,
                                         textInputAction: TextInputAction.next,
                                         inputFormatter: [
@@ -210,7 +238,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                         ],
                                         onChange: (p0) {
                                           setState(() {
-                                            livingRoomValue = int.parse(p0);
+                                            livingRoomValue = int.tryParse(p0) ?? 0;
                                           });
                                         },
                                       )),
@@ -220,6 +248,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                   child: AdditionCard(
                                       title: bedRoom,
                                       child: Input(
+                                        value: bedRoomValue.toString(),
                                         textInputType: TextInputType.number,
                                         textInputAction: TextInputAction.next,
                                         inputFormatter: [
@@ -227,7 +256,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                         ],
                                         onChange: (p0) {
                                           setState(() {
-                                            bedRoomValue = int.parse(p0);
+                                            bedRoomValue = int.tryParse(p0) ?? 0;
                                           });
                                         },
                                       )),
@@ -244,6 +273,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                     child: AdditionCard(
                                         title: bedOne,
                                         child: Input(
+                                          value: bedOneValue.toString(),
                                           textInputType: TextInputType.number,
                                           textInputAction: TextInputAction.next,
                                           inputFormatter: [
@@ -252,7 +282,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                           ],
                                           onChange: (p0) {
                                             setState(() {
-                                              bedOneValue = int.parse(p0);
+                                              bedOneValue = int.tryParse(p0) ?? 0;
                                             });
                                           },
                                         )),
@@ -262,6 +292,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                     child: AdditionCard(
                                         title: bedTwo,
                                         child: Input(
+                                          value: bedTwoValue.toString(),
                                           textInputType: TextInputType.number,
                                           inputFormatter: [
                                             FilteringTextInputFormatter
@@ -269,7 +300,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                           ],
                                           onChange: (p0) {
                                             setState(() {
-                                              bedTwoValue = int.parse(p0);
+                                              bedTwoValue = int.tryParse(p0) ?? 0;
                                             });
                                           },
                                           onSubmitted: ((p0) {

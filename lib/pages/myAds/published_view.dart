@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:landlord/controllers/controllers.dart';
 import 'package:landlord/model/models.dart';
 import 'package:landlord/pages/no_data.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
 class PublishedView extends StatefulWidget {
-  const PublishedView({super.key, required this.posts});
-  final List<Post> posts;
+  const PublishedView({super.key, });
+
   @override
   State<PublishedView> createState() => _PublishedViewState();
 }
 
 class _PublishedViewState extends State<PublishedView> {
+  final controller = Get.put(MainController());
+  
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -20,12 +23,12 @@ class _PublishedViewState extends State<PublishedView> {
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.6 - 66,
           child: SingleChildScrollView(
-            child: widget.posts.isNotEmpty
+            child: controller.ownPost.where((p0) => p0.status?.toLowerCase() == postStatus[0]).isNotEmpty
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      ...widget.posts.map((e) {
-                        final i = widget.posts.indexOf(e);
+                      ...controller.ownPost.where((p0) => p0.status?.toLowerCase() == postStatus[0]).map((e) {
+                        final i = controller.ownPost.indexOf(e);
                         return Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -39,7 +42,7 @@ class _PublishedViewState extends State<PublishedView> {
                                 post: e,
                               ),
                             ),
-                            i + 1 != widget.posts.length
+                            i + 1 != controller.ownPost.where((p0) => p0.status?.toLowerCase() == postStatus[0]).length
                                 ? const Divider(
                                     color: navGray,
                                     height: 2,

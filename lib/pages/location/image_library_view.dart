@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -19,12 +20,27 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
   GlobalKey<ScaffoldState> imageLibraryKey = GlobalKey<ScaffoldState>();
   final ImagePicker picker = ImagePicker();
   List<XFile> images = [];
+  List<String> networkImages =[];
+
   void selectImages() async {
     final List<XFile> selectedImages = await picker.pickMultiImage();
     if (selectedImages.isNotEmpty) {
       images.addAll(selectedImages);
     }
     setState(() {});
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+  
+  controller.createPost.value!.postAttachments?.forEach((e) { 
+    networkImages.add(e.fileThumb!);
+  });
+    setState(() {
+
+    });
   }
 
   bool isDrawer = false;
@@ -66,12 +82,13 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                     ],
                   ),
                 ],
+  
               ),
             ),
           );
         });
   }
-
+CustomSnackbar snackbar = CustomSnackbar();
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -94,7 +111,15 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () {},
+                onPressed: () async  {
+                  await controller.updatePost(images.isNotEmpty ? images : []).then((value) {
+                    if(value) {
+                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                    } else {
+                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                    }
+                  });
+                },
                 icon: SvgPicture.asset(
                   iconSave,
                   width: 24,
@@ -152,15 +177,16 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                                   (e) => Stack(
                                     children: [
                                       Container(
-                                        padding: EdgeInsets.all(4),
+                                        padding: const EdgeInsets.all(4),
                                         width: double.infinity,
                                         child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                            child: Image.file(
-                                              File(e.path),
-                                              fit: BoxFit.cover,
-                                            )),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          child: Image.file(
+                                            File(e.path),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                       ),
                                       Positioned(
                                         top: 0,
@@ -178,7 +204,7 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                                                 borderRadius:
                                                     BorderRadius.circular(100),
                                                 color: red),
-                                            child: Icon(
+                                            child: const Icon(
                                               Icons.delete,
                                               size: 16,
                                               color: Colors.white,
@@ -191,6 +217,61 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                                 )
                                 .toList(),
                           ),
+                          if(networkImages.isNotEmpty && images.isEmpty)
+                          GridView.count(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            crossAxisCount: 3,
+                            padding: EdgeInsets.zero,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10,
+                            children: images
+                                .map(
+                                  (e) => Stack(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(4),
+                                        width: double.infinity,
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          child: CachedNetworkImage(
+                                            imageUrl: '$fileUrl$e',
+                                    
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 0,
+                                        right: 0,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              images.remove(e);
+                                            });
+                                          },
+                                          child: Container(
+                                            width: 24,
+                                            height: 24,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                                color: red),
+                                            child: const Icon(
+                                              Icons.delete,
+                                              size: 16,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )
+                                .toList(),
+                          ),
+
                       ],
                     )),
                     space20,
@@ -306,7 +387,6 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
             bottom: MediaQuery.of(context).size.height * 0.25,
             child: GestureDetector(
               onHorizontalDragUpdate: (details) {
-                print(details.delta.dx);
                 if (details.delta.dx > 1) {
                   imageLibraryKey.currentState!.openEndDrawer();
                   setState(() {

@@ -10,6 +10,7 @@ import 'package:landlord/model/models.dart';
 import 'package:landlord/provider/api_prodiver.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/constants/enums.dart';
+import 'package:landlord/shared/constants/strings.dart';
 
 class MainController extends GetxController
     with StateMixin<User>, WidgetsBindingObserver {
@@ -40,6 +41,7 @@ class MainController extends GetxController
   final ownPost = <Post>[].obs;
   User? get user => rxUser.value;
   set user(value) => rxUser.value = value;
+  
 
   // config
   getBanks() async {
@@ -53,7 +55,7 @@ class MainController extends GetxController
         (jsonDecode(res.value!) as List).map((e) => City.fromJson(e)).toList();
   }
 
-  getCancellation() async {
+  Future<void> getCancellation() async {
     final res = await apiRepository.getCancelation();
     cancelTerm.value = res;
   }
@@ -151,6 +153,36 @@ class MainController extends GetxController
       print(e);
     }
   }
+
+  // update post
+
+  Future<bool> updatePost(List<XFile> images ) async {
+    try {
+List<String> imagesUrl = [];
+     
+
+if(images.isNotEmpty) {
+   for (final element in images) {
+        imagesUrl.add(await apiRepository.uploadFile(element));
+      }
+} 
+  final res = await apiRepository.updatePost(createPost.value!, imagesUrl);
+  return res;
+    } catch(e) {
+      return false;
+    }
+  }
+
+  // delete post 
+  Future<ErrorHandler> deletePost(String id ) async {
+    final res = await apiRepository.deletePost(id);
+    if(res.success!) {
+      return ErrorHandler(success: true, message: successDeleted);
+    } else {
+      
+      return ErrorHandler(success: false, message: errorOccurred);
+    }
+  } 
 
   // own post
   Future<void> getOwnPost(SortData? sortData, List<FilterData> filterData,
