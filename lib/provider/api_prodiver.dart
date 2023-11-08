@@ -226,7 +226,7 @@ return ErrorHandler(success: false);
       final data = {"username": username, "password": password};
    
       final res = await dio.post('/auth/login', data: data);
-
+print(res);
       return User.fromJson(res.data['data']);
     } on DioException catch (e) {
       if (e.response?.statusCode == 401 && e.response?.data['message'] != "") {
@@ -235,6 +235,7 @@ return ErrorHandler(success: false);
       if (e.response?.statusCode == 401) {
         throw Exception('Та Нэвтрэх нэр, нууц үгээ оруулна уу');
       }
+      
       rethrow;
     }
   }
@@ -511,8 +512,76 @@ return ErrorHandler(success: false);
       throw Exception('Алдаа');
     }
   }
+  Future<List<RentRequest>> pendingRentRequest(String status) async {
+    final data = {
+          "status": status
+        };
+ 
+    try {
+      final response = await dio.post(
+        '/rentreq/pendingRentRequest',
+        data: data
+      );
+
+      return (response.data['data'] as List)
+          .map((e) => RentRequest.fromJson(e))
+          .toList();
+    } catch(e) {
+      print(e);
+      throw Exception('Алдаа');
+    }
+  }
 
   getOwnPosts(int? skip, int? take, SortData? sortData,
+      List<FilterData>? filterData) async {
+    try {
+      final data = {
+        "skip": skip ?? 0,
+        "take": take ?? 12,
+        "sortData": sortData ?? {},
+        "filterData": filterData ?? [],
+      };
+      final response = await dio.post('/posts/getOwnPosts', data: data);
+
+      return (response.data['data'] as List)
+          .map((e) => Post.fromJson(e))
+          .toList();
+    } on DioException catch (e) {
+      if (e.response?.data["success"] == false) {
+        throw Exception(tryAgain);
+      } else {
+        throw Exception(errorOccurred);
+      }
+    }
+  }
+  Future<Map<String, List>> getPostStats(String postId, String week) async {
+    try {
+      final data = {
+         "postId": postId,  "date": week 
+      };
+      final response = await dio.post('/posts/getPostStats', data: data);
+     
+    if(response.data['success']) {
+      return {
+        "views": response.data['data']['views'] as List,
+        "likes": (response.data['data']['likes'] as List),
+      };
+      
+
+    } else {
+      return {"views": [], "likes": []};
+    }
+        
+    } on DioException catch (e) {
+      if (e.response?.data["success"] == false) {
+        throw Exception(tryAgain);
+      } else {
+        throw Exception(errorOccurred);
+      }
+    }
+  }
+  // my order
+  getMyOrders(int? skip, int? take, SortData? sortData,
       List<FilterData>? filterData) async {
     try {
       final data = {

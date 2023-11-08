@@ -42,7 +42,8 @@ class MainController extends GetxController
   User? get user => rxUser.value;
   set user(value) => rxUser.value = value;
   
-
+  // order
+  final orders = <Post>[].obs;
   // config
   getBanks() async {
     final res = await apiRepository.getConfigById('banks');
@@ -123,7 +124,11 @@ class MainController extends GetxController
       print(e);
     }
   }
+Future<Map<String , List>> getPostStats(String postId, String date)  async {
+  final res = await  apiRepository.getPostStats(postId, date);
 
+  return res;
+}
   // create post
   nextStep() {
     if (verified.where((p0) => p0 == (currentStep.value + 1)).isEmpty &&
@@ -195,6 +200,19 @@ if(images.isNotEmpty) {
     }
   }
 
+  // order
+  Future<void> getOrder(SortData? sortData, List<FilterData> filterData,
+      [int skip = 0, int take = 10]) async {
+    try {
+      ownPost.value =
+          await apiRepository.getMyOrders(skip, take, sortData, filterData);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+
+
   // rent request
   Future<List<RentRequest>> getRentRequestById(int id) async {
     try {
@@ -203,6 +221,19 @@ if(images.isNotEmpty) {
       return [];
     }
   }
+
+  // pendingRentRequest
+  Future<List<RentRequest>> pendingRentRequest(String status) async {
+    try {
+      final res =  await apiRepository.pendingRentRequest(status);
+      print(res);
+      return res;
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
 
   Future<void> setupApp() async {
     isLoading.value = true;

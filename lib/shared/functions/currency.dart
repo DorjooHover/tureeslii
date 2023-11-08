@@ -11,3 +11,12 @@ String currencyFormat(double value, bool isD) {
 
   return result.substring(0, result.length - 1);
 }
+
+String dateFormat(DateTime date) {
+  int year = date.year;
+  int month = date.month;
+  int day = date.day;
+  String monthStr = month < 10 ? '0$month' : '$month';
+  String dayStr = day < 10 ? '0$day' : day.toString(); 
+  return '$year.$monthStr.$dayStr';
+}

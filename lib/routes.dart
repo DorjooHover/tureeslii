@@ -43,6 +43,12 @@ class Routes {
   static String entered = '$myAds/entered';
   static String notEnough = '$myAds/notEnough';
   static String rentRequest = '$published/request';
+// my order
+  static String myOrders = '/myOrders';
+  static String historyDetail = '/history/detail';
+  // statistic
+  static String statistic = '/statistic';
+
   // auth
   static String auth = '/auth';
   static String register = '/register';
@@ -153,6 +159,14 @@ class Routes {
         page: () => const MyAdsView(),
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
+
+    // my order
+
+    GetPage(
+        name: myOrders,
+        page: () => const MyOrdersView(),
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
     // GetPage(
     //     name: published,
     //     page: () => const PublishedView(),
@@ -174,6 +188,27 @@ class Routes {
           Post res = Get.arguments;
          
           return RentRequestView(data: res);
+        },
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+        // history
+    GetPage(
+        name: historyDetail,
+        page: () {
+          RentRequest res = Get.arguments[0];
+          String type = Get.arguments[1];
+         
+          return HistoryDetailView(data: res, type: type,);
+        },
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300)),
+        // statistic
+    GetPage(
+        name: statistic,
+        page: () {
+     
+         
+          return StatisticView();
         },
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),

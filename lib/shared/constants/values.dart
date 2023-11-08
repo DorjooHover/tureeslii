@@ -135,7 +135,16 @@ const sortValues = [
     'is': 'false',
   },
 ];
-
+ const datesValues = [
+          "week",
+        "month", 
+         "3month"
+    ];
+ const datesValuesStr = [
+          "Сүүлийн 7 хоног",
+        "Сүүлийн 1 сар", 
+         "Сүүлийн 3 сар"
+    ];
 // navigation bar
 const navbar = [
   {
@@ -151,15 +160,15 @@ const navbar = [
     'label': myAds,
   },
   {
-    'icon': navNotification,
-    'activeIcon': navNotificationActive,
-    'url': navNotificationActive,
+    // 'icon': navNotification,
+    // 'activeIcon': navNotificationActive,
+    'url': 'myOrders',
     'label': order,
   },
   {
     'icon': navOrder,
     'activeIcon': navOrderActive,
-    'url': navOrderActive,
+  'url': 'statistic',
     'label': statistic,
   },
   {

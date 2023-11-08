@@ -26,3 +26,4 @@ export 'sidebar.dart';
 export 'snackbar.dart';
 export 'social.dart';
 export 'spacer.dart';
+export 'dateSlider.dart';

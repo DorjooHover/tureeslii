@@ -159,7 +159,7 @@ class MyAdsAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.isDrawer = false,
       this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
       this.bottom,
-      this.title = const SizedBox(),
+      this.title ,
       this.bgColor = Colors.white});
   final Color statusBarColor;
   final Color bgColor;
@@ -173,7 +173,7 @@ class MyAdsAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
   final Widget? center;
   final PreferredSize? bottom;
-  final Widget title;
+  final Widget? title;
   @override
   Size get preferredSize => Size.fromHeight(height);
 

@@ -33,13 +33,13 @@ class AuthController extends GetxController {
   login(String username, String password) async {
     try {
       User user = await apiRepository.login(username, password);
-      print(user);
+
       await _saveTokens(user.accessToken ?? '')
           .then((value) => Get.toNamed(Routes.main));
       return user;
     } catch (e) {
-      print(e);
-      return e;
+    
+      return e.toString().replaceAll('Exception:', '');
     }
   }
 

@@ -131,6 +131,11 @@ const String published = 'Нийтлэгдсэн';
 const String entered = 'Оруулсан';
 const String notEnough = 'Дутуу';
 
+// my order
+const String expected = 'Хүлээгдэж буй';
+const String agreed = 'Зөвшөөрсөн';
+const String history = 'Түүх';
+
 // addition
 const String birthday = 'Төрсөн он сар';
 const String gender = 'Хүйс';
@@ -158,9 +163,33 @@ const String furniture = 'Тавилга';
 
 // rent request
 const String rentRequestStr = 'Түрээслэх хүсэлт';
+const String remainder = 'Үлдэгдэл';
 
 const String rentCondition = 'Түрээсийн нөхцөл';
 const String restrictions = 'Хязгаарлалтууд';
+// history
+const String notResponse = 'Хариу өгөөгүй';
+const String renterCanceled = 'Түрээслэгч цуцалсан';
+const String refused = 'Татгалзсан';
+const String rented = 'Түрээсэлсэн';
+const String paymentMonthly = 'Сарын төлбөр';
+const String paymentPaid = 'Төлбөр төлөлт';
+const String totalPayment = 'Нийт төлбөр';
+const String totalPaid = 'Нийт төлсөн';
+
+// statistic
+
+ 
+
+const String totalViewed = 'Нийт үзсэн';
+const String totalSaved = 'Нийт хадгалсан';
+const String lastOneMonthViewed = 'Сүүлийн 1 сард үзсэн';
+const String lastSevenDayViewed = 'Сүүлийн долоо хоногт үзсэн';
+const String viewedCount = 'Үзсэн тоо';
+const String savedCount = 'Хадгалсан тоо';
+const String lastOneMonthCount = 'Сүүлийн 1 сард үзсэн тоо';
+const String lastSevenDayCount = 'Сүүлийн долоо хоногт үзсэн тоо';
+
 
 // global
 const String or = 'Эсвэл';
@@ -217,6 +246,7 @@ const String emailVerificationString = 'Та имайл хаягаа шалга�
 const String slogan = 'Ая тухтай байдлыг амар хялбараар';
 const String fakeInfo = 'Мэдээлэл худлаа оруулсан';
 const String deletePost = 'Зар устгах уу';
+const String post = 'Зар';
 
 // drawer
 const String verificationDrawer = 'Баталгаажуулалт';

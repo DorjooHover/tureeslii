@@ -11,7 +11,7 @@ class User {
   String? companyName;
   String? companyRegistry;
   String? mobile;
-  String? rentPersonCount;
+  int? rentPersonCount;
   String? job;
   String? jobTitle;
   String? profession;
