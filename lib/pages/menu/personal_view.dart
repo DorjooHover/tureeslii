@@ -16,7 +16,7 @@ class _PersonalViewState extends State<PersonalView> {
   bool info = true;
   bool product = true;
   final controller = Get.put(MainController());
-  CustomSnackbar snackbar = CustomSnackbar();
+  // CustomSnackbar snackbar = CustomSnackbar();
   String lastNameValue = "",
       firstNameValue = "",
       phoneValue = "",
@@ -102,8 +102,8 @@ class _PersonalViewState extends State<PersonalView> {
                           if (controller.user!.emailVerified != null &&
                               !controller.user!.emailVerified!) {
                             controller.sendEmailVerification();
-                            snackbar.mainSnackbar(context,
-                                emailVerificationString, SnackbarType.warning);
+                            // snackbar.mainSnackbar(context,
+                            //     emailVerificationString, SnackbarType.warning);
                           }
                         },
                         child: Padding(
@@ -288,8 +288,8 @@ class _PersonalViewState extends State<PersonalView> {
                       companyName: companyNameValue,
                       orderNotification: info,
                       productAdsNotification: product));
-                  snackbar.mainSnackbar(context, res ? 'Ажмилттай' : 'Алдаа',
-                      res ? SnackbarType.success : SnackbarType.error);
+                  // snackbar.mainSnackbar(context, res ? 'Ажмилттай' : 'Алдаа',
+                  //     res ? SnackbarType.success : SnackbarType.error);
                 },
                 text: request,
                 width: double.infinity,

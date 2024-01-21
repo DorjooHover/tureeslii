@@ -22,7 +22,7 @@ class _LoginViewState extends State<LoginView> {
   String username = "";
   String passwordValue = "";
   bool showPassword = true;
-  CustomSnackbar snackbar = CustomSnackbar();
+  // CustomSnackbar snackbar = CustomSnackbar();
   loginFunc() async {
     final user = await controller.login(username, passwordValue);
 
@@ -30,7 +30,7 @@ class _LoginViewState extends State<LoginView> {
       Get.toNamed(Routes.main);
       mainController.refreshUser();
     } else {
-      snackbar.mainSnackbar(context, user.toString(), SnackbarType.error);
+      // snackbar.mainSnackbar(context, user.toString(), SnackbarType.error);
     }
   }
 

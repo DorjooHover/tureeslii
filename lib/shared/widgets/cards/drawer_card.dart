@@ -39,12 +39,16 @@ class LocationDrawerCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 9),
-          Text(
-            text,
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                color: isSelected ? Colors.white : black,
-                fontWeight: FontWeight.bold),
-          ),
+          Flexible(
+              child: FittedBox(
+            fit: BoxFit.cover,
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: isSelected ? Colors.white : black,
+                  fontWeight: FontWeight.bold),
+            ),
+          ))
         ],
       ),
     );

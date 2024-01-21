@@ -255,7 +255,7 @@ const String order = 'Захиалга';
 const String statistic = 'Статистик';
 const String logout = 'Гарах';
 
-// errors
+// logs
 const String locationErrorStr = 'Газрын зураг тэмдэглэгээ хийнэ үү';
 const String incompleteInfo = 'Мэдээллээ бүрэн оруулна уу';
 const String inDayCanNot30Day =
@@ -265,3 +265,6 @@ const String chooseAnyOptionInRentType =
 const String incompleteTitle = 'Гарчигаа оруулна уу';
 const String tryAgain = 'Дахин оролдоно уу';
 const String errorOccurred = 'Алдаа гарлаа';
+class Messages {
+  static String success = "Амжилттай"; 
+}

@@ -26,10 +26,10 @@ class _RoomInfoViewState extends State<RoomInfoView> {
   int bedRoomValue = 0;
   int bedOneValue = 0;
   int bedTwoValue = 0;
-  CustomSnackbar snackbar = CustomSnackbar();
+  // CustomSnackbar snackbar = CustomSnackbar();
   Future nextStep() async {
     if (titleValue == '') {
-      snackbar.mainSnackbar(context, incompleteTitle, SnackbarType.error);
+      // snackbar.mainSnackbar(context, incompleteTitle, SnackbarType.error);
       return;
     }
     controller.createPost.value!.singleBed = bedOneValue;
@@ -95,9 +95,9 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                 onPressed: () async {
                   await controller.updatePost([]).then((value) {
                     if(value) {
-                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                      //  snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
                     } else {
-                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      //  snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
                     }
                   });
                 },

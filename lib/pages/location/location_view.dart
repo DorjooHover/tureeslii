@@ -140,14 +140,14 @@ bool isDrawer = false;
   }
 
   
-  CustomSnackbar snackbar = CustomSnackbar();
+  // CustomSnackbar snackbar = CustomSnackbar();
   Future nextStep() async {
     if (selectedLocation == null) {
-      snackbar.mainSnackbar(
-        context,
-        locationErrorStr,
-        SnackbarType.error,
-      );
+      // snackbar.mainSnackbar(
+      //   context,
+      //   locationErrorStr,
+      //   SnackbarType.error,
+      // );
       return;
     }
     if (addressValue != '' &&
@@ -170,11 +170,11 @@ bool isDrawer = false;
       controller.nextStep();
       Get.toNamed(Routes.general);
     } else {
-      snackbar.mainSnackbar(
-        context,
-        incompleteInfo,
-        SnackbarType.error,
-      );
+      // snackbar.mainSnackbar(
+      //   context,
+      //   incompleteInfo,
+      //   SnackbarType.error,
+      // );
       return;
     }
   }
@@ -191,6 +191,7 @@ bool isDrawer = false;
       child: Stack(
         children: [
           Scaffold(
+            // resizeToAvoidBottomInset: false,
             key: locationKey,
             appBar: MainAppBar(
               back: true,
@@ -209,9 +210,9 @@ bool isDrawer = false;
                 onPressed: () async{
                   await controller.updatePost([]).then((value) {
                     if(value) {
-                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                      //  snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
                     } else {
-                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      //  snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
                     }
                   });
                   
@@ -274,7 +275,7 @@ bool isDrawer = false;
                       ),
                     )),
                 Positioned(
-                  bottom: MediaQuery.of(context).padding.bottom,
+                  bottom: 0,
                   right: 0,
                   left: 0,
                   child: AnimatedContainer(
@@ -541,7 +542,7 @@ bool isDrawer = false;
                       )),
                 ),
                 Positioned(
-                    bottom: MediaQuery.of(context).padding.bottom,
+                    bottom: 0,
                     left: 0,
                     right: 0,
                     child: GestureDetector(

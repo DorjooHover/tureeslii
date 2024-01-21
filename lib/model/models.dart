@@ -8,3 +8,4 @@ export 'error_handler.dart';
 export 'notification.model.dart';
 export 'post.model.dart';
 export 'rentRequest.model.dart';
+export 'verification.model.dart';

@@ -82,7 +82,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
     controller.nextStep();
     Get.toNamed(Routes.flatInfo);
   }
-CustomSnackbar snackbar = CustomSnackbar();
+// CustomSnackbar snackbar = CustomSnackbar();
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -108,9 +108,9 @@ CustomSnackbar snackbar = CustomSnackbar();
                 onPressed: () async  {
                   await controller.updatePost([]).then((value) {
                     if(value) {
-                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                      //  snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
                     } else {
-                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      //  snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
                     }
                   });
                 },

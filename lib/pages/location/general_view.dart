@@ -34,7 +34,7 @@ class _GeneralViewState extends State<GeneralView> {
       selectedPaymentCondition = paymentConditionValues[0],
       selectedBailCondition = bailConditionValues[0];
   int selectedCancelCondition = 0;
-  CustomSnackbar snackbar = CustomSnackbar();
+  // CustomSnackbar snackbar = CustomSnackbar();
 
    void initState() {
     super.initState();
@@ -73,12 +73,12 @@ if(controller.createPost.value?.id != null) {
   }
   Future nextStep() async {
     if (!isDay && !isMonth) {
-      snackbar.mainSnackbar(
-          context, chooseAnyOptionInRentType, SnackbarType.error);
+      // snackbar.mainSnackbar(
+      //     context, chooseAnyOptionInRentType, SnackbarType.error);
       return;
     }
     if (isDay && minimumRentDayValue > 30) {
-      snackbar.mainSnackbar(context, inDayCanNot30Day, SnackbarType.error);
+      // snackbar.mainSnackbar(context, inDayCanNot30Day, SnackbarType.error);
       return;
     }
 
@@ -153,9 +153,9 @@ if(controller.createPost.value?.id != null) {
                 onPressed: () async {
                   await controller.updatePost([]).then((value) {
                     if(value) {
-                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                      //  snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
                     } else {
-                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      //  snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
                     }
                   });
                 },

@@ -19,7 +19,7 @@ class _FlatInfoViewState extends State<FlatInfoView> {
 
   int selectedHeating = 0, selectedWaterSupply = 0, selectedToilet = 0;
   double flatArea = 0.0;
-  CustomSnackbar snackbar = CustomSnackbar();
+  // CustomSnackbar snackbar = CustomSnackbar();
   @override
   void initState() {
     super.initState();
@@ -34,8 +34,8 @@ class _FlatInfoViewState extends State<FlatInfoView> {
   }
   nextStep() {
     if (flatArea <= 0) {
-      snackbar.mainSnackbar(
-          context, 'Талбайгаа оруулна уу', SnackbarType.error);
+      // snackbar.mainSnackbar(
+      //     context, 'Талбайгаа оруулна уу', SnackbarType.error);
       return;
     }
     controller.createPost.value!.plot = flatArea;
@@ -72,9 +72,9 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                 onPressed: () async {
                   await controller.updatePost([]).then((value) {
                     if(value) {
-                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                      //  snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
                     } else {
-                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      //  snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
                     }
                   });
                 },
@@ -243,7 +243,6 @@ class _FlatInfoViewState extends State<FlatInfoView> {
             bottom: MediaQuery.of(context).size.height * 0.25,
             child: GestureDetector(
               onHorizontalDragUpdate: (details) {
-                print(details.delta.dx);
                 if (details.delta.dx > 1) {
                   flatInfoView.currentState!.openEndDrawer();
                   setState(() {

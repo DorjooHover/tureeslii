@@ -32,7 +32,6 @@ class _HistoryViewState extends State<HistoryView> {
       loading = true;
     });
     List<RentRequest> res = await controller.pendingRentRequest(status);
-    
 
     setState(() {
       data = res;
@@ -41,14 +40,13 @@ class _HistoryViewState extends State<HistoryView> {
       loading = false;
     });
   }
+
   @override
   void setState(VoidCallback fn) {
-    
-    if(mounted) {
+    if (mounted) {
       super.setState(fn);
     }
   }
-
 
   @override
   void initState() {
@@ -94,32 +92,33 @@ class _HistoryViewState extends State<HistoryView> {
           }).toList(),
         ),
         space16,
-        loading ? Center(child: CircularProgressIndicator(),) :
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: origin),
-          height: MediaQuery.of(context).size.height * 0.65 - 66,
-          child: data.isNotEmpty
-              ? ListView.builder(
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Get.toNamed(Routes.historyDetail,
-                            arguments: [data[index], statusStr[index]]);
-                      },
-                      child: Container(
-                        margin: EdgeInsets.symmetric(vertical: origin),
-                        child: HistoryCard(data: data[index]),
+        loading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Container(
+                padding: const EdgeInsets.symmetric(horizontal: origin),
+                child: data.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              Get.toNamed(Routes.historyDetail,
+                                  arguments: [data[index], statusStr[index]]);
+                            },
+                            child: Container(
+                              margin:
+                                  const EdgeInsets.symmetric(vertical: origin),
+                              child: HistoryCard(data: data[index]),
+                            ),
+                          );
+                        },
+                      )
+                    : const Center(
+                        child: NoDataView(),
                       ),
-                    );
-                  },
-                )
-              : Center(
-                  child: NoDataView(
-                    height: MediaQuery.of(context).size.height * 0.6 - 66,
-                  ),
-                ),
-        ),
+              ),
       ],
     );
   }

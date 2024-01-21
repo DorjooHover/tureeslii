@@ -88,7 +88,7 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
           );
         });
   }
-CustomSnackbar snackbar = CustomSnackbar();
+// CustomSnackbar snackbar = CustomSnackbar();
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -114,9 +114,9 @@ CustomSnackbar snackbar = CustomSnackbar();
                 onPressed: () async  {
                   await controller.updatePost(images.isNotEmpty ? images : []).then((value) {
                     if(value) {
-                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                      //  snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
                     } else {
-                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      //  snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
                     }
                   });
                 },
