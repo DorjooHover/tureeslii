@@ -58,10 +58,13 @@ class MainController extends GetxController
     }
   }
 
-  getVerification() async {
+  Future<void> getVerification() async {
     try {
       final res = await apiRepository.getUserVerification();
-      res.fold((l) => null, (r) => verification.value = r);
+      res.fold((l) => null, (r) => {
+        verification.value = r,
+        
+      });
     } catch (e) {
       dev.log(e.toString());
     }
@@ -297,7 +300,11 @@ class MainController extends GetxController
     try {
       final res = await apiRepository.getUser();
       res.fold(
-          (l) => null,
+          (l) => {
+                storage.remove(StorageKeys.token.name),
+                update(),
+                Get.toNamed(Routes.auth)
+              },
           (r) => {
                 user = r,
                 change(user, status: RxStatus.success()),
@@ -314,7 +321,7 @@ class MainController extends GetxController
               });
 
       isLoading.value = false;
-    } on DioException {
+    } catch (e) {
       isLoading.value = false;
 
       storage.remove(StorageKeys.token.name);
@@ -335,6 +342,12 @@ class MainController extends GetxController
   }
 
   @override
+  void onReady() async {
+    await setupApp();
+    super.onInit();
+  }
+
+  @override
   void dispose() {
     super.dispose();
   }
@@ -344,8 +357,5 @@ class MainController extends GetxController
     super.onClose();
   }
 
-  @override
-  onReady() {
-    super.onReady();
-  }
+
 }

@@ -138,7 +138,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
                       children: <Widget>[
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                        activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -165,7 +165,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                           activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -196,7 +196,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                           activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -223,7 +223,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                           activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -250,7 +250,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                           activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -277,7 +277,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                           activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -304,7 +304,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                           activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -339,7 +339,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
                       children: <Widget>[
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                           activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -370,7 +370,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
                             children: <Widget>[
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -397,7 +397,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -424,7 +424,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -451,7 +451,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -478,7 +478,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -505,7 +505,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,

@@ -245,7 +245,7 @@ class _PersonalViewState extends State<PersonalView> {
               space24,
               SwitchListTile.adaptive(
                 contentPadding: EdgeInsets.zero,
-                activeColor: Colors.white,
+                 activeColor: prime,
                 activeTrackColor: active,
                 title: Text(
                   infoByEmail,
@@ -262,7 +262,7 @@ class _PersonalViewState extends State<PersonalView> {
               ),
               SwitchListTile.adaptive(
                 contentPadding: EdgeInsets.zero,
-                activeColor: Colors.white,
+                 activeColor: prime,
                 activeTrackColor: active,
                 title: Text(
                   productByEmail,

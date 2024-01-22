@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,9 +21,7 @@ class VerificationView extends StatefulWidget {
 
 class _VerificationViewState extends State<VerificationView> {
   final verificationKey = GlobalKey<FormState>();
-  String selectedBank = bankValues[0];
-  String accountNumberValue = "";
-  String accountNameValue = "";
+  String? selectedBank;
   final ImagePicker picker = ImagePicker();
   final ImagePicker backPicker = ImagePicker();
   String? fImage;
@@ -56,14 +55,18 @@ class _VerificationViewState extends State<VerificationView> {
     });
   }
 
+  TextEditingController accountNumberController = TextEditingController();
+  TextEditingController accountNameController = TextEditingController();
   final controller = Get.put(MainController());
   @override
   void initState() {
+    init();
     super.initState();
   }
 
   init() async {
     await controller.getVerification();
+
     if (controller.banks.isNotEmpty) {
       setState(() {
         selectedBank = controller.banks[0];
@@ -71,11 +74,13 @@ class _VerificationViewState extends State<VerificationView> {
     }
     if (controller.verification.value != null) {
       int bankIndex = controller.banks
-          .indexOf((p0) => p0 == controller.verification.value!.bankName);
+          .indexWhere((p0) => p0 == controller.verification.value!.bankName);
+      accountNumberController.text =
+          controller.verification.value!.bankAccNo ?? '';
+      accountNameController.text =
+          controller.verification.value!.bankAccName ?? '';
       setState(() {
         selectedBank = controller.banks[bankIndex];
-        accountNameValue = controller.verification.value!.bankAccName ?? '';
-        accountNumberValue = controller.verification.value!.bankAccNo ?? '';
         fImage = controller.verification.value!.front;
         bImage = controller.verification.value!.back;
       });
@@ -98,14 +103,14 @@ class _VerificationViewState extends State<VerificationView> {
       );
       return;
     }
-    if (accountNumberValue == "") {
+    if (accountNumberController.text == "") {
       showTopSnackBar(
         Overlay.of(context),
         const CustomSnackBar.info(message: "Дансны дугаараа оруулна уу."),
       );
       return;
     }
-    if (accountNameValue == "") {
+    if (accountNameController.text == "") {
       showTopSnackBar(
         Overlay.of(context),
         const CustomSnackBar.info(
@@ -114,13 +119,23 @@ class _VerificationViewState extends State<VerificationView> {
       return;
     }
 
-    bool res = await controller.sendVerificationUser(frontImage, backImage,
-        selectedBank, accountNumberValue, accountNameValue);
+    bool res = await controller.sendVerificationUser(
+        frontImage,
+        backImage,
+        selectedBank!,
+        accountNumberController.text,
+        accountNameController.text);
     if (res) {
       showTopSnackBar(
         Overlay.of(context),
         CustomSnackBar.success(message: Messages.success),
       );
+    } else {
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.info(message: tryAgain),
+      );
+
     }
   }
 
@@ -240,7 +255,7 @@ class _VerificationViewState extends State<VerificationView> {
                       title: bank,
                       child: DropDown(
                         list: controller.banks,
-                        value: selectedBank,
+                        value: selectedBank ?? controller.banks[0],
                         onChanged: (value) {
                           if (value != null) {
                             setState(() {
@@ -254,11 +269,15 @@ class _VerificationViewState extends State<VerificationView> {
                     AdditionCard(
                         title: accountNumber,
                         child: Input(
+                          controller: accountNumberController,
                           onChange: (p0) {
                             setState(() {
-                              accountNumberValue = p0;
+                              accountNumberController.text = p0;
                             });
                           },
+                          inputFormatter: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           textInputAction: TextInputAction.next,
                           textInputType: TextInputType.number,
                         )),
@@ -266,9 +285,10 @@ class _VerificationViewState extends State<VerificationView> {
                     AdditionCard(
                         title: accountName,
                         child: Input(
+                          controller: accountNameController,
                           onChange: (p0) {
                             setState(() {
-                              accountNameValue = p0;
+                              accountNameController.text = p0;
                             });
                           },
                           onSubmitted: ((p0) {

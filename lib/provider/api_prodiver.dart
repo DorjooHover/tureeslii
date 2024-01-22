@@ -46,7 +46,6 @@ class ApiRepository extends GetxService {
       }
       return left(errorOccurred);
     } catch (e) {
-      dev.log(e.toString());
       return left(errorOccurred);
     }
   }
@@ -409,8 +408,8 @@ class ApiRepository extends GetxService {
       } else {
         res = await dio.post('/user/verificationRequest', data: data);
       }
+     
       if (res.statusCode == 201) {
-        print(res.data);
         return right(res.data['success']);
       }
       return left(tryAgain);
@@ -420,9 +419,8 @@ class ApiRepository extends GetxService {
     }
   }
 
-EitherVerification<List<Verification>> getUserVerification() async {
+  EitherVerification<List<Verification>> getUserVerification() async {
     try {
-      
       final res = await dio.get('/user/verificationRequest/user');
       if (res.statusCode == 200) {
         return right(Verification.fromJson(res.data['data']));
@@ -436,8 +434,6 @@ EitherVerification<List<Verification>> getUserVerification() async {
       }
     }
   }
-
-  
 
 // config
   EitherConfig<Config> getConfigById(String id) async {

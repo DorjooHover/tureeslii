@@ -267,4 +267,5 @@ const String tryAgain = 'Дахин оролдоно уу';
 const String errorOccurred = 'Алдаа гарлаа';
 class Messages {
   static String success = "Амжилттай"; 
+  static String incomplete = "Дутуу байна."; 
 }
