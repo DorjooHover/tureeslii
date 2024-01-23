@@ -82,7 +82,7 @@ cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ?? false
     controller.nextStep();
     Get.toNamed(Routes.flatInfo);
   }
-CustomSnackbar snackbar = CustomSnackbar();
+// CustomSnackbar snackbar = CustomSnackbar();
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -108,9 +108,9 @@ CustomSnackbar snackbar = CustomSnackbar();
                 onPressed: () async  {
                   await controller.updatePost([]).then((value) {
                     if(value) {
-                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                      //  snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
                     } else {
-                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      //  snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
                     }
                   });
                 },
@@ -138,7 +138,7 @@ CustomSnackbar snackbar = CustomSnackbar();
                       children: <Widget>[
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                        activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -165,7 +165,7 @@ CustomSnackbar snackbar = CustomSnackbar();
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                           activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -196,7 +196,7 @@ CustomSnackbar snackbar = CustomSnackbar();
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                           activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -223,7 +223,7 @@ CustomSnackbar snackbar = CustomSnackbar();
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                           activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -250,7 +250,7 @@ CustomSnackbar snackbar = CustomSnackbar();
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                           activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -277,7 +277,7 @@ CustomSnackbar snackbar = CustomSnackbar();
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                           activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -304,7 +304,7 @@ CustomSnackbar snackbar = CustomSnackbar();
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                           activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -339,7 +339,7 @@ CustomSnackbar snackbar = CustomSnackbar();
                       children: <Widget>[
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.white,
+                           activeColor: prime,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -370,7 +370,7 @@ CustomSnackbar snackbar = CustomSnackbar();
                             children: <Widget>[
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -397,7 +397,7 @@ CustomSnackbar snackbar = CustomSnackbar();
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -424,7 +424,7 @@ CustomSnackbar snackbar = CustomSnackbar();
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -451,7 +451,7 @@ CustomSnackbar snackbar = CustomSnackbar();
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -478,7 +478,7 @@ CustomSnackbar snackbar = CustomSnackbar();
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -505,7 +505,7 @@ CustomSnackbar snackbar = CustomSnackbar();
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,

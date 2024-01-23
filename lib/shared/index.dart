@@ -5,4 +5,6 @@ export './constants/spacing.dart';
 export './constants/strings.dart';
 export './constants/values.dart';
 export 'functions/currency.dart';
+export 'functions/snackbar.dart';
 export 'widgets/widgets.dart';
+export 'constants/either.dart';

@@ -11,6 +11,7 @@ import 'package:landlord/provider/api_prodiver.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/constants/enums.dart';
 import 'package:landlord/shared/constants/strings.dart';
+import "dart:developer" as dev;
 
 class MainController extends GetxController
     with StateMixin<User>, WidgetsBindingObserver {
@@ -25,6 +26,8 @@ class MainController extends GetxController
   final our = false.obs;
   final loading = false.obs;
   final allCategory = <Category>[].obs;
+  // verification
+  final verification = Rxn<Verification?>();
   // config
   final banks = <String>[].obs;
   final cities = <City>[].obs;
@@ -41,28 +44,61 @@ class MainController extends GetxController
   final ownPost = <Post>[].obs;
   User? get user => rxUser.value;
   set user(value) => rxUser.value = value;
-  
+
   // order
   final orders = <Post>[].obs;
   // config
   getBanks() async {
-    final res = await apiRepository.getConfigById('banks');
-    banks.value = List<String>.from(jsonDecode(res.value!) as List);
+    try {
+      final res = await apiRepository.getConfigById('banks');
+      res.fold((l) => null,
+          (r) => banks.value = List<String>.from(jsonDecode(r.value!) as List));
+    } catch (e) {
+      dev.log(e.toString());
+    }
+  }
+
+  Future<void> getVerification() async {
+    try {
+      final res = await apiRepository.getUserVerification();
+      res.fold((l) => null, (r) => {
+        verification.value = r,
+        
+      });
+    } catch (e) {
+      dev.log(e.toString());
+    }
   }
 
   Future<void> getCities() async {
-    final res = await apiRepository.getConfigById('cities');
-    cities.value =
-        (jsonDecode(res.value!) as List).map((e) => City.fromJson(e)).toList();
+    try {
+      final res = await apiRepository.getConfigById('cities');
+      res.fold(
+          (l) => null,
+          (r) => cities.value = (jsonDecode(r.value!) as List)
+              .map((e) => City.fromJson(e))
+              .toList());
+    } catch (e) {
+      dev.log(e.toString());
+    }
   }
 
   Future<void> getCancellation() async {
-    final res = await apiRepository.getCancelation();
-    cancelTerm.value = res;
+    try {
+      final res = await apiRepository.getCancelation();
+      res.fold((l) => null, (r) => cancelTerm.value = r);
+    } catch (e) {
+      dev.log(e.toString());
+    }
   }
 
   getCategories() async {
-    allCategory.value = await apiRepository.getCategories();
+    try {
+      final res = await apiRepository.getCategories();
+      res.fold((l) => null, (r) => allCategory.value = r);
+    } catch (e) {
+      dev.log(e.toString());
+    }
   }
 
   // user
@@ -71,28 +107,27 @@ class MainController extends GetxController
     change(user, status: RxStatus.success());
   }
 
-  Future<bool> updateUser(User user) async {
+  updateUser(User user) async {
     final res = await apiRepository.updateUser(user);
-    if (res) {
-      await refreshUser();
-    }
-    return res;
+    res.fold((l) => null, (r) => refreshUser());
   }
 
   Future<void> sendEmailVerification() async {
     await apiRepository.sendEmailVerifyCode();
   }
 
-  Future<bool> getMobileVerification() async {
-    return apiRepository.getMobileVerifyCode();
+  getMobileVerification() async {
+    final res = await apiRepository.getMobileVerifyCode();
+    res.fold((l) => null, (r) => null);
   }
 
-  Future<bool> sendMobileVerification() async {
-    return apiRepository.sendMobileVerifyCode(otp.value);
+  sendMobileVerification() async {
+    final res = await apiRepository.sendMobileVerifyCode(otp.value);
+    res.fold((l) => null, (r) => null);
   }
 
-  Future<bool> savePersonal(User u) async {
-    bool res = await apiRepository.savePersonal(User(
+  savePersonal(User u) async {
+    final res = await apiRepository.savePersonal(User(
         lastname: u.lastname ?? user!.lastname,
         firstname: u.firstname ?? user!.firstname,
         mobile: u.mobile ?? user!.mobile!,
@@ -101,34 +136,50 @@ class MainController extends GetxController
         orderNotification: u.orderNotification ?? user!.orderNotification,
         productAdsNotification:
             u.productAdsNotification ?? user!.productAdsNotification));
-    if (res) {
-      refreshUser();
-    }
-    return res;
+    res.fold((l) => null, (r) => refreshUser());
   }
 
-  sendVerificationUser(XFile frontImage, XFile backImage, String bankName,
+  sendVerificationUser(XFile? frontImage, XFile? backImage, String bankName,
       String accountNumber, String accountName) async {
     try {
       final regex = RegExp(r'^[0-9a-zA-Zа-яА-ЯҮүӨө]');
       bool r = regex.hasMatch(accountName);
-
+      bool result = false;
       if (r) {
-        String front = await apiRepository.uploadFile(frontImage);
-        String back = await apiRepository.uploadFile(backImage);
-        final res = await apiRepository.verificationUser(
-            front, back, accountNumber, bankName, accountName);
-        return res;
+        bool check = true;
+        String? frontRes, backRes;
+        if (frontImage != null) {
+          final front = await apiRepository.uploadFile(frontImage);
+          front.fold((l) => check = false, (r) => frontRes = r);
+        }
+        if (check) {
+          final back = await apiRepository.uploadFile(backImage);
+          back.fold((l) => check = false, (r) => backRes = r);
+        }
+        if (check) {
+          final res = await apiRepository.verificationUser(
+              frontRes == null ? verification.value!.front! : frontRes!,
+              backRes == null ? verification.value!.back! : backRes!,
+              accountNumber,
+              bankName,
+              accountName,
+              verification.value != null);
+          res.fold((l) => print(l), (r) => result = r);
+        }
       }
+      return result;
     } catch (e) {
-      print(e);
+      dev.log(e.toString());
     }
   }
-Future<Map<String , List>> getPostStats(String postId, String date)  async {
-  final res = await  apiRepository.getPostStats(postId, date);
 
-  return res;
-}
+  Future<Map<String, List>> getPostStats(String postId, String date) async {
+    Map<String, List>? f;
+    final res = await apiRepository.getPostStats(postId, date);
+    res.fold((l) => f = {}, (r) => f = r);
+    return f!;
+  }
+
   // create post
   nextStep() {
     if (verified.where((p0) => p0 == (currentStep.value + 1)).isEmpty &&
@@ -148,55 +199,58 @@ Future<Map<String , List>> getPostStats(String postId, String date)  async {
     try {
       List<String> imagesUrl = [];
       for (final element in images) {
-        imagesUrl.add(await apiRepository.uploadFile(element));
+        final res = await apiRepository.uploadFile(element);
+        res.fold((l) => null, (r) => imagesUrl.add(r));
       }
 
       await apiRepository
           .createPost(createPost.value!, imagesUrl)
           .then((value) => createPost.value = Post());
     } catch (e) {
-      print(e);
+      dev.log(e.toString());
     }
   }
 
   // update post
 
-  Future<bool> updatePost(List<XFile> images ) async {
+  Future<bool> updatePost(List<XFile> images) async {
     try {
-List<String> imagesUrl = [];
-     
-
-if(images.isNotEmpty) {
-   for (final element in images) {
-        imagesUrl.add(await apiRepository.uploadFile(element));
+      List<String> imagesUrl = [];
+      bool success = false;
+      if (images.isNotEmpty) {
+        for (final element in images) {
+          final res = await apiRepository.uploadFile(element);
+          res.fold((l) => null, (r) => imagesUrl.add(r));
+        }
       }
-} 
-  final res = await apiRepository.updatePost(createPost.value!, imagesUrl);
-  return res;
-    } catch(e) {
+      final res = await apiRepository.updatePost(createPost.value!, imagesUrl);
+      res.fold((l) => null, (r) => success = r);
+      return success;
+    } catch (e) {
       return false;
     }
   }
 
-  // delete post 
-  Future<ErrorHandler> deletePost(String id ) async {
+  // delete post
+  Future<ErrorHandler> deletePost(String id) async {
     final res = await apiRepository.deletePost(id);
-    if(res.success!) {
-      return ErrorHandler(success: true, message: successDeleted);
-    } else {
-      
-      return ErrorHandler(success: false, message: errorOccurred);
-    }
-  } 
+    ErrorHandler? handler;
+    res.fold(
+        (l) => handler = ErrorHandler(success: false, message: errorOccurred),
+        (r) => handler = r);
+
+    return handler!;
+  }
 
   // own post
   Future<void> getOwnPost(SortData? sortData, List<FilterData> filterData,
       [int skip = 0, int take = 10]) async {
     try {
-      ownPost.value =
+      final res =
           await apiRepository.getOwnPosts(skip, take, sortData, filterData);
+      res.fold((l) => null, (r) => ownPost.value = r);
     } catch (e) {
-      print(e);
+      dev.log(e.toString());
     }
   }
 
@@ -204,19 +258,21 @@ if(images.isNotEmpty) {
   Future<void> getOrder(SortData? sortData, List<FilterData> filterData,
       [int skip = 0, int take = 10]) async {
     try {
-      ownPost.value =
+      final res =
           await apiRepository.getMyOrders(skip, take, sortData, filterData);
+      res.fold((l) => null, (r) => ownPost.value = r);
     } catch (e) {
-      print(e);
+      dev.log(e.toString());
     }
   }
-
-
 
   // rent request
   Future<List<RentRequest>> getRentRequestById(int id) async {
     try {
-      return await apiRepository.getRentRequestById(id);
+      List<RentRequest> list = [];
+      final res = await apiRepository.getRentRequestById(id);
+      res.fold((l) => null, (r) => list = r);
+      return list;
     } catch (e) {
       return [];
     }
@@ -225,36 +281,47 @@ if(images.isNotEmpty) {
   // pendingRentRequest
   Future<List<RentRequest>> pendingRentRequest(String status) async {
     try {
-      final res =  await apiRepository.pendingRentRequest(status);
-      print(res);
-      return res;
+      List<RentRequest> list = [];
+      final res = await apiRepository.pendingRentRequest(status);
+      res.fold((l) => null, (r) => list = r);
+      return list;
     } catch (e) {
-      print(e);
+      dev.log(e.toString());
       return [];
     }
   }
 
-
   Future<void> setupApp() async {
     isLoading.value = true;
+    final token = storage.read(StorageKeys.token.name);
+    if (token == null) {
+      return;
+    }
     try {
       final res = await apiRepository.getUser();
-      if (res != null) {
-        user = res;
-        change(user, status: RxStatus.success());
-        if (user != null) {
-          getBanks();
-          getCities();
-          getCancellation();
-          getCategories();
-          getOwnPost(null, []);
+      res.fold(
+          (l) => {
+                storage.remove(StorageKeys.token.name),
+                update(),
+                Get.toNamed(Routes.auth)
+              },
+          (r) => {
+                user = r,
+                change(user, status: RxStatus.success()),
+                if (user != null)
+                  {
+                    getBanks(),
+                    getCities(),
+                    getCancellation(),
+                    getCategories(),
+                    getOwnPost(null, [])
 
-          // getSavedPost();
-        }
-      }
+                    // getSavedPost();
+                  }
+              });
 
       isLoading.value = false;
-    } on DioException {
+    } catch (e) {
       isLoading.value = false;
 
       storage.remove(StorageKeys.token.name);
@@ -275,6 +342,12 @@ if(images.isNotEmpty) {
   }
 
   @override
+  void onReady() async {
+    await setupApp();
+    super.onInit();
+  }
+
+  @override
   void dispose() {
     super.dispose();
   }
@@ -284,8 +357,5 @@ if(images.isNotEmpty) {
     super.onClose();
   }
 
-  @override
-  onReady() {
-    super.onReady();
-  }
+
 }

@@ -54,7 +54,7 @@ invite=     controller.createPost.value!.guestAllowed!;
     controller.nextStep();
     Get.toNamed(Routes.flatFeature);
   }
-  CustomSnackbar snackbar = CustomSnackbar();
+  // CustomSnackbar snackbar = CustomSnackbar();
 
   @override
   Widget build(BuildContext context) {
@@ -80,9 +80,9 @@ invite=     controller.createPost.value!.guestAllowed!;
               child: IconButton(
                 onPressed: () async {await controller.updatePost([]).then((value) {
                     if(value) {
-                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                      //  snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
                     } else {
-                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      //  snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
                     }
                   });},
                 icon: SvgPicture.asset(
@@ -155,7 +155,7 @@ invite=     controller.createPost.value!.guestAllowed!;
                             ),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
-                              activeColor: Colors.white,
+                               activeColor: prime,
                               activeTrackColor: active,
                               title: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -182,7 +182,7 @@ invite=     controller.createPost.value!.guestAllowed!;
                             ),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
-                              activeColor: Colors.white,
+                              activeColor: prime,
                               activeTrackColor: active,
                               title: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -209,7 +209,7 @@ invite=     controller.createPost.value!.guestAllowed!;
                             ),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
-                              activeColor: Colors.white,
+                               activeColor: prime,
                               activeTrackColor: active,
                               title: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -236,7 +236,7 @@ invite=     controller.createPost.value!.guestAllowed!;
                             ),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
-                              activeColor: Colors.white,
+                               activeColor: prime,
                               activeTrackColor: active,
                               title: Row(
                                 mainAxisSize: MainAxisSize.min,

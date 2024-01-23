@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:landlord/model/models.dart';
-import 'package:landlord/shared/constants/enums.dart';
-import 'package:landlord/shared/constants/strings.dart';
+import 'package:dartz/dartz.dart';
+import 'package:landlord/shared/index.dart';
+import 'dart:developer' as dev;
 
 class ApiRepository extends GetxService {
   final isProduction = const bool.fromEnvironment('dart.vm.product');
@@ -29,24 +30,27 @@ class ApiRepository extends GetxService {
           },
         ),
         // RetryOnConnectionChangeInterceptor()
-        // LogInterceptor(responseBody: true),
+        // LogInterceptor(resBody: true),
       ],
     );
     return dio;
   }
 
   // auth
-  getUser() async {
+  EitherUser<User> getUser() async {
     try {
-      final response = await dio.get('/auth/user');
+      final res = await dio.get('/auth/user');
 
-      return User.fromJson(response.data['data']);
-    } on DioException {
-      rethrow;
+      if (res.statusCode == 200) {
+        return right(User.fromJson(res.data['data']));
+      }
+      return left(errorOccurred);
+    } catch (e) {
+      return left(errorOccurred);
     }
   }
 
-  Future<String> uploadFile(image) async {
+  EitherText<String> uploadFile(image) async {
     try {
       final request = http.MultipartRequest(
           'POST', Uri.parse('https://tureeslii.mn/api/upload'));
@@ -57,13 +61,13 @@ class ApiRepository extends GetxService {
 
       String resStr = await res.stream.bytesToString();
 
-      return resStr;
+      return right(resStr);
     } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? errorOccurred);
+      return left(e.response?.data['message'] ?? errorOccurred);
     }
   }
 
-  Future<bool> createPost(Post post, List<String> images) async {
+  EitherSuccess<bool> createPost(Post post, List<String> images) async {
     try {
       final data = {
         // location
@@ -129,18 +133,22 @@ class ApiRepository extends GetxService {
 
       final res = await dio.post('/posts', data: data);
 
-      return res.data['success'];
+      if (res.statusCode == 201) {
+        return right(res.data['success']);
+      }
+
+      return left(tryAgain);
     } on DioException catch (e) {
-      print(e);
-      return false;
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
-  Future<bool> updatePost(Post post, List<String> images) async {
+  EitherSuccess<bool> updatePost(Post post, List<String> images) async {
     try {
       final data = {
         "id": post.id,
-       // location
+        // location
         "lat": post.lat,
         "long": post.long,
         "address": post.address,
@@ -203,68 +211,82 @@ class ApiRepository extends GetxService {
 
       final res = await dio.put('/posts', data: data);
 
-      return res.data['success'];
+      if (res.statusCode == 201) {
+        return right(res.data['success']);
+      }
+
+      return left(tryAgain);
     } on DioException catch (e) {
-      print(e);
-      return false;
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
-
-  Future<ErrorHandler> deletePost(String id) async {
+  EitherHandler<ErrorHandler> deletePost(String id) async {
     try {
-      final res = await dio.delete('/posts/$id') ;
-     return  ErrorHandler.fromJson(res.data);
-     
+      final res = await dio.delete('/posts/$id');
+      if (res.statusCode == 200) {
+        return right(ErrorHandler.fromJson(res.data));
+      }
+      return left(tryAgain);
     } catch (e) {
-return ErrorHandler(success: false);
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
-  Future<User> login(String username, String password) async {
+  EitherUser<User> login(String username, String password) async {
     try {
       final data = {"username": username, "password": password};
-   
+
       final res = await dio.post('/auth/login', data: data);
-print(res);
-      return User.fromJson(res.data['data']);
+      if (res.statusCode == 201) {
+        return right(User.fromJson(res.data['data']));
+      }
+      return left(tryAgain);
     } on DioException catch (e) {
+      dev.log(e.toString());
       if (e.response?.statusCode == 401 && e.response?.data['message'] != "") {
-        throw Exception('Нэвтрэх нэр эсвэл нууц үг буруу байна');
+        return left('Нэвтрэх нэр эсвэл нууц үг буруу байна');
       }
       if (e.response?.statusCode == 401) {
-        throw Exception('Та Нэвтрэх нэр, нууц үгээ оруулна уу');
+        return left('Та Нэвтрэх нэр, нууц үгээ оруулна уу');
       }
-      
-      rethrow;
+      return left(errorOccurred);
     }
   }
 
-  Future<bool> register(
+  EitherSuccess<bool> register(
     String email,
     String password,
   ) async {
     try {
       final data = {"password": password, "isCreator": false, "email": email};
-      await dio.post('/auth/register', data: data);
-
-      return true;
-    } on DioException {
-      return false;
+      final res = await dio.post('/auth/register', data: data);
+      if (res.statusCode == 201) {
+        return right(true);
+      }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
-  Future<bool> forgotPassword(String email) async {
+  EitherSuccess<bool> forgotPassword(String email) async {
     try {
       final res = await dio.post('/auth/forgotpwd', data: {"username": email});
- 
-      return true;
-    } on DioException {
-      return false;
+      if (res.statusCode == 201) {
+        return right(true);
+      }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
-  Future<bool> verifyForgotPassword(
+  EitherSuccess<bool> verifyForgotPassword(
       String password, String code, String email) async {
     try {
       final data = {
@@ -272,14 +294,18 @@ print(res);
         "password_verify": code,
         "email_code": email
       };
-      await dio.post('/auth/changepwdforgot', data: data);
-      return true;
-    } on DioException {
-      return false;
+      final res = await dio.post('/auth/changepwdforgot', data: data);
+      if (res.statusCode == 201) {
+        return right(true);
+      }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
-  Future<bool> savePersonal(User user) async {
+  EitherSuccess<bool> savePersonal(User user) async {
     try {
       final data = {
         "lastname": user.lastname,
@@ -292,56 +318,81 @@ print(res);
         // "password": password
       };
 
-      await dio.put('/user', data: data);
-      return true;
-    } on DioException {
-      return false;
-    }
-  }
-
-  Future<bool> sendEmailVerifyCode() async {
-    try {
-      await dio.get('/auth/requestVerifyCode');
-      return true;
+      final res = await dio.put('/user', data: data);
+      if (res.statusCode == 201) {
+        return right(true);
+      }
+      return left(tryAgain);
     } catch (e) {
-      return false;
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
-  Future<bool> getMobileVerifyCode() async {
+  EitherSuccess<bool> sendEmailVerifyCode() async {
+    try {
+      final res = await dio.get('/auth/requestVerifyCode');
+      if (res.statusCode == 200) {
+        return right(true);
+      }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
+    }
+  }
+
+  EitherSuccess<bool> getMobileVerifyCode() async {
     try {
       final res = await dio.get(
         '/auth/requestVerifyCodeMobile',
       );
-      return res.data['success'];
-    } on DioException {
-      throw Exception(errorOccurred);
+      if (res.statusCode == 200) {
+        return right(res.data['success']);
+      }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
-  Future<bool> sendMobileVerifyCode(String code) async {
+  EitherSuccess<bool> sendMobileVerifyCode(String code) async {
     final data = {'code': code};
     try {
       final res = await dio.post('/auth/verifyMobile', data: data);
-      return res.data['success'];
-    } on DioException {
-      throw Exception(errorOccurred);
+      if (res.statusCode == 201) {
+        return right(res.data['success']);
+      }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
-  Future<bool> verifyEmailCode(String code) async {
+  EitherSuccess<bool> verifyEmailCode(String code) async {
     try {
       final data = {"code": code};
       final res = await dio.post('/auth/verifyEmail', data: data);
-      return res.data['success'];
-    } on DioException {
-      throw Exception(errorOccurred);
+      if (res.statusCode == 201) {
+        return right(res.data['success']);
+      }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
   // verification
-  Future<bool> verificationUser(String frontCard, String backCard,
-      String bankAccount, String bankName, String bankAccName) async {
+  EitherSuccess<bool> verificationUser(
+      String frontCard,
+      String backCard,
+      String bankAccount,
+      String bankName,
+      String bankAccName,
+      bool update) async {
     try {
       final data = {
         "front": frontCard,
@@ -351,52 +402,89 @@ print(res);
         "bankAccName": bankAccName,
       };
 
-      final res = await dio.post('/user/verificationRequest', data: data);
+      final res;
+      if (update) {
+        res = await dio.put('/user/verifications', data: data);
+      } else {
+        res = await dio.post('/user/verificationRequest', data: data);
+      }
+     
+      if (res.statusCode == 201) {
+        return right(res.data['success']);
+      }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
+    }
+  }
 
-      return res.data['success'];
-    } on DioException {
-      throw Exception(errorOccurred);
+  EitherVerification<List<Verification>> getUserVerification() async {
+    try {
+      final res = await dio.get('/user/verificationRequest/user');
+      if (res.statusCode == 200) {
+        return right(Verification.fromJson(res.data['data']));
+      }
+      return left(tryAgain);
+    } on DioException catch (e) {
+      if (e.response?.data["success"] == false) {
+        return left(tryAgain);
+      } else {
+        return left(errorOccurred);
+      }
     }
   }
 
 // config
-  Future<Config> getConfigById(String id) async {
+  EitherConfig<Config> getConfigById(String id) async {
     try {
-      final response = await dio.get('/admin/config/$id');
-      return Config.fromJson(response.data);
-    } on DioException {
-      throw Exception(errorOccurred);
+      final res = await dio.get('/admin/config/$id');
+      if (res.statusCode == 200) {
+        return right(Config.fromJson(res.data));
+      }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
   // cancel term
-  Future<List<Cancelation>> getCancelation() async {
+  EitherCancelations<List<Cancelation>> getCancelation() async {
     try {
-      final response = await dio.get('/cancelation/get');
+      final res = await dio.get('/cancelation/get');
 
-      return (response.data['data'] as List)
-          .map((e) => Cancelation.fromJson(e))
-          .toList();
-    } on DioException {
-      rethrow;
+      if (res.statusCode == 200) {
+        return right((res.data['data'] as List)
+            .map((e) => Cancelation.fromJson(e))
+            .toList());
+      }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
   // category
-  Future<List<Category>> getCategories() async {
+  EitherCategories<List<Category>> getCategories() async {
     try {
-      final response = await dio.get('/category');
+      final res = await dio.get('/category');
 
-      return (response.data['data'] as List)
-          .map((e) => Category.fromJson(e))
-          .toList();
-    } on DioException {
-      throw Exception(errorOccurred);
+      if (res.statusCode == 200) {
+        return right((res.data['data'] as List)
+            .map((e) => Category.fromJson(e))
+            .toList());
+      }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
   // posts
 
-  Future<List<Post>> getAllPosts(int? skip, int? take, SortData? sortData,
+  EitherPosts<List<Post>> getAllPosts(int? skip, int? take, SortData? sortData,
       List<FilterData>? filterData) async {
     try {
       final data = {
@@ -405,68 +493,70 @@ print(res);
         "sortData": sortData ?? {},
         "filterData": filterData ?? [],
       };
-      final response = await dio.post('/posts/getPosts', data: data);
-      return (response.data['data'] as List)
-          .map((e) => Post.fromJson(e))
-          .toList();
+      final res = await dio.post('/posts/getPosts', data: data);
+      if (res.statusCode == 201) {
+        return right(
+            (res.data['data'] as List).map((e) => Post.fromJson(e)).toList());
+      }
+      return left(tryAgain);
     } on DioException catch (e) {
       if (e.response?.data["success"] == false) {
-        throw Exception(tryAgain);
+        return left(tryAgain);
       } else {
-        throw Exception(errorOccurred);
+        return left(errorOccurred);
       }
     }
   }
 
-  getSavedPosts() async {
+  EitherPosts<List<Post>> getSavedPosts() async {
     try {
-      final response = await dio.get(
+      final res = await dio.get(
         '/posts/getSavedPosts',
       );
-      return (response.data['data'] as List)
-          .map((e) => Post.fromJson(e))
-          .toList();
-    } on DioException catch (e) {
-      if (e.response?.data["success"] == false) {
-        throw Exception(tryAgain);
-      } else {
-        throw Exception(errorOccurred);
+      if (res.statusCode == 200) {
+        return right(
+            (res.data['data'] as List).map((e) => Post.fromJson(e)).toList());
       }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
-  saveBookmark(int postId) async {
+  EitherSuccess<bool> saveBookmark(int postId) async {
     try {
       final data = {"postId": postId};
 
-      await dio.post('/posts/saveBookmark', data: data);
-      return true;
-    } on DioException catch (e) {
-      print(e.response);
-      if (e.response?.data["success"] == false) {
-        throw Exception(tryAgain);
-      } else {
-        throw Exception(errorOccurred);
+      final res = await dio.post('/posts/saveBookmark', data: data);
+      if (res.statusCode == 201) {
+        return right(true);
       }
+
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
-  removeBookmark(int postId) async {
+  EitherSuccess<bool> removeBookmark(int postId) async {
     try {
-      await dio.delete(
+      final res = await dio.delete(
         '/posts/removeBookmark/$postId',
       );
-      return true;
-    } on DioException catch (e) {
-      if (e.response?.data["success"] == false) {
-        throw Exception(tryAgain);
-      } else {
-        throw Exception(errorOccurred);
+      if (res.statusCode == 200) {
+        return right(true);
       }
+
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
-  Future<ErrorHandler> rentRequest(
+  EitherHandler<ErrorHandler> rentRequest(
       int postId, int startDate, int duration) async {
     try {
       final data = {
@@ -474,65 +564,67 @@ print(res);
         "startDate": startDate,
         "duration": duration,
       };
-      final response = await dio.post('/posts/rentRequest', data: data);
-
-      if (response.data['success']) {
-        return ErrorHandler(success: true, message: 'Ажмилттай');
+      final res = await dio.post('/posts/rentRequest', data: data);
+      if (res.statusCode != 201) {
+        return left(tryAgain);
       }
-      if (response.data['message'] == 'please_confirm_email') {
-        return ErrorHandler(
-            message: 'Имайл хаягаа баталгаажуулна уу.', success: false);
+      if (res.data['success']) {
+        return right(ErrorHandler(success: true, message: 'Ажмилттай'));
       }
-      if (response.data['message'] == 'start date error') {
-        return ErrorHandler(
-            message: 'Эхлэх огноо алдаатай байна.', success: false);
+      if (res.data['message'] == 'please_confirm_email') {
+        return right(ErrorHandler(
+            message: 'Имайл хаягаа баталгаажуулна уу.', success: false));
       }
-      if (response.data['message'] ==
-          'Энэ хугацаанд түрээслэх боломжгүй байна') {
-        return ErrorHandler(
+      if (res.data['message'] == 'start date error') {
+        return right(ErrorHandler(
+            message: 'Эхлэх огноо алдаатай байна.', success: false));
+      }
+      if (res.data['message'] == 'Энэ хугацаанд түрээслэх боломжгүй байна') {
+        return right(ErrorHandler(
             message: 'Энэ хугацаанд түрээслэх боломжгүй байна.',
-            success: false);
+            success: false));
       }
-      return ErrorHandler(message: errorOccurred, success: false);
-    } on DioException {
-      throw Exception('Алдаа');
+      return right(ErrorHandler(message: errorOccurred, success: false));
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
-  Future<List<RentRequest>> getRentRequestById(int id) async {
+  EitherRentRequests<List<RentRequest>> getRentRequestById(int id) async {
     try {
-      final response = await dio.get(
+      final res = await dio.get(
         '/rentreq/getByPost/$id',
       );
-
-      return (response.data as List)
-          .map((e) => RentRequest.fromJson(e))
-          .toList();
-    } on DioException {
-      throw Exception('Алдаа');
+      if (res.statusCode == 200) {
+        return right(
+            (res.data as List).map((e) => RentRequest.fromJson(e)).toList());
+      }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
-  Future<List<RentRequest>> pendingRentRequest(String status) async {
-    final data = {
-          "status": status
-        };
- 
+
+  EitherRentRequests<List<RentRequest>> pendingRentRequest(
+      String status) async {
+    final data = {"status": status};
+
     try {
-      final response = await dio.post(
-        '/rentreq/pendingRentRequest',
-        data: data
-      );
-
-      return (response.data['data'] as List)
-          .map((e) => RentRequest.fromJson(e))
-          .toList();
-    } catch(e) {
-      print(e);
-      throw Exception('Алдаа');
+      final res = await dio.post('/rentreq/pendingRentRequest', data: data);
+      if (res.statusCode == 201) {
+        return right((res.data['data'] as List)
+            .map((e) => RentRequest.fromJson(e))
+            .toList());
+      }
+      return left(tryAgain);
+    } catch (e) {
+      return left(errorOccurred);
     }
   }
 
-  getOwnPosts(int? skip, int? take, SortData? sortData,
+  EitherPosts<List<Post>> getOwnPosts(int? skip, int? take, SortData? sortData,
       List<FilterData>? filterData) async {
     try {
       final data = {
@@ -541,47 +633,38 @@ print(res);
         "sortData": sortData ?? {},
         "filterData": filterData ?? [],
       };
-      final response = await dio.post('/posts/getOwnPosts', data: data);
-
-      return (response.data['data'] as List)
-          .map((e) => Post.fromJson(e))
-          .toList();
-    } on DioException catch (e) {
-      if (e.response?.data["success"] == false) {
-        throw Exception(tryAgain);
-      } else {
-        throw Exception(errorOccurred);
+      final res = await dio.post('/posts/getOwnPosts', data: data);
+      if (res.statusCode == 201) {
+        return right(
+            (res.data['data'] as List).map((e) => Post.fromJson(e)).toList());
       }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
-  Future<Map<String, List>> getPostStats(String postId, String week) async {
+
+  EitherMap<Map<String, List>> getPostStats(String postId, String week) async {
     try {
-      final data = {
-         "postId": postId,  "date": week 
-      };
-      final response = await dio.post('/posts/getPostStats', data: data);
-     
-    if(response.data['success']) {
-      return {
-        "views": response.data['data']['views'] as List,
-        "likes": (response.data['data']['likes'] as List),
-      };
-      
+      final data = {"postId": postId, "date": week};
+      final res = await dio.post('/posts/getPostStats', data: data);
 
-    } else {
-      return {"views": [], "likes": []};
-    }
-        
-    } on DioException catch (e) {
-      if (e.response?.data["success"] == false) {
-        throw Exception(tryAgain);
-      } else {
-        throw Exception(errorOccurred);
+      if (res.statusCode == 201) {
+        return right({
+          "views": res.data['data']['views'] as List,
+          "likes": (res.data['data']['likes'] as List),
+        });
       }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
+
   // my order
-  getMyOrders(int? skip, int? take, SortData? sortData,
+  EitherPosts<List<Post>> getMyOrders(int? skip, int? take, SortData? sortData,
       List<FilterData>? filterData) async {
     try {
       final data = {
@@ -590,43 +673,46 @@ print(res);
         "sortData": sortData ?? {},
         "filterData": filterData ?? [],
       };
-      final response = await dio.post('/posts/getOwnPosts', data: data);
-
-      return (response.data['data'] as List)
-          .map((e) => Post.fromJson(e))
-          .toList();
-    } on DioException catch (e) {
-      if (e.response?.data["success"] == false) {
-        throw Exception(tryAgain);
-      } else {
-        throw Exception(errorOccurred);
+      final res = await dio.post('/posts/getOwnPosts', data: data);
+      if (res.statusCode == 201) {
+        return right(
+            (res.data['data'] as List).map((e) => Post.fromJson(e)).toList());
       }
+
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
 // notification
-  Future<List<Notifications>> getAllNotification() async {
+  EitherNotifications<List<Notifications>> getAllNotification() async {
     try {
-      final response = await dio.get('/notification');
-
-      return (response as List).map((e) => Notifications.fromJson(e)).toList();
-    } on DioException {
-      throw Exception(errorOccurred);
+      final res = await dio.get('/notification');
+      if (res.statusCode == 200) {
+        return right(
+            (res as List).map((e) => Notifications.fromJson(e)).toList());
+      }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 
   // users
-  Future<void> changePassword(String password, String newPassword) async {
-    try {
-      final data = {'oldPassword': password, 'password': newPassword};
-      final res = await dio.put('/user/password', data: data);
-      return res.data;
-    } on DioException {
-      throw Exception(errorOccurred);
-    }
-  }
+  // Future<void> changePassword(String password, String newPassword) async {
+  //   try {
+  //     final data = {'oldPassword': password, 'password': newPassword};
+  //     final res = await dio.put('/user/password', data: data);
+  //     return res.data;
+  //   } on DioException {
+  //     throw Exception(errorOccurred);
+  //   }
+  // }
 
-  Future<bool> updateUser(User user) async {
+  EitherSuccess<bool> updateUser(User user) async {
     try {
       final data = {
         "birthdate": user.birthdate,
@@ -639,10 +725,14 @@ print(res);
         "incomeAmount": user.incomeAmount,
         "description": user.description,
       };
-      await dio.put('/user', data: data);
-      return true;
-    } on DioException {
-      return false;
+      final res = await dio.put('/user', data: data);
+      if (res.statusCode == 201) {
+        return right(true);
+      }
+      return left(tryAgain);
+    } catch (e) {
+      dev.log(e.toString());
+      return left(errorOccurred);
     }
   }
 }

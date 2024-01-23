@@ -18,7 +18,7 @@ class MyAdsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MainController());
-    CustomSnackbar snackbar = CustomSnackbar();
+    // CustomSnackbar snackbar = CustomSnackbar();
     String status = '';
 
     Color statusColor = Colors.transparent;
@@ -212,14 +212,14 @@ class MyAdsCard extends StatelessWidget {
                                     .deletePost(post.id.toString());
                                 Navigator.pop(context);
                                 if (res.success!) {
-                                  snackbar.mainSnackbar(context, res.message!,
-                                      SnackbarType.success);
+                                  // snackbar.mainSnackbar(context, res.message!,
+                                  //     SnackbarType.success);
                                   controller.ownPost.value = controller.ownPost
                                       .where((e) => e.id != post.id)
                                       .toList();
                                 } else {
-                                  snackbar.mainSnackbar(context, res.message!,
-                                      SnackbarType.warning);
+                                  // snackbar.mainSnackbar(context, res.message!,
+                                      // SnackbarType.warning);
                                 }
                               },
                               color: red,

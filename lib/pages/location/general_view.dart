@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class GeneralView extends StatefulWidget {
   const GeneralView({super.key});
@@ -34,51 +36,50 @@ class _GeneralViewState extends State<GeneralView> {
       selectedPaymentCondition = paymentConditionValues[0],
       selectedBailCondition = bailConditionValues[0];
   int selectedCancelCondition = 0;
-  CustomSnackbar snackbar = CustomSnackbar();
+  // CustomSnackbar snackbar = CustomSnackbar();
 
-   void initState() {
+  void initState() {
     super.initState();
     if (controller.cancelTerm.isNotEmpty) {
       selectedCancelCondition = controller.cancelTerm.first.id!;
     } else {
       controller.getCancellation();
     }
-if(controller.createPost.value?.id != null) {
-   
+    if (controller.createPost.value?.id != null) {
       setState(() {
         isDay = controller.createPost.value!.dailyRent!;
         //  selectedCancelCondition =  int.tryParse(controller.createPost.value!.cancelTerm) ??  controller.cancelTerm.first.id!;
-   startRentDateValue  =  controller.createPost.value!.startDate!.substring(0, 10) ;
-    bailMoney = controller.createPost.value!.depositRequired! ;
-    isMonth = controller.createPost.value!.monthlyRent! ;
-    rentPriceMonthValue = controller.createPost.value!.price! ;
-    rentPriceValue = controller.createPost.value!.priceDaily! ;
-    minimumRentDayValue = controller.createPost.value!.minDurationDaily ! ;
-    minimumRentMonthValue = controller.createPost.value!.minDurationMonthly! ;
-    
-    final paymentCondIndex = paymentConditionValuesValue
-        .indexWhere((element) => element == controller.createPost.value?.paymentTerm);
-    selectedPaymentCondition = paymentConditionValues[paymentCondIndex];
-    final bailCondIndex = bailConditionValuesValue.indexWhere((element) => element == controller.createPost.value?.depositTerm);
-    selectedBailCondition = bailConditionValues[bailCondIndex];
-    final contractCondIndex = contractConditionValuesValue.indexWhere((element) => element == controller.createPost.value?.priceTerm);
-    selectedContractCondition = contractConditionValues[contractCondIndex];
+        startRentDateValue =
+            controller.createPost.value!.startDate!.substring(0, 10);
+        bailMoney = controller.createPost.value!.depositRequired!;
+        isMonth = controller.createPost.value!.monthlyRent!;
+        rentPriceMonthValue = controller.createPost.value!.price!;
+        rentPriceValue = controller.createPost.value!.priceDaily!;
+        minimumRentDayValue = controller.createPost.value!.minDurationDaily!;
+        minimumRentMonthValue =
+            controller.createPost.value!.minDurationMonthly!;
 
-
-    
-        });
+        final paymentCondIndex = paymentConditionValuesValue.indexWhere(
+            (element) => element == controller.createPost.value?.paymentTerm);
+        selectedPaymentCondition = paymentConditionValues[paymentCondIndex];
+        final bailCondIndex = bailConditionValuesValue.indexWhere(
+            (element) => element == controller.createPost.value?.depositTerm);
+        selectedBailCondition = bailConditionValues[bailCondIndex];
+        final contractCondIndex = contractConditionValuesValue.indexWhere(
+            (element) => element == controller.createPost.value?.priceTerm);
+        selectedContractCondition = contractConditionValues[contractCondIndex];
+      });
     }
-
-    
   }
+
   Future nextStep() async {
     if (!isDay && !isMonth) {
-      snackbar.mainSnackbar(
-          context, chooseAnyOptionInRentType, SnackbarType.error);
+      // snackbar.mainSnackbar(
+      //     context, chooseAnyOptionInRentType, SnackbarType.error);
       return;
     }
     if (isDay && minimumRentDayValue > 30) {
-      snackbar.mainSnackbar(context, inDayCanNot30Day, SnackbarType.error);
+      // snackbar.mainSnackbar(context, inDayCanNot30Day, SnackbarType.error);
       return;
     }
 
@@ -126,8 +127,6 @@ if(controller.createPost.value?.id != null) {
     Get.toNamed(Routes.condition);
   }
 
- 
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -152,10 +151,16 @@ if(controller.createPost.value?.id != null) {
               child: IconButton(
                 onPressed: () async {
                   await controller.updatePost([]).then((value) {
-                    if(value) {
-                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                    if (value) {
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        CustomSnackBar.success(message: successSaved),
+                      );
                     } else {
-                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        CustomSnackBar.info(message: errorOccurred),
+                      );
                     }
                   });
                 },
@@ -273,6 +278,7 @@ if(controller.createPost.value?.id != null) {
                           children: <Widget>[
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
+                              activeColor: prime,
                               title: Text(
                                 canDay,
                                 style: Theme.of(context)
@@ -294,7 +300,7 @@ if(controller.createPost.value?.id != null) {
                               AdditionCard(
                                   title: rentPrice,
                                   child: Input(
-                                    value:rentPriceValue.toString(),
+                                    value: rentPriceValue.toString(),
                                     textInputType: TextInputType.number,
                                     textInputAction: TextInputAction.next,
                                     onChange: (p0) {
@@ -330,6 +336,7 @@ if(controller.createPost.value?.id != null) {
                           children: <Widget>[
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
+                               activeColor: prime,
                               title: Text(
                                 canMonth,
                                 style: Theme.of(context)
@@ -396,7 +403,7 @@ if(controller.createPost.value?.id != null) {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Text(
                                   flatPriceStr,
@@ -416,7 +423,7 @@ if(controller.createPost.value?.id != null) {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Text(
                                   sokhStr,
@@ -436,7 +443,7 @@ if(controller.createPost.value?.id != null) {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                 activeColor: prime,
                                 activeTrackColor: active,
                                 title: Text(
                                   eletronicStr,
@@ -456,7 +463,7 @@ if(controller.createPost.value?.id != null) {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
+                                activeColor: prime,
                                 activeTrackColor: active,
                                 title: Text(
                                   internetStr,
@@ -497,7 +504,7 @@ if(controller.createPost.value?.id != null) {
                                 )),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
-                              activeColor: Colors.white,
+                               activeColor: prime,
                               activeTrackColor: active,
                               title: Text(
                                 bailMoneyStr,

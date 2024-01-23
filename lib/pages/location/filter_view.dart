@@ -176,7 +176,6 @@ class _FilterViewState extends State<FilterView> {
                               values: RangeValues(
                                   startPaymentValue, endPaymentValue),
                               onChanged: (values) {
-                                print(startPaymentValue);
                                 setState(() {
                                   startPaymentValue = values.start;
                                   endPaymentValue = values.end;

@@ -3,7 +3,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:landlord/model/user.dart';
 import 'package:landlord/provider/api_prodiver.dart';
 import 'package:landlord/routes.dart';
-
+import 'dart:developer' as dev;
 import './splash_controller.dart' show SplashController;
 import '../../../shared/index.dart';
 
@@ -17,29 +17,46 @@ class AuthController extends GetxController {
     super.onInit();
   }
 
-  Future<bool> registerEmail(String email, String password) async {
-    return await apiRepository.register(email, password);
+  registerEmail(String email, String password) async {
+    try {
+      final res = await apiRepository.register(email, password);
+      res.fold((l) => null, (r) => null);
+    } catch (e) {
+      dev.log(e.toString());
+    }
   }
 
-  Future<bool> forgotPassword(String email) async {
-    return await apiRepository.forgotPassword(email);
+  forgotPassword(String email) async {
+    try {
+      final res = await apiRepository.forgotPassword(email);
+      res.fold((l) => null, (r) => null);
+    } catch (e) {
+      dev.log(e.toString());
+    }
   }
 
-  Future<bool> forgotPasswordVerify(
-      String password, String code, String email) async {
-    return await apiRepository.verifyForgotPassword(password, code, email);
+  forgotPasswordVerify(String password, String code, String email) async {
+    try {
+      final res =
+          await apiRepository.verifyForgotPassword(password, code, email);
+      res.fold((l) => null, (r) => null);
+    } catch (e) {
+      dev.log(e.toString());
+    }
   }
 
   login(String username, String password) async {
     try {
-      User user = await apiRepository.login(username, password);
+      final res = await apiRepository.login(username, password);
 
-      await _saveTokens(user.accessToken ?? '')
-          .then((value) => Get.toNamed(Routes.main));
-      return user;
+      res.fold(
+          (l) => null,
+          (r) => {
+                _saveTokens(r.accessToken ?? '')
+                    .then((value) => Get.toNamed(Routes.main))
+              });
     } catch (e) {
-    
-      return e.toString().replaceAll('Exception:', '');
+      return e.toString();
     }
   }
 

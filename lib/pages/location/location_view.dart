@@ -11,6 +11,8 @@ import 'package:landlord/model/models.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 import 'package:location/location.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class LocationView extends StatefulWidget {
   const LocationView({super.key});
@@ -51,68 +53,65 @@ class _LocationViewState extends State<LocationView>
   }
 
   GlobalKey<ScaffoldState> locationKey = GlobalKey<ScaffoldState>();
-bool isDrawer = false;
+  bool isDrawer = false;
   LatLng? selectedLocation;
-  City? cityValue;
-  String stateValue = '';
-   String districtValue = '';
-  String flatNumberValue = "";
-  int floorValue = 1;
-  String doorNumberValue = "";
-  String addressValue = '';
+  int? cityValue;
+  TextEditingController stateController = TextEditingController();
+  TextEditingController districtController = TextEditingController();
+  TextEditingController flatNumberController = TextEditingController();
+  TextEditingController floorController = TextEditingController();
+  TextEditingController doorNumberController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+
   final controller = Get.put(MainController());
   @override
   void initState() {
     super.initState();
 
-   
-
-    if(controller.createPost.value?.id != null) {
-      
+    if (controller.createPost.value?.id != null) {
       setState(() {
-        selectedLocation = LatLng(double.parse(controller.createPost.value!.lat!), double.parse(controller.createPost.value!.long!));
-        currentLocation = LocationData.fromMap({"latitude" : double.parse(controller.createPost.value!.lat!), 
-    "longitude" : double.parse(controller.createPost.value!.long!)});
-        cityValue = controller.cities.where((p0) => p0.name == controller.createPost.value!.city!).first;
-        stateValue = controller.createPost.value!.state!;
-        districtValue = controller.createPost.value!.district! ;
-        flatNumberValue = controller.createPost.value!.apartmentNo!;
-        floorValue = controller.createPost.value!.floor!;
-        doorNumberValue = controller.createPost.value!.doorNo!;
-        addressValue = controller.createPost.value!.address!;
+        selectedLocation = LatLng(
+            double.parse(controller.createPost.value!.lat!),
+            double.parse(controller.createPost.value!.long!));
+        currentLocation = LocationData.fromMap({
+          "latitude": double.parse(controller.createPost.value!.lat!),
+          "longitude": double.parse(controller.createPost.value!.long!)
+        });
+        cityValue = controller.cities
+            .indexWhere((p0) => p0.name == controller.createPost.value!.city!);
+        stateController.text = controller.createPost.value!.state!;
+        districtController.text = controller.createPost.value!.district!;
+        flatNumberController.text = controller.createPost.value!.apartmentNo!;
+        floorController.text = controller.createPost.value!.floor!.toString();
+        doorNumberController.text = controller.createPost.value!.doorNo!;
+        addressController.text = controller.createPost.value!.address!;
       });
     } else {
-
-       if (currentLocation == null) {
-       
-      getCurrentLocation();
-    }
+      if (currentLocation == null) {
+        getCurrentLocation();
+      }
     }
     if (controller.cities.isNotEmpty) {
-  
-      if(controller.createPost.value?.id == null) {
-      moveLocation(LatLng(controller.cities[0].location![0],
-          controller.cities[0].location![1]));
-      setState(() {
-        cityValue = controller.cities[0];
-      });
-
+      if (controller.createPost.value?.id == null) {
+        moveLocation(LatLng(controller.cities[0].location![0],
+            controller.cities[0].location![1]));
       } else {
-             moveLocation(LatLng(double.parse(controller.createPost.value!.lat!), double.parse(controller.createPost.value!.long!)));
+        moveLocation(LatLng(double.parse(controller.createPost.value!.lat!),
+            double.parse(controller.createPost.value!.long!)));
       }
-    } 
-    else {
+    } else {
       controller.getCities().then((value) => {
-           if(controller.createPost.value?.id == null) {
-      moveLocation(LatLng(controller.cities[0].location![0],
-          controller.cities[0].location![1])),
-      setState(() {
-        cityValue = controller.cities[0];
-      })
-
-      } else {
-             moveLocation(LatLng(double.parse(controller.createPost.value!.lat!), double.parse(controller.createPost.value!.long!)))
-      }
+            if (controller.createPost.value?.id == null)
+              {
+                moveLocation(LatLng(controller.cities[0].location![0],
+                    controller.cities[0].location![1])),
+              }
+            else
+              {
+                moveLocation(LatLng(
+                    double.parse(controller.createPost.value!.lat!),
+                    double.parse(controller.createPost.value!.long!)))
+              }
           });
     }
   }
@@ -139,41 +138,46 @@ bool isDrawer = false;
     );
   }
 
-  
-  CustomSnackbar snackbar = CustomSnackbar();
+  // CustomSnackbar snackbar = CustomSnackbar();
   Future nextStep() async {
     if (selectedLocation == null) {
-      snackbar.mainSnackbar(
-        context,
-        locationErrorStr,
-        SnackbarType.error,
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.info(message: locationErrorStr),
       );
+
       return;
     }
-    if (addressValue != '' &&
+    if (cityValue == null) {
+      setState(() {
+        cityValue = 0;
+      });
+    }
+
+    if (addressController.text != '' &&
         cityValue != null &&
-        stateValue != '' &&
-        districtValue != '' &&
-        floorValue != -1 &&
-        flatNumberValue != '' &&
-        doorNumberValue != '') {
-      controller.createPost.value!.address = addressValue;
-      controller.createPost.value!.city = cityValue!.name!;
-      controller.createPost.value!.state = stateValue;
-      controller.createPost.value!.district = districtValue.toString();
-      controller.createPost.value!.floor = floorValue;
-      controller.createPost.value!.apartmentNo = flatNumberValue;
-      controller.createPost.value!.doorNo = doorNumberValue.toString();
+        stateController.text != '' &&
+        districtController.text != '' &&
+        floorController.text != "" &&
+        flatNumberController.text != '' &&
+        doorNumberController.text != '') {
+      controller.createPost.value!.address = addressController.text;
+      controller.createPost.value!.city = controller.cities[cityValue!].name;
+      controller.createPost.value!.state = stateController.text;
+      controller.createPost.value!.district = districtController.text;
+      controller.createPost.value!.floor =
+          int.tryParse(floorController.text) ?? 1;
+      controller.createPost.value!.apartmentNo = flatNumberController.text;
+      controller.createPost.value!.doorNo = doorNumberController.text;
       controller.createPost.value!.long =
           selectedLocation!.longitude.toString();
       controller.createPost.value!.lat = selectedLocation!.latitude.toString();
       controller.nextStep();
       Get.toNamed(Routes.general);
     } else {
-      snackbar.mainSnackbar(
-        context,
-        incompleteInfo,
-        SnackbarType.error,
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.info(message: Messages.incomplete),
       );
       return;
     }
@@ -191,6 +195,7 @@ bool isDrawer = false;
       child: Stack(
         children: [
           Scaffold(
+            // resizeToAvoidBottomInset: false,
             key: locationKey,
             appBar: MainAppBar(
               back: true,
@@ -206,15 +211,14 @@ bool isDrawer = false;
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () async{
+                onPressed: () async {
                   await controller.updatePost([]).then((value) {
-                    if(value) {
-                       snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                    if (value) {
+                      //  snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
                     } else {
-                       snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      //  snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
                     }
                   });
-                  
                 },
                 icon: SvgPicture.asset(
                   iconSave,
@@ -274,7 +278,7 @@ bool isDrawer = false;
                       ),
                     )),
                 Positioned(
-                  bottom: MediaQuery.of(context).padding.bottom,
+                  bottom: 0,
                   right: 0,
                   left: 0,
                   child: AnimatedContainer(
@@ -302,7 +306,6 @@ bool isDrawer = false;
                               ),
                               height: _size.height * 0.6,
                               child: SingleChildScrollView(
-                                physics: const NeverScrollableScrollPhysics(),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
@@ -373,8 +376,10 @@ bool isDrawer = false;
                                                           color: labelGray)),
                                               underline: const SizedBox(),
                                               items: controller.cities.map((e) {
+                                                int i = controller.cities
+                                                    .indexOf(e);
                                                 return DropdownMenuItem(
-                                                  value: e,
+                                                  value: i,
                                                   child: Text(
                                                     e.name!,
                                                     style: Theme.of(context)
@@ -391,8 +396,10 @@ bool isDrawer = false;
                                                     isDrag = true;
                                                   });
                                                   moveLocation(LatLng(
-                                                      value.location![0],
-                                                      value.location![1]));
+                                                      controller.cities[value]
+                                                          .location![0],
+                                                      controller.cities[value]
+                                                          .location![1]));
                                                 }
                                               },
                                             ),
@@ -403,14 +410,14 @@ bool isDrawer = false;
                                             child: AdditionCard(
                                                 title: district,
                                                 child: Input(
-                                                  value: districtValue,
+                                                  controller:
+                                                      districtController,
                                                   textInputAction:
                                                       TextInputAction.next,
                                                   onChange: (p0) {
                                                     setState(() {
-                                                       districtValue =
-                                                           p0;
-                                                   
+                                                      districtController.text =
+                                                          p0;
                                                       isDrag = true;
                                                     });
                                                   },
@@ -424,7 +431,7 @@ bool isDrawer = false;
                                             child: AdditionCard(
                                                 title: committee,
                                                 child: Input(
-                                                  value: stateValue ,
+                                                    controller: stateController,
                                                     textInputAction:
                                                         TextInputAction.next,
                                                     textInputType:
@@ -435,7 +442,8 @@ bool isDrawer = false;
                                                     ],
                                                     onChange: (p0) {
                                                       setState(() {
-                                                          stateValue = p0;
+                                                        stateController.text =
+                                                            p0;
                                                         isDrag = true;
                                                       });
                                                     }))),
@@ -444,7 +452,7 @@ bool isDrawer = false;
                                             child: AdditionCard(
                                                 title: floor,
                                                 child: Input(
-                                                  value: floorValue != -1 ? floorValue.toString() : '',
+                                                    controller: floorController,
                                                     textInputType:
                                                         TextInputType.number,
                                                     inputFormatter: [
@@ -454,12 +462,12 @@ bool isDrawer = false;
                                                     textInputAction:
                                                         TextInputAction.next,
                                                     onChange: (p0) {
-                                                      if(p0.isNotEmpty) {
+                                                      if (p0.isNotEmpty) {
                                                         setState(() {
-                                                        isDrag = true;
-                                                        floorValue =
-                                                            int.parse(p0) ;
-                                                      });
+                                                          isDrag = true;
+                                                          floorController.text =
+                                                              p0;
+                                                        });
                                                       }
                                                     }))),
                                       ],
@@ -469,15 +477,16 @@ bool isDrawer = false;
                                       children: <Widget>[
                                         Expanded(
                                             child: AdditionCard(
-                                              
                                                 title: flatNumber,
                                                 child: Input(
-                                                  value: flatNumberValue ,
+                                                    controller:
+                                                        flatNumberController,
                                                     textInputAction:
                                                         TextInputAction.next,
                                                     onChange: (p0) {
                                                       setState(() {
-                                                        flatNumberValue = p0;
+                                                        flatNumberController
+                                                            .text = p0;
                                                         isDrag = true;
                                                       });
                                                     }))),
@@ -486,7 +495,8 @@ bool isDrawer = false;
                                             child: AdditionCard(
                                                 title: doorNumber,
                                                 child: Input(
-                                                  value: doorNumberValue,
+                                                    controller:
+                                                        doorNumberController,
                                                     textInputType:
                                                         TextInputType.number,
                                                     inputFormatter: [
@@ -498,7 +508,8 @@ bool isDrawer = false;
                                                     onChange: (p0) {
                                                       setState(() {
                                                         isDrag = true;
-                                                        doorNumberValue = p0;
+                                                        doorNumberController
+                                                            .text = p0;
                                                       });
                                                     }))),
                                       ],
@@ -513,12 +524,12 @@ bool isDrawer = false;
                                         child: AdditionCard(
                                             title: address,
                                             child: Input(
-                                              value: addressValue,
+                                              controller: addressController,
                                               maxLine: 5,
                                               onChange: (p0) {
                                                 setState(() {
                                                   isDrag = true;
-                                                  addressValue = p0;
+                                                  addressController.text = p0;
                                                 });
                                               },
                                               onSubmitted: (p0) {
@@ -541,7 +552,7 @@ bool isDrawer = false;
                       )),
                 ),
                 Positioned(
-                    bottom: MediaQuery.of(context).padding.bottom,
+                    bottom: 0,
                     left: 0,
                     right: 0,
                     child: GestureDetector(
@@ -553,7 +564,7 @@ bool isDrawer = false;
                         width: double.infinity,
                         alignment: Alignment.centerLeft,
                         padding:
-                            EdgeInsets.only(top: 18, right: 16, bottom: 32),
+                            EdgeInsets.only(top: 10, right: 16, bottom: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[

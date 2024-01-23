@@ -107,6 +107,9 @@ class _MyAdsViewState extends State<MyAdsView> {
             child: Container(
               color: Colors.white,
               child: TabBar(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelPadding: EdgeInsets.zero,
                 indicatorColor: prime,
                 labelStyle: Theme.of(context)
                     .textTheme
@@ -115,16 +118,16 @@ class _MyAdsViewState extends State<MyAdsView> {
                 unselectedLabelStyle: Theme.of(context).textTheme.bodySmall,
                 labelColor: black,
                 unselectedLabelColor: black,
-                tabs: [
-                  Tab(height: 30, text: published),
-                  Tab(height: 30, text: entered),
+                tabs: const [
+                   Tab(height: 30, text: published),
+                   Tab(height: 30, text: entered),
                   Tab(height: 30, text: notEnough),
                 ],
               ),
             ),
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
             PublishedView(
     
