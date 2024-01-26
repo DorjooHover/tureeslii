@@ -139,7 +139,7 @@ class MainController extends GetxController
     res.fold((l) => null, (r) => refreshUser());
   }
 
-  sendVerificationUser(XFile? frontImage, XFile? backImage, String bankName,
+  Future<void> sendVerificationUser(XFile? frontImage, XFile? backImage, String bankName,
       String accountNumber, String accountName) async {
     try {
       final regex = RegExp(r'^[0-9a-zA-Zа-яА-ЯҮүӨө]');
@@ -152,10 +152,11 @@ class MainController extends GetxController
           final front = await apiRepository.uploadFile(frontImage);
           front.fold((l) => check = false, (r) => frontRes = r);
         }
-        if (check) {
+        if (check && backImage != null) {
           final back = await apiRepository.uploadFile(backImage);
           back.fold((l) => check = false, (r) => backRes = r);
         }
+        print(verification.value?.toJson());
         if (check) {
           final res = await apiRepository.verificationUser(
               frontRes == null ? verification.value!.front! : frontRes!,
@@ -163,11 +164,12 @@ class MainController extends GetxController
               accountNumber,
               bankName,
               accountName,
+              verification.value?.status,
               verification.value != null);
           res.fold((l) => print(l), (r) => result = r);
         }
       }
-      return result;
+      // return result;
     } catch (e) {
       dev.log(e.toString());
     }
