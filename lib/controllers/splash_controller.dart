@@ -61,8 +61,7 @@ class SplashController extends GetxController {
     worker = ever<String?>(
       token,
       (tkn) {
-
-        if (tkn != null) {
+        if (tkn != null && tkn != '') {
           Get.toNamed(Routes.main);
         } else {
           Get.toNamed(Routes.auth);

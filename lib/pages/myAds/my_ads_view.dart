@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/model/models.dart';
 import 'package:landlord/pages/pages.dart';
+import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 
 class MyAdsView extends StatefulWidget {
@@ -57,9 +59,14 @@ class _MyAdsViewState extends State<MyAdsView> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Image.asset(
-                      imageLogo,
-                      height: 22,
+                    GestureDetector(
+                      onTap: () {
+                        Get.toNamed(Routes.main);
+                      },
+                      child: Image.asset(
+                        imageLogo,
+                        height: 22,
+                      ),
                     ),
                     Builder(
                       builder: (context) => IconButton(
@@ -119,8 +126,8 @@ class _MyAdsViewState extends State<MyAdsView> {
                 labelColor: black,
                 unselectedLabelColor: black,
                 tabs: const [
-                   Tab(height: 30, text: published),
-                   Tab(height: 30, text: entered),
+                  Tab(height: 30, text: published),
+                  Tab(height: 30, text: entered),
                   Tab(height: 30, text: notEnough),
                 ],
               ),
@@ -129,12 +136,8 @@ class _MyAdsViewState extends State<MyAdsView> {
         ),
         body: const TabBarView(
           children: [
-            PublishedView(
-    
-            ),
-            EnteredView(
-           
-            ),
+            PublishedView(),
+            EnteredView(),
             NotEnoughView(),
           ],
         ),
