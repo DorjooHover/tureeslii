@@ -21,7 +21,7 @@ class DatePickerThemeWidget extends StatelessWidget {
                       fontWeight: FontWeight.normal,
                       fontSize: 12,
                       fontFamily: 'Quicksand'),
-                  primary: Colors.amber, // color of button's letters
+                  // primary: Colors.amber, // color of button's letters
                   backgroundColor: Colors.black54, // Background color
                   shape: RoundedRectangleBorder(
                       side: const BorderSide(
