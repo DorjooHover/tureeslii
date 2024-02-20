@@ -392,7 +392,10 @@ class ApiRepository extends GetxService {
       String bankAccount,
       String bankName,
       String bankAccName,
-      bool update) async {
+      String? status,
+      bool update, 
+
+      ) async {
     try {
       final data = {
         "front": frontCard,
@@ -400,15 +403,19 @@ class ApiRepository extends GetxService {
         "bankAccNo": bankAccount,
         "bankName": bankName,
         "bankAccName": bankAccName,
+        "status": status ?? "NEW"
       };
-
+      print(update);
       final res;
       if (update) {
         res = await dio.put('/user/verifications', data: data);
       } else {
         res = await dio.post('/user/verificationRequest', data: data);
       }
-     
+
+      print(res);
+      print(res.data);
+      print(res.statusCode);
       if (res.statusCode == 201) {
         return right(res.data['success']);
       }

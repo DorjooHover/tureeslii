@@ -119,24 +119,24 @@ class _VerificationViewState extends State<VerificationView> {
       return;
     }
 
-    bool res = await controller.sendVerificationUser(
+    await controller.sendVerificationUser(
         frontImage,
         backImage,
         selectedBank!,
         accountNumberController.text,
         accountNameController.text);
-    if (res) {
-      showTopSnackBar(
-        Overlay.of(context),
-        CustomSnackBar.success(message: Messages.success),
-      );
-    } else {
-      showTopSnackBar(
-        Overlay.of(context),
-        CustomSnackBar.info(message: tryAgain),
-      );
+    // if (res) {
+    //   showTopSnackBar(
+    //     Overlay.of(context),
+    //     CustomSnackBar.success(message: Messages.success),
+    //   );
+    // } else {
+    //   showTopSnackBar(
+    //     Overlay.of(context),
+    //     CustomSnackBar.info(message: tryAgain),
+    //   );
 
-    }
+    // }
   }
 
   @override
