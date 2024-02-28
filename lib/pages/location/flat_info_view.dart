@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class FlatInfoView extends StatefulWidget {
   const FlatInfoView({super.key});
@@ -19,7 +21,6 @@ class _FlatInfoViewState extends State<FlatInfoView> {
 
   int selectedHeating = 0, selectedWaterSupply = 0, selectedToilet = 0;
   double flatArea = 0.0;
-  // CustomSnackbar snackbar = CustomSnackbar();
   @override
   void initState() {
     super.initState();
@@ -34,8 +35,12 @@ class _FlatInfoViewState extends State<FlatInfoView> {
   }
   nextStep() {
     if (flatArea <= 0) {
-      // snackbar.mainSnackbar(
-      //     context, 'Талбайгаа оруулна уу', SnackbarType.error);
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.info(message: 'Талбайгаа оруулна уу'),
+      );
+
+
       return;
     }
     controller.createPost.value!.plot = flatArea;
@@ -71,10 +76,16 @@ class _FlatInfoViewState extends State<FlatInfoView> {
               child: IconButton(
                 onPressed: () async {
                   await controller.updatePost([]).then((value) {
-                    if(value) {
-                      //  snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                    if (value) {
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        CustomSnackBar.success(message: successSaved),
+                      );
                     } else {
-                      //  snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        CustomSnackBar.info(message: tryAgain),
+                      );
                     }
                   });
                 },

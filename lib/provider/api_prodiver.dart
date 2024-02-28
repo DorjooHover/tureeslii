@@ -15,6 +15,7 @@ class ApiRepository extends GetxService {
   static Dio createDio() {
     Dio dio = Dio(BaseOptions(
       baseUrl: 'https://tureeslii.mn/api',
+      validateStatus: (status) => status != null && status < 500,
     ));
     dio.interceptors.addAll(
       [
@@ -46,7 +47,6 @@ class ApiRepository extends GetxService {
       }
       return left(errorOccurred);
     } catch (e) {
-      
       return left(errorOccurred);
     }
   }
@@ -264,10 +264,11 @@ class ApiRepository extends GetxService {
     try {
       final data = {"password": password, "isCreator": false, "email": email};
       final res = await dio.post('/auth/register', data: data);
-      if (res.statusCode == 201) {
+
+      if (res.data['success']) {
         return right(true);
       }
-      return left(tryAgain);
+      return left(res.data['message']);
     } catch (e) {
       dev.log(e.toString());
       return left(errorOccurred);
@@ -388,15 +389,14 @@ class ApiRepository extends GetxService {
 
   // verification
   EitherSuccess<bool> verificationUser(
-      String frontCard,
-      String backCard,
-      String bankAccount,
-      String bankName,
-      String bankAccName,
-      String? status,
-      bool update, 
-
-      ) async {
+    String frontCard,
+    String backCard,
+    String bankAccount,
+    String bankName,
+    String bankAccName,
+    String? status,
+    bool update,
+  ) async {
     try {
       final data = {
         "front": frontCard,

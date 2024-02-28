@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class RoomInfoView extends StatefulWidget {
   const RoomInfoView({super.key});
@@ -26,10 +28,14 @@ class _RoomInfoViewState extends State<RoomInfoView> {
   int bedRoomValue = 0;
   int bedOneValue = 0;
   int bedTwoValue = 0;
-  // CustomSnackbar snackbar = CustomSnackbar();
+
   Future nextStep() async {
     if (titleValue == '') {
-      // snackbar.mainSnackbar(context, incompleteTitle, SnackbarType.error);
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.info(message: incompleteTitle),
+      );
+
       return;
     }
     controller.createPost.value!.singleBed = bedOneValue;
@@ -56,18 +62,29 @@ class _RoomInfoViewState extends State<RoomInfoView> {
     }
 
     setState(() {
-      bedOneValue =  controller.createPost.value!.singleBed == null ? 0 : controller.createPost.value!.singleBed!;
-    bedTwoValue =  controller.createPost.value!.singleBed == null ? 0 : controller.createPost.value!.doubleBed!;
-    bedRoomValue =  controller.createPost.value!.singleBed == null ? 0 : controller.createPost.value!.bedroom!;
-    bathRoomValue =  controller.createPost.value!.singleBed == null ? 0 : controller.createPost.value!.bathroom!;
-    livingRoomValue =  controller.createPost.value!.singleBed == null ? 0 : controller.createPost.value!.livingRoom!;
-    kitchenValue =  controller.createPost.value!.singleBed == null ? 0 : controller.createPost.value!.kitchen!;
-    selectedType = controller.createPost.value!.category!['id'];
-    controller.createPost.value!.category = controller.createPost.value!.category['id'];
-    titleValue = controller.createPost.value!.title!;
+      bedOneValue = controller.createPost.value!.singleBed == null
+          ? 0
+          : controller.createPost.value!.singleBed!;
+      bedTwoValue = controller.createPost.value!.singleBed == null
+          ? 0
+          : controller.createPost.value!.doubleBed!;
+      bedRoomValue = controller.createPost.value!.singleBed == null
+          ? 0
+          : controller.createPost.value!.bedroom!;
+      bathRoomValue = controller.createPost.value!.singleBed == null
+          ? 0
+          : controller.createPost.value!.bathroom!;
+      livingRoomValue = controller.createPost.value!.singleBed == null
+          ? 0
+          : controller.createPost.value!.livingRoom!;
+      kitchenValue = controller.createPost.value!.singleBed == null
+          ? 0
+          : controller.createPost.value!.kitchen!;
+      selectedType = controller.createPost.value!.category!['id'];
+      controller.createPost.value!.category =
+          controller.createPost.value!.category['id'];
+      titleValue = controller.createPost.value!.title!;
     });
-   
-
   }
 
   @override
@@ -94,10 +111,16 @@ class _RoomInfoViewState extends State<RoomInfoView> {
               child: IconButton(
                 onPressed: () async {
                   await controller.updatePost([]).then((value) {
-                    if(value) {
-                      //  snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                    if (value) {
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        CustomSnackBar.success(message: successSaved),
+                      );
                     } else {
-                      //  snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        CustomSnackBar.info(message: tryAgain),
+                      );
                     }
                   });
                 },
@@ -187,17 +210,16 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                   child: AdditionCard(
                                       title: kitchenRoom,
                                       child: Input(
-                                         value: kitchenValue.toString(),
+                                        value: kitchenValue.toString(),
                                         textInputType: TextInputType.number,
                                         textInputAction: TextInputAction.next,
                                         inputFormatter: [
                                           FilteringTextInputFormatter.digitsOnly
                                         ],
                                         onChange: (p0) {
-                                          
-                                            setState(() {
-                                            kitchenValue = int.tryParse(p0) ?? 0;
-                                            
+                                          setState(() {
+                                            kitchenValue =
+                                                int.tryParse(p0) ?? 0;
                                           });
                                         },
                                       )),
@@ -215,7 +237,8 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                         ],
                                         onChange: (p0) {
                                           setState(() {
-                                            bathRoomValue = int.tryParse(p0) ?? 0;
+                                            bathRoomValue =
+                                                int.tryParse(p0) ?? 0;
                                           });
                                         },
                                       )),
@@ -238,7 +261,8 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                         ],
                                         onChange: (p0) {
                                           setState(() {
-                                            livingRoomValue = int.tryParse(p0) ?? 0;
+                                            livingRoomValue =
+                                                int.tryParse(p0) ?? 0;
                                           });
                                         },
                                       )),
@@ -256,7 +280,8 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                         ],
                                         onChange: (p0) {
                                           setState(() {
-                                            bedRoomValue = int.tryParse(p0) ?? 0;
+                                            bedRoomValue =
+                                                int.tryParse(p0) ?? 0;
                                           });
                                         },
                                       )),
@@ -282,7 +307,8 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                           ],
                                           onChange: (p0) {
                                             setState(() {
-                                              bedOneValue = int.tryParse(p0) ?? 0;
+                                              bedOneValue =
+                                                  int.tryParse(p0) ?? 0;
                                             });
                                           },
                                         )),
@@ -300,7 +326,8 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                           ],
                                           onChange: (p0) {
                                             setState(() {
-                                              bedTwoValue = int.tryParse(p0) ?? 0;
+                                              bedTwoValue =
+                                                  int.tryParse(p0) ?? 0;
                                             });
                                           },
                                           onSubmitted: ((p0) {

@@ -138,7 +138,7 @@ class _LocationViewState extends State<LocationView>
     );
   }
 
-  // CustomSnackbar snackbar = CustomSnackbar();
+
   Future nextStep() async {
     if (selectedLocation == null) {
       showTopSnackBar(
@@ -213,10 +213,16 @@ class _LocationViewState extends State<LocationView>
               child: IconButton(
                 onPressed: () async {
                   await controller.updatePost([]).then((value) {
-                    if (value) {
-                      //  snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                   if (value) {
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        CustomSnackBar.success(message: successSaved),
+                      );
                     } else {
-                      //  snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        CustomSnackBar.info(message: tryAgain),
+                      );
                     }
                   });
                 },

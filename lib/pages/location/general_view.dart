@@ -36,7 +36,6 @@ class _GeneralViewState extends State<GeneralView> {
       selectedPaymentCondition = paymentConditionValues[0],
       selectedBailCondition = bailConditionValues[0];
   int selectedCancelCondition = 0;
-  // CustomSnackbar snackbar = CustomSnackbar();
 
   void initState() {
     super.initState();
@@ -74,12 +73,19 @@ class _GeneralViewState extends State<GeneralView> {
 
   Future nextStep() async {
     if (!isDay && !isMonth) {
-      // snackbar.mainSnackbar(
-      //     context, chooseAnyOptionInRentType, SnackbarType.error);
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.info(message: chooseAnyOptionInRentType),
+      );
+
       return;
     }
     if (isDay && minimumRentDayValue > 30) {
-      // snackbar.mainSnackbar(context, inDayCanNot30Day, SnackbarType.error);
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.info(message: inDayCanNot30Day),
+      );
+
       return;
     }
 
@@ -336,7 +342,7 @@ class _GeneralViewState extends State<GeneralView> {
                           children: <Widget>[
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
-                               activeColor: prime,
+                              activeColor: prime,
                               title: Text(
                                 canMonth,
                                 style: Theme.of(context)
@@ -403,7 +409,7 @@ class _GeneralViewState extends State<GeneralView> {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                 activeColor: prime,
+                                activeColor: prime,
                                 activeTrackColor: active,
                                 title: Text(
                                   flatPriceStr,
@@ -423,7 +429,7 @@ class _GeneralViewState extends State<GeneralView> {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                 activeColor: prime,
+                                activeColor: prime,
                                 activeTrackColor: active,
                                 title: Text(
                                   sokhStr,
@@ -443,7 +449,7 @@ class _GeneralViewState extends State<GeneralView> {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                 activeColor: prime,
+                                activeColor: prime,
                                 activeTrackColor: active,
                                 title: Text(
                                   eletronicStr,
@@ -504,7 +510,7 @@ class _GeneralViewState extends State<GeneralView> {
                                 )),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
-                               activeColor: prime,
+                              activeColor: prime,
                               activeTrackColor: active,
                               title: Text(
                                 bailMoneyStr,

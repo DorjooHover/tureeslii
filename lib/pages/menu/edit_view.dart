@@ -3,7 +3,10 @@ import 'package:get/get.dart';
 import 'package:landlord/controllers/auth_controller.dart';
 import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/model/models.dart';
+import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class SignInView extends StatefulWidget {
   const SignInView({super.key, this.edit = true});
@@ -116,19 +119,21 @@ class _SignInViewState extends State<SignInView> {
                                 },
                                 onSubmitted: (p0) {
                                   controller.registerEmail(
-                                      emailValue, passwordValue);
+                                      emailValue, passwordValue, context);
                                 },
                               )),
                         ],
                       ),
                 space32,
-                MainButton(
-                  onPressed: () {
-                    controller.registerEmail(emailValue, passwordValue);
-                  },
-                  text: widget.edit ? save : register,
-                  width: double.infinity,
-                )
+                Obx(() => MainButton(
+                      loading: controller.fetchLoading.value,
+                      onPressed: () {
+                        controller.registerEmail(
+                            emailValue, passwordValue, context);
+                      },
+                      text: widget.edit ? save : register,
+                      width: double.infinity,
+                    ))
               ],
             ),
           ),

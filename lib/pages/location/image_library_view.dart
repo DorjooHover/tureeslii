@@ -8,6 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class ImageLibraryView extends StatefulWidget {
   const ImageLibraryView({super.key});
@@ -88,7 +90,7 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
           );
         });
   }
-// CustomSnackbar snackbar = CustomSnackbar();
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -113,10 +115,16 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
               child: IconButton(
                 onPressed: () async  {
                   await controller.updatePost(images.isNotEmpty ? images : []).then((value) {
-                    if(value) {
-                      //  snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                    if (value) {
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        CustomSnackBar.success(message: successSaved),
+                      );
                     } else {
-                      //  snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        CustomSnackBar.info(message: tryAgain),
+                      );
                     }
                   });
                 },

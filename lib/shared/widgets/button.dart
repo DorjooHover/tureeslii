@@ -69,8 +69,15 @@ class MainButton extends StatelessWidget {
           child: IconTheme(
             data: Theme.of(context).iconTheme.copyWith(color: contentColor),
             child: loading
-                ? const CircularProgressIndicator(
-                    color: Colors.white,
+                ? Container(
+                    alignment: Alignment.center,
+                    width: 20,
+                    height: 20,
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    ),
                   )
                 : text != null
                     ? Text(

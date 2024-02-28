@@ -111,8 +111,8 @@ class MainController extends GetxController
     try {
       final res = await apiRepository.getUser();
       res.fold(
-          (l) => {
-                storage.remove(StorageKeys.token.name),
+          (l) async => {
+                await storage.remove(StorageKeys.token.name),
                 update(),
                 Get.toNamed(Routes.auth)
               },
@@ -329,7 +329,10 @@ class MainController extends GetxController
 
   Future<void> setupApp() async {
     isLoading.value = true;
-    refreshUser();
+    final token = await storage.read(StorageKeys.token.name);
+    if (token != null) {
+      refreshUser();
+    }
   }
 
   // changeOrderStatus(String id, String status) {

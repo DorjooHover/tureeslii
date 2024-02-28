@@ -7,6 +7,8 @@ import 'package:landlord/model/models.dart';
 import 'package:landlord/pages/auth/forgot_password_view.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -22,16 +24,9 @@ class _LoginViewState extends State<LoginView> {
   String username = "";
   String passwordValue = "";
   bool showPassword = true;
-  // CustomSnackbar snackbar = CustomSnackbar();
-  loginFunc() async {
-    final user = await controller.login(username, passwordValue);
 
-    if (user is User) {
-      Get.toNamed(Routes.main);
-      mainController.refreshUser();
-    } else {
-      // snackbar.mainSnackbar(context, user.toString(), SnackbarType.error);
-    }
+  loginFunc() async {
+    controller.login(username, passwordValue, context);
   }
 
   @override
@@ -44,7 +39,7 @@ class _LoginViewState extends State<LoginView> {
           padding: EdgeInsets.only(
               left: origin,
               right: origin,
-              bottom: large+MediaQuery.of(context).padding.top,
+              bottom: large + MediaQuery.of(context).padding.top,
               top: large + MediaQuery.of(context).padding.top),
           child: Form(
             key: loginKey,
@@ -115,12 +110,15 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
                 space24,
-                MainButton(
-                  onPressed: () {
-                    loginFunc();
-                  },
-                  text: login,
-                  width: double.infinity,
+                Obx(
+                  () => MainButton(
+                    loading: controller.fetchLoading.value,
+                    onPressed: () {
+                      loginFunc();
+                    },
+                    text: login,
+                    width: double.infinity,
+                  ),
                 ),
                 space24,
                 const MainSpacer(text: or),

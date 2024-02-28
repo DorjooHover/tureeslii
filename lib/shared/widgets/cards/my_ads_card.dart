@@ -5,6 +5,8 @@ import 'package:landlord/controllers/controllers.dart';
 import 'package:landlord/model/models.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class MyAdsCard extends StatelessWidget {
   const MyAdsCard({
@@ -18,7 +20,7 @@ class MyAdsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MainController());
-    // CustomSnackbar snackbar = CustomSnackbar();
+
     String status = '';
 
     Color statusColor = Colors.transparent;
@@ -212,14 +214,19 @@ class MyAdsCard extends StatelessWidget {
                                     .deletePost(post.id.toString());
                                 Navigator.pop(context);
                                 if (res.success!) {
-                                  // snackbar.mainSnackbar(context, res.message!,
-                                  //     SnackbarType.success);
+                                  showTopSnackBar(
+                                    Overlay.of(context),
+                                    CustomSnackBar.success(
+                                        message: res.message!),
+                                  );
                                   controller.ownPost.value = controller.ownPost
                                       .where((e) => e.id != post.id)
                                       .toList();
                                 } else {
-                                  // snackbar.mainSnackbar(context, res.message!,
-                                      // SnackbarType.warning);
+                                  showTopSnackBar(
+                                    Overlay.of(context),
+                                    CustomSnackBar.info(message: res.message!),
+                                  );
                                 }
                               },
                               color: red,
@@ -310,29 +317,25 @@ class NotEnoughCard extends StatelessWidget {
 }
 
 class RentRequestCard extends StatelessWidget {
-  const RentRequestCard({
-    super.key,
-    required this.data,
-    this.shadow = true,
-    this.borderRadius
-  });
+  const RentRequestCard(
+      {super.key, required this.data, this.shadow = true, this.borderRadius});
   final Post data;
   final bool shadow;
   final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
- 
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(18),
       decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            if (shadow)
-              BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 15)
-          ],
-          borderRadius:borderRadius ?? BorderRadius.circular( origin),),
+        color: Colors.white,
+        boxShadow: [
+          if (shadow)
+            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 15)
+        ],
+        borderRadius: borderRadius ?? BorderRadius.circular(origin),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -560,11 +563,7 @@ class RequestCard extends StatelessWidget {
 }
 
 class AgreedRequestCard extends StatelessWidget {
-  const AgreedRequestCard({
-    super.key,
-    required this.data,
-    this.child
-  });
+  const AgreedRequestCard({super.key, required this.data, this.child});
   final RentRequest data;
   final Widget? child;
   @override
@@ -624,30 +623,30 @@ class AgreedRequestCard extends StatelessWidget {
             startDate: DateTime(2023, 11, 1),
             endDate: DateTime(2023, 11, 24),
           ),
-          
           child ?? space36,
-          if(child == null) SizedBox(
-            width: MediaQuery.of(context).size.width - large,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  remainder,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(color: black),
-                ),
-                Text(
-                  '${currencyFormat(5000000, false)}₮',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: red, fontWeight: FontWeight.bold),
-                )
-              ],
+          if (child == null)
+            SizedBox(
+              width: MediaQuery.of(context).size.width - large,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    remainder,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(color: black),
+                  ),
+                  Text(
+                    '${currencyFormat(5000000, false)}₮',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: red, fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -682,66 +681,82 @@ class HistoryCard extends StatelessWidget {
               errorWidget: (context, url, error) =>
                   const Icon(Icons.error), // Widget to display on error
             )),
-            space16,
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-             Container(
+        space16,
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
               width: MediaQuery.of(context).size.width - 94 - 32,
-              child: Text(data.post?.title ?? '', style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: black, fontWeight: FontWeight.bold),  overflow: TextOverflow.ellipsis,),
-             ),
-                space8,
-                Row(
-                  children: <Widget>[
-                    ClipRRect(
-            borderRadius: BorderRadius.circular(100),
-            child: CachedNetworkImage(
-              width: 30,
-              height: 30,
-              alignment: Alignment.center,
-              imageUrl:
-                  '${data.user?.profilePic != '' ? '$fileUrl${data.user!.profilePic!}' : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'}',
-              fit: BoxFit.cover,
-              placeholder: (context, url) => const Padding(
-                padding: EdgeInsets.all(4),
-                child: Center(
-                  child: SizedBox(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
+              child: Text(
+                data.post?.title ?? '',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(color: black, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
               ),
-              errorWidget: (context, url, error) =>
-                  const Icon(Icons.error), // Widget to display on error
-            )),
-            space6,
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            space8,
+            Row(
               children: <Widget>[
-                Text('${data.user!.firstname!.substring(0,1)}.${data.user!.lastname}', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: black),),
-                Row(
+                ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: CachedNetworkImage(
+                      width: 30,
+                      height: 30,
+                      alignment: Alignment.center,
+                      imageUrl:
+                          '${data.user?.profilePic != '' ? '$fileUrl${data.user!.profilePic!}' : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'}',
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Center(
+                          child: SizedBox(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error), // Widget to display on error
+                    )),
+                space6,
+                Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Icon(
-                      Icons.phone,
-                      size: 16,
-                      color: green,
-                    ),
-                    space4,
                     Text(
-                      data.user?.mobile ?? '',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: black, fontWeight: FontWeight.w400),
+                      '${data.user!.firstname!.substring(0, 1)}.${data.user!.lastname}',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
+                          .copyWith(color: black),
                     ),
-                  ],
-                ),
-              ],
-            )
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.phone,
+                          size: 16,
+                          color: green,
+                        ),
+                        space4,
+                        Text(
+                          data.user?.mobile ?? '',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(
+                                  color: black, fontWeight: FontWeight.w400),
+                        ),
+                      ],
+                    ),
                   ],
                 )
               ],
             )
+          ],
+        )
       ],
     );
   }

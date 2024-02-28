@@ -33,3 +33,4 @@ typedef EitherHandler<T> = Future<Either<String, ErrorHandler>>;
 
 typedef EitherMap<T> = Future<Either<String, Map<String, List>>>;
 typedef EitherSuccess<T> = Future<Either<String, bool>>;
+typedef EitherMessage<T> = Future<Either<String, String>>;

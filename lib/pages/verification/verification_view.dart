@@ -119,12 +119,8 @@ class _VerificationViewState extends State<VerificationView> {
       return;
     }
 
-    await controller.sendVerificationUser(
-        frontImage,
-        backImage,
-        selectedBank!,
-        accountNumberController.text,
-        accountNameController.text);
+    await controller.sendVerificationUser(frontImage, backImage, selectedBank!,
+        accountNumberController.text, accountNameController.text);
     // if (res) {
     //   showTopSnackBar(
     //     Overlay.of(context),

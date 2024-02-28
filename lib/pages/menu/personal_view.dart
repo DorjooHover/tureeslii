@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/model/models.dart';
 import 'package:landlord/shared/index.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class PersonalView extends StatefulWidget {
   const PersonalView({super.key});
@@ -16,7 +18,6 @@ class _PersonalViewState extends State<PersonalView> {
   bool info = true;
   bool product = true;
   final controller = Get.put(MainController());
-  // CustomSnackbar snackbar = CustomSnackbar();
   String lastNameValue = "",
       firstNameValue = "",
       phoneValue = "",
@@ -103,8 +104,11 @@ class _PersonalViewState extends State<PersonalView> {
                             if (controller.user!.emailVerified != null &&
                                 !controller.user!.emailVerified!) {
                               controller.sendEmailVerification();
-                              // snackbar.mainSnackbar(context,
-                              //     emailVerificationString, SnackbarType.warning);
+                              showTopSnackBar(
+                                Overlay.of(context),
+                                CustomSnackBar.info(
+                                    message: emailVerificationString),
+                              );
                             }
                           },
                           child: Padding(
@@ -290,8 +294,17 @@ class _PersonalViewState extends State<PersonalView> {
                         companyName: companyNameValue,
                         orderNotification: info,
                         productAdsNotification: product));
-                    // snackbar.mainSnackbar(context, res ? 'Ажмилттай' : 'Алдаа',
-                    //     res ? SnackbarType.success : SnackbarType.error);
+                    if (res) {
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        CustomSnackBar.success(message: Messages.success),
+                      );
+                    } else {
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        CustomSnackBar.info(message: Messages.incomplete),
+                      );
+                    }
                   },
                   text: request,
                   width: double.infinity,

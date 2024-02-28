@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class ConditionView extends StatefulWidget {
   const ConditionView({super.key});
@@ -54,7 +56,7 @@ invite=     controller.createPost.value!.guestAllowed!;
     controller.nextStep();
     Get.toNamed(Routes.flatFeature);
   }
-  // CustomSnackbar snackbar = CustomSnackbar();
+
 
   @override
   Widget build(BuildContext context) {
@@ -79,10 +81,16 @@ invite=     controller.createPost.value!.guestAllowed!;
               statusBarColor: bgGray,
               child: IconButton(
                 onPressed: () async {await controller.updatePost([]).then((value) {
-                    if(value) {
-                      //  snackbar.mainSnackbar(context, successSaved, SnackbarType.success);
+                    if (value) {
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        CustomSnackBar.success(message: Messages.success),
+                      );
                     } else {
-                      //  snackbar.mainSnackbar(context, errorOccurred, SnackbarType.warning);
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        CustomSnackBar.info(message: tryAgain),
+                      );
                     }
                   });},
                 icon: SvgPicture.asset(
