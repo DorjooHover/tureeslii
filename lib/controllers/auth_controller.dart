@@ -19,6 +19,7 @@ class AuthController extends GetxController {
 
   registerEmail(String email, String password) async {
     try {
+   
       final res = await apiRepository.register(email, password);
       res.fold((l) => null, (r) => null);
     } catch (e) {

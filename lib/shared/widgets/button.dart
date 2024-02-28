@@ -115,8 +115,8 @@ class MainIconButton extends StatelessWidget {
     return Row(
       mainAxisAlignment: mainAxisAlignment,
       children: [
-        TextButton(
-            onPressed: onPressed,
+        GestureDetector(
+            onTap: onPressed,
             child: Row(
               children: [
                 back

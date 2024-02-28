@@ -38,17 +38,14 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgGray,
-      appBar: MainAppBar(
-        bgColor: bgGray,
-        statusBarColor: bgGray,
-        back: false,
-        menu: false,
-        logo: false,
-      ),
+      // appBar: const AppBar(),
       body: SingleChildScrollView(
         child: Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: origin, vertical: large),
+          padding: EdgeInsets.only(
+              left: origin,
+              right: origin,
+              bottom: large+MediaQuery.of(context).padding.top,
+              top: large + MediaQuery.of(context).padding.top),
           child: Form(
             key: loginKey,
             child: Column(
