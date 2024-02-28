@@ -61,10 +61,11 @@ class MainController extends GetxController
   Future<void> getVerification() async {
     try {
       final res = await apiRepository.getUserVerification();
-      res.fold((l) => null, (r) => {
-        verification.value = r,
-        
-      });
+      res.fold(
+          (l) => null,
+          (r) => {
+                verification.value = r,
+              });
     } catch (e) {
       dev.log(e.toString());
     }
@@ -103,8 +104,41 @@ class MainController extends GetxController
 
   // user
   refreshUser() async {
-    user = await apiRepository.getUser();
-    change(user, status: RxStatus.success());
+    final token = storage.read(StorageKeys.token.name);
+    if (token == null) {
+      return;
+    }
+    try {
+      final res = await apiRepository.getUser();
+      res.fold(
+          (l) => {
+                storage.remove(StorageKeys.token.name),
+                update(),
+                Get.toNamed(Routes.auth)
+              },
+          (r) => {
+                user = r,
+                change(user, status: RxStatus.success()),
+                if (user != null)
+                  {
+                    getBanks(),
+                    getCities(),
+                    getCancellation(),
+                    getCategories(),
+                    getOwnPost(null, [])
+
+                    // getSavedPost();
+                  }
+              });
+
+      isLoading.value = false;
+    } catch (e) {
+      isLoading.value = false;
+
+      storage.remove(StorageKeys.token.name);
+      update();
+      Get.toNamed(Routes.auth);
+    }
   }
 
   updateUser(User user) async {
@@ -139,8 +173,8 @@ class MainController extends GetxController
     res.fold((l) => null, (r) => refreshUser());
   }
 
-  Future<void> sendVerificationUser(XFile? frontImage, XFile? backImage, String bankName,
-      String accountNumber, String accountName) async {
+  Future<void> sendVerificationUser(XFile? frontImage, XFile? backImage,
+      String bankName, String accountNumber, String accountName) async {
     try {
       final regex = RegExp(r'^[0-9a-zA-Zа-яА-ЯҮүӨө]');
       bool r = regex.hasMatch(accountName);
@@ -295,41 +329,7 @@ class MainController extends GetxController
 
   Future<void> setupApp() async {
     isLoading.value = true;
-    final token = storage.read(StorageKeys.token.name);
-    if (token == null) {
-      return;
-    }
-    try {
-      final res = await apiRepository.getUser();
-      res.fold(
-          (l) => {
-                storage.remove(StorageKeys.token.name),
-                update(),
-                Get.toNamed(Routes.auth)
-              },
-          (r) => {
-                user = r,
-                change(user, status: RxStatus.success()),
-                if (user != null)
-                  {
-                    getBanks(),
-                    getCities(),
-                    getCancellation(),
-                    getCategories(),
-                    getOwnPost(null, [])
-
-                    // getSavedPost();
-                  }
-              });
-
-      isLoading.value = false;
-    } catch (e) {
-      isLoading.value = false;
-
-      storage.remove(StorageKeys.token.name);
-      update();
-      Get.toNamed(Routes.auth);
-    }
+    refreshUser();
   }
 
   // changeOrderStatus(String id, String status) {
@@ -358,6 +358,4 @@ class MainController extends GetxController
   void onClose() {
     super.onClose();
   }
-
-
 }

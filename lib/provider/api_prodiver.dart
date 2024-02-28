@@ -46,6 +46,7 @@ class ApiRepository extends GetxService {
       }
       return left(errorOccurred);
     } catch (e) {
+      
       return left(errorOccurred);
     }
   }

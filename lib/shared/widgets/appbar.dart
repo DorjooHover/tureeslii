@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:landlord/routes.dart';
 import 'package:landlord/shared/constants/assets.dart';
 import 'package:landlord/shared/constants/colors.dart';
 import 'package:landlord/shared/constants/spacing.dart';
@@ -95,9 +97,15 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                       },
                     ),
                   logo
-                      ? Image.asset(
-                          imageLogo,
-                          height: 22,
+                      ? GestureDetector(
+                          onTap: () {
+                            print('asdf');
+                            Get.toNamed(Routes.main);
+                          },
+                          child: Image.asset(
+                            imageLogo,
+                            height: 22,
+                          ),
                         )
                       : center ?? const SizedBox(),
                   child ?? const SizedBox(),
@@ -159,7 +167,7 @@ class MyAdsAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.isDrawer = false,
       this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
       this.bottom,
-      this.title ,
+      this.title,
       this.bgColor = Colors.white});
   final Color statusBarColor;
   final Color bgColor;
@@ -236,9 +244,15 @@ class MyAdsAppBar extends StatelessWidget implements PreferredSizeWidget {
                           },
                         ),
                       logo
-                          ? Image.asset(
-                              imageLogo,
-                              height: 22,
+                          ? GestureDetector(
+                              onTap: () {
+                                print('asdf');
+                                Get.toNamed(Routes.main);
+                              },
+                              child: Image.asset(
+                                imageLogo,
+                                height: 22,
+                              ),
                             )
                           : center ?? const SizedBox(),
                       child ?? const SizedBox(),

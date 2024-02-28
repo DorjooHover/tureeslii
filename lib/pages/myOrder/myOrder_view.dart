@@ -13,9 +13,8 @@ class MyOrdersView extends StatefulWidget {
   State<MyOrdersView> createState() => _MyOrdersViewState();
 }
 
-
 class _MyOrdersViewState extends State<MyOrdersView> {
-bool isDrawer = false;
+  bool isDrawer = false;
   String selectedBank = bankValues[0];
   final GlobalKey<ScaffoldState> myOrdersKey = GlobalKey<ScaffoldState>();
   final controller = Get.put(MainController());
@@ -74,20 +73,17 @@ bool isDrawer = false;
                 ),
               ),
               Container(
-                
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
                     horizontal: origin, vertical: 25),
                 color: Colors.white,
-                child:
-                    Text(
-                      order,
-                      style: Theme.of(context)
-                          .textTheme
-                          .displayMedium!
-                          .copyWith(color: black, fontWeight: FontWeight.w600),
-                    ),
-                
+                child: Text(
+                  order,
+                  style: Theme.of(context)
+                      .textTheme
+                      .displayMedium!
+                      .copyWith(color: black, fontWeight: FontWeight.w600),
+                ),
               ),
             ],
           ),
@@ -100,11 +96,10 @@ bool isDrawer = false;
               width: double.infinity,
               color: Colors.white,
               child: TabBar(
-                
-                
                 isScrollable: true,
-                indicatorSize: TabBarIndicatorSize.tab,
+                indicatorSize: TabBarIndicatorSize.label,
                 indicatorColor: prime,
+                labelPadding: const EdgeInsets.only(right: medium),
                 labelStyle: Theme.of(context)
                     .textTheme
                     .bodySmall!
@@ -112,7 +107,9 @@ bool isDrawer = false;
                 unselectedLabelStyle: Theme.of(context).textTheme.bodySmall,
                 labelColor: black,
                 unselectedLabelColor: black,
-                tabs: [
+                tabAlignment: TabAlignment.start,
+                padding: const EdgeInsets.symmetric(horizontal: origin),
+                tabs: const [
                   Tab(height: 30, text: expected),
                   Tab(height: 30, text: agreed),
                   Tab(height: 30, text: history),
@@ -123,12 +120,8 @@ bool isDrawer = false;
         ),
         body: TabBarView(
           children: [
-            ExpectedView(
-    
-            ),
-            AgreedView(
-           
-            ),
+            ExpectedView(),
+            AgreedView(),
             HistoryView(),
           ],
         ),

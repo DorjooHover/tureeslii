@@ -57,44 +57,45 @@ class _HistoryViewState extends State<HistoryView> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      // mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        space32,
-        Wrap(
-          runSpacing: 10,
-          spacing: 10,
-          children: statusStr.map((e) {
-            int i = statusStr.indexOf(e);
+        if (!loading && data.isNotEmpty) space32,
+        if (!loading && data.isNotEmpty)
+          Wrap(
+            runSpacing: 10,
+            spacing: 10,
+            children: statusStr.map((e) {
+              int i = statusStr.indexOf(e);
 
-            return GestureDetector(
-              onTap: () {
-                if (active != i) {
-                  getData(statuses[i]);
-                  setState(() {
-                    active = i;
-                  });
-                }
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: active == i ? prime : Color(0xffEFEFEF)),
-                child: Text(
-                  e,
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelSmall!
-                      .copyWith(color: i == active ? Colors.white : black),
+              return GestureDetector(
+                onTap: () {
+                  if (active != i) {
+                    getData(statuses[i]);
+                    setState(() {
+                      active = i;
+                    });
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: active == i ? prime : Color(0xffEFEFEF)),
+                  child: Text(
+                    e,
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelSmall!
+                        .copyWith(color: i == active ? Colors.white : black),
+                  ),
                 ),
-              ),
-            );
-          }).toList(),
-        ),
+              );
+            }).toList(),
+          ),
         space16,
         loading
             ? const Center(
-                child: CircularProgressIndicator(),
+                child: NoDataView(),
               )
             : Container(
                 padding: const EdgeInsets.symmetric(horizontal: origin),

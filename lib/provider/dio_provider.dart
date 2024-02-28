@@ -38,8 +38,8 @@ class DioProvider extends GetxService {
     try {
       final response = await dio.get(path, queryParameters: queryParameters);
       return response.data;
-    } on Exception {
-      rethrow;
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -50,7 +50,7 @@ class DioProvider extends GetxService {
 
       return response.data;
     } catch (e) {
-      rethrow;
+      print(e);
     }
   }
 
@@ -58,8 +58,8 @@ class DioProvider extends GetxService {
     try {
       final response = await dio.put(path, data: data);
       return response.data;
-    } on Exception {
-      rethrow;
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -67,8 +67,8 @@ class DioProvider extends GetxService {
     try {
       final response = await dio.patch(path, data: data);
       return response.data;
-    } on Exception {
-      rethrow;
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -76,8 +76,8 @@ class DioProvider extends GetxService {
     try {
       final response = await dio.delete(path, data: data);
       return response.data;
-    } on Exception {
-      rethrow;
+    } catch (e) {
+      print(e);
     }
   }
 }
