@@ -200,7 +200,7 @@ class MyAdsAppBar extends StatelessWidget implements PreferredSizeWidget {
           [
             Builder(
               builder: (context) => IconButton(
-                icon: Icon(Icons.menu_sharp),
+                icon: const Icon(Icons.menu_sharp),
                 onPressed: () => Scaffold.of(context).openEndDrawer(),
                 tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
               ),

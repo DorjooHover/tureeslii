@@ -186,29 +186,30 @@ class Routes {
         name: rentRequest,
         page: () {
           Post res = Get.arguments;
-         
+
           return RentRequestView(data: res);
         },
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
-        // history
+    // history
     GetPage(
         name: historyDetail,
         page: () {
           RentRequest res = Get.arguments[0];
           String type = Get.arguments[1];
-         
-          return HistoryDetailView(data: res, type: type,);
+
+          return HistoryDetailView(
+            data: res,
+            type: type,
+          );
         },
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),
-        // statistic
+    // statistic
     GetPage(
         name: statistic,
         page: () {
-     
-         
-          return StatisticView();
+          return const StatisticView();
         },
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300)),

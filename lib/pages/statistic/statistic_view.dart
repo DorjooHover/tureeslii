@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:landlord/controllers/controllers.dart';
 import 'package:landlord/shared/index.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:syncfusion_flutter_charts/sparkcharts.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class StatisticView extends StatefulWidget {
   const StatisticView({super.key});
@@ -19,54 +20,70 @@ class _StatisticViewState extends State<StatisticView> {
   final controller = Get.put(MainController());
   int viewed = 0;
   int saved = 0;
+
   @override
   void setState(VoidCallback fn) {
     if (mounted) {
       super.setState(fn);
     }
   }
-  List<ChartSampleData> chartData = <ChartSampleData>[
 
-  ];
+  List<ChartSampleData> chartData = <ChartSampleData>[];
 
   getViews(String postId, String week) async {
-    
-    Map<String, List> res =await controller.getPostStats(postId, week);
-    if(res['views']!.isNotEmpty) {
-      List<ChartSampleData> chart = List<ChartSampleData>.filled(res['views']!.length, ChartSampleData());
-       
-      for(int i = 0; i < res['views']!.length ; i++) {
-        setState(() { 
+    Map<String, List> res = await controller.getPostStats(postId, week);
+    if (res['views']!.isNotEmpty) {
+      List<ChartSampleData> chart =
+          List<ChartSampleData>.filled(res['views']!.length, ChartSampleData());
+
+      for (int i = 0; i < res['views']!.length; i++) {
+        setState(() {
           viewed += res['views']![i]['counted_leads'] as int;
-         saved += res['liked']![i]['counted_leads'] as int;
+          saved += res['liked']![i]['counted_leads'] as int;
         });
         chart[i].x = res['views']![i]['count_date'] as String;
         chart[i].y = res['views']![i]['counted_leads'] as int;
         chart[i].yValue = res['liked']![i]['counted_leads'] as int;
       }
-      
-      setState(() {chartData = chart;});
 
+      setState(() {
+        chartData = chart;
+      });
     }
-    
   }
 
   @override
   void initState() {
     super.initState();
     if (controller.ownPost.isNotEmpty) {
-    
       setState(() {
         data =
             controller.ownPost.map((element) => element.id.toString()).toList();
         postId = data[0];
-        
       });
+
       int dateIndex = datesValuesStr.indexOf(date);
+
       getViews(postId!, datesValues[dateIndex]);
     }
   }
 
+  changeDate(String? e) {
+    if (e != null) {
+      setState(() {
+        date = e;
+      });
+      if (controller.ownPost.isNotEmpty) {
+        int i = datesValuesStr.indexOf(e);
+        getViews(postId!, datesValues[i]);
+      } else {
+        showTopSnackBar(
+          Overlay.of(context),
+          const CustomSnackBar.info(message: 'Зар байхгүй байна.'),
+        );
+      }
+    }
+  }
 
   TrackballBehavior _trackballBehavior =
       TrackballBehavior(enable: true, activationMode: ActivationMode.singleTap);
@@ -112,16 +129,14 @@ class _StatisticViewState extends State<StatisticView> {
                                 list: data,
                                 value: postId ?? '0',
                                 onChanged: (String? e) {
-                                  if (e != null) {
-                                    setState(() {
-                                      postId = e;
-                                    });
-                             
-                                    
-                                
-                                    getViews(e,date);
-                                  
-                                  }
+                                  print(e);
+                                  // if (e != null) {
+                                  //   setState(() {
+                                  //     postId = e;
+                                  //   });
+
+                                  //   getViews(e, date);
+                                  // }
                                 })
                           ],
                         ),
@@ -144,13 +159,7 @@ class _StatisticViewState extends State<StatisticView> {
                                 list: datesValuesStr,
                                 value: date,
                                 onChanged: (String? e) {
-                                  if (e != null) {
-                                    setState(() {
-                                      date = e;
-                                    });
-                                    int i = datesValuesStr.indexOf(e);
-                                    getViews(postId!, datesValues[i]);
-                                  }
+                                  changeDate(e);
                                 })
                           ],
                         ),
@@ -280,17 +289,14 @@ class _StatisticViewState extends State<StatisticView> {
           yValueMapper: (ChartSampleData sales, _) => sales.yValue,
           name: savedCount,
           markerSettings: const MarkerSettings(isVisible: true)),
-
     ];
   }
 }
 
 class ChartSampleData {
- 
   ChartSampleData(
       {this.x,
       this.y,
-
       this.yValue,
       this.pointColor,
       this.size,
@@ -307,10 +313,8 @@ class ChartSampleData {
   /// Holds y value of the datapoint
   num? y;
 
-
   /// Holds y value of the datapoint
   num? yValue;
-
 
   /// Holds point color of the datapoint
   final Color? pointColor;
@@ -336,4 +340,3 @@ class ChartSampleData {
   /// Holds open value of the datapoint
   final num? volume;
 }
-

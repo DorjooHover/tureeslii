@@ -2,14 +2,12 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/shared/index.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/tap_bounce_container.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class VerificationView extends StatefulWidget {
@@ -120,19 +118,7 @@ class _VerificationViewState extends State<VerificationView> {
     }
 
     await controller.sendVerificationUser(frontImage, backImage, selectedBank!,
-        accountNumberController.text, accountNameController.text);
-    // if (res) {
-    //   showTopSnackBar(
-    //     Overlay.of(context),
-    //     CustomSnackBar.success(message: Messages.success),
-    //   );
-    // } else {
-    //   showTopSnackBar(
-    //     Overlay.of(context),
-    //     CustomSnackBar.info(message: tryAgain),
-    //   );
-
-    // }
+        accountNumberController.text, accountNameController.text, context);
   }
 
   @override
@@ -290,12 +276,15 @@ class _VerificationViewState extends State<VerificationView> {
                           }),
                         )),
                     space36,
-                    MainButton(
-                      onPressed: () {
-                        submit();
-                      },
-                      text: request,
-                      width: double.infinity,
+                    Obx(
+                      () => MainButton(
+                        loading: controller.fetchLoading.value,
+                        onPressed: () {
+                          submit();
+                        },
+                        text: request,
+                        width: double.infinity,
+                      ),
                     ),
                     space40
                   ],

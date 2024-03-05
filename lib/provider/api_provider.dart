@@ -399,14 +399,13 @@ class ApiRepository extends GetxService {
 
   // verification
   EitherSuccess<bool> verificationUser(
-    String frontCard,
-    String backCard,
-    String bankAccount,
-    String bankName,
-    String bankAccName,
-    String? status,
-    bool update,
-  ) async {
+      String frontCard,
+      String backCard,
+      String bankAccount,
+      String bankName,
+      String bankAccName,
+      String? status,
+      bool update) async {
     try {
       final data = {
         "front": frontCard,
@@ -414,9 +413,9 @@ class ApiRepository extends GetxService {
         "bankAccNo": bankAccount,
         "bankName": bankName,
         "bankAccName": bankAccName,
-        "status": status ?? "NEW"
+        "status": status ?? "NEW",
       };
-      print(update);
+
       final res;
       if (update) {
         res = await dio.put('/user/verifications', data: data);
@@ -424,11 +423,8 @@ class ApiRepository extends GetxService {
         res = await dio.post('/user/verificationRequest', data: data);
       }
 
-      print(res);
-      print(res.data);
-      print(res.statusCode);
-      if (res.statusCode == 201) {
-        return right(res.data['success']);
+      if (res.data['success']) {
+        return right(true);
       }
       return left(tryAgain);
     } catch (e) {

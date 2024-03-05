@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:landlord/provider/api_prodiver.dart';
+import 'package:landlord/provider/api_provider.dart';
 import 'package:landlord/routes.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'dart:developer' as dev;

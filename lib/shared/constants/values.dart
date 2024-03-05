@@ -149,29 +149,29 @@ const sortValues = [
 const datesValues = ["week", "month", "3month"];
 const datesValuesStr = ["Сүүлийн 7 хоног", "Сүүлийн 1 сар", "Сүүлийн 3 сар"];
 // navigation bar
-const navbar = [
+final navbar = [
   {
     'icon': navLocation,
     'activeIcon': navLocationActive,
-    'url': 'verification',
+    'url': Routes.verification,
     'label': verificationDrawer,
   },
   {
     'icon': navBookmark,
     'activeIcon': navBookmarkActive,
-    'url': 'myAds',
+    'url': Routes.myAds,
     'label': myAds,
   },
   {
     // 'icon': navNotification,
     // 'activeIcon': navNotificationActive,
-    'url': 'myOrders',
+    'url': Routes.myOrders,
     'label': order,
   },
   {
     'icon': navOrder,
     'activeIcon': navOrderActive,
-    'url': 'statistic',
+    'url': Routes.statistic,
     'label': statistic,
   },
   {
