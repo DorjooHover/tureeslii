@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:landlord/controllers/main_controller.dart';
@@ -37,7 +37,7 @@ class _FlatInfoViewState extends State<FlatInfoView> {
     }
   }
 
-  nextStep() {
+  nextStep(bool edit) {
     bool success = true;
     String message = '';
     if (flatArea <= 0) {
@@ -50,11 +50,13 @@ class _FlatInfoViewState extends State<FlatInfoView> {
     controller.createPost.value!.waterSupply =
         waterSupplyValuesValue[selectedWaterSupply];
     controller.createPost.value!.restroom = toiletValuesValue[selectedToilet];
-    controller.nextStep(
-      success,
-      context,
-      message,
-    );
+    edit
+        ? controller.updatePost(context)
+        : controller.nextStep(
+            success,
+            context,
+            message,
+          );
   }
 
   @override
@@ -75,12 +77,13 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                     .bodyMedium!
                     .copyWith(fontWeight: FontWeight.bold),
               ),
+              onPressed: () => controller.prevStep(),
               actions: [Container()],
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
                 onPressed: () {
-                  controller.updatePost(context);
+                  nextStep(true);
                 },
                 icon: SvgPicture.asset(
                   iconSave,
@@ -157,7 +160,7 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                                   value: flatArea.toString(),
                                   textInputType: TextInputType.number,
                                   onSubmitted: (p0) {
-                                    nextStep();
+                                    nextStep(false);
                                   },
                                   inputFormatter: onlyUnsignedNumbers(),
                                   onChange: (p0) {
@@ -208,7 +211,7 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              nextStep();
+                              nextStep(false);
                             },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,

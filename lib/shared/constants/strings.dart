@@ -108,6 +108,7 @@ const String imageRequireSize = 'Багадаа 620x480 хэмжээтэй ба�
 const String haveDaySpecial = 'хоног онцгой зар болгох ';
 // listing
 const String adAdd = 'Зар нэмэх';
+const String adEdit = 'Зар засах';
 
 // verification
 const String verification = 'Хэрэглэгчийн баталгаажуулалт';

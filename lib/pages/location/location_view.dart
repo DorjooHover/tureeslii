@@ -9,8 +9,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:landlord/controllers/main_controller.dart';
 import 'package:landlord/shared/index.dart';
 import 'package:location/location.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class LocationView extends StatefulWidget {
   const LocationView({super.key});
@@ -153,7 +151,7 @@ class _LocationViewState extends State<LocationView>
     );
   }
 
-  nextStep() async {
+  nextStep(bool edit) async {
     bool success = true;
     String message = '';
     if (selectedLocation == null) {
@@ -183,11 +181,13 @@ class _LocationViewState extends State<LocationView>
       success = false;
       message = Messages.incomplete;
     }
-    controller.nextStep(
-      success,
-      context,
-      message,
-    );
+    edit
+        ? controller.updatePost(context)
+        : controller.nextStep(
+            success,
+            context,
+            message,
+          );
   }
 
   @override
@@ -219,7 +219,7 @@ class _LocationViewState extends State<LocationView>
               statusBarColor: bgGray,
               child: IconButton(
                 onPressed: () {
-                  controller.updatePost(context);
+                  nextStep(true);
                 },
                 icon: SvgPicture.asset(
                   iconSave,
@@ -279,13 +279,15 @@ class _LocationViewState extends State<LocationView>
                       ),
                     )),
                 Positioned(
-                  bottom: MediaQuery.of(context).padding.bottom,
+                  bottom: 0,
                   right: 0,
                   left: 0,
                   child: AnimatedContainer(
                       constraints: BoxConstraints(
                         maxHeight: MediaQuery.of(context).size.height * 0.55,
                       ),
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).padding.bottom),
                       curve: Curves.easeOut,
                       height: !isDrag ? _headerHeight : _size.height * 0.55,
                       duration: const Duration(milliseconds: 600),
@@ -528,7 +530,7 @@ class _LocationViewState extends State<LocationView>
                                                 });
                                               },
                                               onSubmitted: (p0) {
-                                                nextStep();
+                                                nextStep(false);
                                               },
                                             )),
                                       ),
@@ -547,19 +549,22 @@ class _LocationViewState extends State<LocationView>
                       )),
                 ),
                 Positioned(
-                    bottom: MediaQuery.of(context).padding.bottom,
+                    bottom: 0,
                     left: 0,
                     right: 0,
                     child: GestureDetector(
                       onTap: () {
-                        nextStep();
+                        nextStep(false);
                       },
                       child: Container(
                         color: bgGray,
                         width: double.infinity,
                         alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.only(
-                            top: 10, right: 16, bottom: 20),
+                        padding: EdgeInsets.only(
+                          top: 10,
+                          right: 16,
+                          bottom: MediaQuery.of(context).padding.bottom + 20,
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[

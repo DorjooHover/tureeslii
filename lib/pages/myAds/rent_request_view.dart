@@ -37,7 +37,7 @@ class _RentRequestViewState extends State<RentRequestView> {
     return Scaffold(
       key: requestKey,
       backgroundColor: Colors.white,
-      appBar: MainAppBar(
+      appBar: const MainAppBar(
         bgColor: bgGray,
         statusBarColor: bgGray,
         back: true,
@@ -45,7 +45,7 @@ class _RentRequestViewState extends State<RentRequestView> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 25),
+          padding: const EdgeInsets.symmetric(vertical: 25),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -62,7 +62,7 @@ class _RentRequestViewState extends State<RentRequestView> {
               ),
               space20,
               Padding(
-                  padding: EdgeInsets.symmetric(horizontal: origin),
+                  padding: const EdgeInsets.symmetric(horizontal: origin),
                   child: RentRequestCard(data: widget.data)),
               space2,
               if (widget.data.rentRequests != null &&

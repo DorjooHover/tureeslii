@@ -15,7 +15,7 @@ class ApiRepository extends GetxService {
   static Dio createDio() {
     Dio dio = Dio(BaseOptions(
       baseUrl: 'https://tureeslii.mn/api',
-      validateStatus: (status) => status != null && status < 500,
+      validateStatus: (status) => status != null && status < 501,
     ));
     dio.interceptors.addAll(
       [
@@ -212,7 +212,7 @@ class ApiRepository extends GetxService {
 
       final res = await dio.put('/posts', data: data);
 
-      if (res.statusCode == 201) {
+      if (res.data['success']) {
         return right(res.data['success']);
       }
 

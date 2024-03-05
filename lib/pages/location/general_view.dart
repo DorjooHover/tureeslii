@@ -69,7 +69,7 @@ class _GeneralViewState extends State<GeneralView> {
     }
   }
 
-  Future nextStep() async {
+  Future nextStep(bool edit) async {
     bool success = true;
     String message = '';
     if (!isDay && !isMonth) {
@@ -121,11 +121,13 @@ class _GeneralViewState extends State<GeneralView> {
       controller.createPost.value!.priceIncluded = [];
     }
 
-    controller.nextStep(
-      success,
-      context,
-      message,
-    );
+    edit
+        ? controller.updatePost(context)
+        : controller.nextStep(
+            success,
+            context,
+            message,
+          );
   }
 
   @override
@@ -147,11 +149,14 @@ class _GeneralViewState extends State<GeneralView> {
                     .copyWith(fontWeight: FontWeight.bold),
               ),
               actions: [Container()],
+              onPressed: () {
+                controller.prevStep();
+              },
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
                 onPressed: () {
-                  controller.updatePost(context);
+                  nextStep(true);
                 },
                 icon: SvgPicture.asset(
                   iconSave,
@@ -572,7 +577,7 @@ class _GeneralViewState extends State<GeneralView> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              nextStep();
+                              nextStep(false);
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(
@@ -619,7 +624,7 @@ class _GeneralViewState extends State<GeneralView> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  Icon(
+                                  const Icon(
                                     Icons.arrow_back_ios_rounded,
                                     color: prime,
                                     size: 24,
@@ -636,7 +641,7 @@ class _GeneralViewState extends State<GeneralView> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              nextStep();
+                              nextStep(false);
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(

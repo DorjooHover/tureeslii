@@ -29,7 +29,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
   int bedOneValue = 0;
   int bedTwoValue = 0;
 
-  Future nextStep() async {
+  Future nextStep(bool edit) async {
     bool success = true;
     String message = '';
     if (titleValue == '') {
@@ -44,11 +44,13 @@ class _RoomInfoViewState extends State<RoomInfoView> {
     controller.createPost.value!.kitchen = kitchenValue;
     controller.createPost.value!.title = titleValue;
     controller.createPost.value!.category = selectedType;
-    controller.nextStep(
-      success,
-      context,
-      message,
-    );
+    edit
+        ? controller.updatePost(context)
+        : controller.nextStep(
+            success,
+            context,
+            message,
+          );
   }
 
   @override
@@ -98,6 +100,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
             backgroundColor: bgGray,
             key: roomInfoView,
             appBar: MainAppBar(
+              onPressed: () => controller.prevStep(),
               back: true,
               logo: false,
               center: Text(
@@ -112,7 +115,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
               statusBarColor: bgGray,
               child: IconButton(
                 onPressed: () {
-                  controller.updatePost(context);
+                  nextStep(true);
                 },
                 icon: SvgPicture.asset(
                   iconSave,
@@ -307,7 +310,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                             });
                                           },
                                           onSubmitted: ((p0) {
-                                            nextStep();
+                                            nextStep(false);
                                           }),
                                         )),
                                   ),
@@ -355,7 +358,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              nextStep();
+                              nextStep(false);
                             },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -365,7 +368,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 space8,
-                                Icon(
+                                const Icon(
                                   Icons.arrow_forward_ios_rounded,
                                   color: prime,
                                   size: 24,

@@ -21,6 +21,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.center,
       this.menu = true,
       this.isDrawer = false,
+      this.onPressed,
       this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
       this.bgColor = Colors.white});
   final Color statusBarColor;
@@ -35,6 +36,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isDrawer;
   final List<Widget>? actions;
   final Widget? center;
+  final Function()? onPressed;
   @override
   Size get preferredSize => Size.fromHeight(height);
 
@@ -93,9 +95,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                         color: gray,
                         size: 24,
                       ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                      onPressed: onPressed ?? () => Navigator.pop(context),
                     ),
                   logo
                       ? GestureDetector(

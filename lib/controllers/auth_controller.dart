@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:landlord/model/user.dart';
 import 'package:landlord/provider/api_prodiver.dart';
 import 'package:landlord/routes.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -28,15 +27,14 @@ class AuthController extends GetxController {
           (l) => showTopSnackBar(
                 Overlay.of(context),
                 CustomSnackBar.info(message: l),
-              ),
-          (r) => {
-                showTopSnackBar(
-                  Overlay.of(context),
-                  CustomSnackBar.success(message: Messages.success),
-                ),
-                logout(),
-                Get.toNamed(Routes.auth)
-              });
+              ), (r) {
+        showTopSnackBar(
+          Overlay.of(context),
+          CustomSnackBar.success(message: Messages.success),
+        );
+        logout();
+        Get.toNamed(Routes.auth);
+      });
       fetchLoading.value = false;
     } catch (e) {
       fetchLoading.value = false;
@@ -71,13 +69,12 @@ class AuthController extends GetxController {
           (l) => showTopSnackBar(
                 Overlay.of(context),
                 CustomSnackBar.info(message: l),
-              ),
-          (r) {
-                Overlay.of(context);
-                CustomSnackBar.success(message: Messages.success);
-                _saveTokens(r.accessToken ?? '')
-                    .then((value) => Get.toNamed(Routes.main));
-              });
+              ), (r) {
+        Overlay.of(context);
+        CustomSnackBar.success(message: Messages.success);
+        _saveTokens(r.accessToken ?? '')
+            .then((value) => Get.toNamed(Routes.main));
+      });
       fetchLoading.value = false;
     } catch (e) {
       fetchLoading.value = false;

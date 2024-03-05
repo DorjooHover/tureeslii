@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -314,6 +315,7 @@ class MainController extends GetxController
           res.fold((l) => null, (r) => imagesUrl.add(r));
         }
       }
+
       final res = await apiRepository.updatePost(createPost.value!, imagesUrl);
       res.fold(
           (l) => showTopSnackBar(
@@ -349,6 +351,8 @@ class MainController extends GetxController
       );
       ownPost.value = ownPost.where((e) => e.id != id).toList();
     });
+    getOwnPost(null, []);
+    Get.back();
   }
 
   // own post
@@ -419,6 +423,15 @@ class MainController extends GetxController
     await setupApp();
     super.onInit();
   }
+
+  // @override
+  // void onReady() async {
+  //   final token = await storage.read(StorageKeys.token.name);
+  //   if ((user == null || user?.accessToken == null) && token != null) {
+  //     await setupApp();
+  //   }
+  //   super.onReady();
+  // }
 
   @override
   void dispose() {

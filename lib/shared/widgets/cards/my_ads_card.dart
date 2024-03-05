@@ -447,7 +447,7 @@ class RequestCard extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Icon(
+                      const Icon(
                         Icons.phone,
                         size: 16,
                         color: green,
@@ -498,7 +498,7 @@ class RequestCard extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Icon(
+                      const Icon(
                         Icons.check,
                         size: 16,
                         color: Colors.white,
@@ -522,7 +522,7 @@ class RequestCard extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Icon(
+                      const Icon(
                         Icons.close,
                         size: 16,
                         color: red,

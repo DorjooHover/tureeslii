@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:landlord/controllers/main_controller.dart';
-import 'package:landlord/routes.dart';
+
 import 'package:landlord/shared/index.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class FlatFeatureView extends StatefulWidget {
   const FlatFeatureView({super.key});
@@ -59,7 +57,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
     }
   }
 
-  nextStep() {
+  nextStep(bool edit) {
     bool success = true;
     String message = '';
     controller.createPost.value!.elevator = elevator;
@@ -89,11 +87,13 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
     if (cabinet) {
       controller.createPost.value!.furnitures?.add('wardrobe');
     }
-    controller.nextStep(
-      success,
-      context,
-      message,
-    );
+    edit
+        ? controller.updatePost(context)
+        : controller.nextStep(
+            success,
+            context,
+            message,
+          );
   }
 
   @override
@@ -107,6 +107,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
             appBar: MainAppBar(
               back: true,
               logo: false,
+              onPressed: () => controller.prevStep(),
               center: Text(
                 flatFeature,
                 style: Theme.of(context)
@@ -119,7 +120,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
               statusBarColor: bgGray,
               child: IconButton(
                 onPressed: () {
-                  controller.updatePost( context);
+                  nextStep(true);
                 },
                 icon: SvgPicture.asset(
                   iconSave,
@@ -592,7 +593,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        nextStep();
+                        nextStep(false);
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

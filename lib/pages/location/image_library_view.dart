@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:landlord/controllers/main_controller.dart';
 
@@ -61,7 +61,9 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                       PackageCard(
                           type: '',
                           onPress: () {
-                            controller.createNewPost(context);
+                            controller.createPost.value?.id == null
+                                ? controller.createNewPost(context)
+                                : controller.updatePost(context);
                           }),
                       space16,
                       PackageCard(type: 'promo1', onPress: () {}),
@@ -87,6 +89,7 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
             appBar: MainAppBar(
               back: true,
               logo: false,
+              onPressed: () => controller.prevStep(),
               center: Text(
                 imagesLibrary,
                 style: Theme.of(context)
@@ -321,13 +324,15 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                               ),
                             ),
                             space20,
-                            Text(
-                              adAdd,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(color: Colors.white),
-                            )
+                            Obx(() => Text(
+                                  controller.createPost.value?.id == null
+                                      ? adAdd
+                                      : adEdit,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(color: Colors.white),
+                                ))
                           ],
                         ),
                       ))),
