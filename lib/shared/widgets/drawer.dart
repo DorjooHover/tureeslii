@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:landlord/controllers/auth_controller.dart';
@@ -21,7 +22,6 @@ class MainDrawer extends StatelessWidget {
     return Drawer(
       backgroundColor: Colors.white,
       width: MediaQuery.of(context).size.width,
-      
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,9 +36,16 @@ class MainDrawer extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Image.asset(
-                    imageLogo,
-                    width: 100,
+                  GestureDetector(
+                    onTap: () => {
+                      Get.currentRoute == Routes.main
+                          ? cancel()
+                          : Get.toNamed(Routes.main)
+                    },
+                    child: Image.asset(
+                      imageLogo,
+                      width: 100,
+                    ),
                   ),
                   IconButton(
                       onPressed: cancel,
@@ -47,11 +54,12 @@ class MainDrawer extends StatelessWidget {
               ),
             ),
             Padding(
-              
               padding: const EdgeInsets.all(origin),
               child: GestureDetector(
                 onTap: () {
-                  Get.toNamed(Routes.personal);
+                  Get.currentRoute == Routes.personal
+                      ? cancel()
+                      : Get.toNamed(Routes.personal);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -59,20 +67,26 @@ class MainDrawer extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        CircleAvatar(
-                          radius: 24,
-                          backgroundImage: NetworkImage(controller
-                                          .user?.profilePic !=
-                                      "" &&
-                                  controller.user?.profilePic != null
-                              ? controller.user!.profilePic!
-                              : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: CachedNetworkImage(
+                            width: 36,
+                            height: 36,
+                            fit: BoxFit.cover,
+                            imageUrl: controller.user?.profilePic != "" &&
+                                    controller.user?.profilePic != null
+                                ? controller.user!.profilePic!
+                                : 'https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                          ),
                         ),
                         space16,
                         Text(
-                          controller.user?.lastname ?? '',
-                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: black, fontWeight: FontWeight.bold),
+                          controller.user?.firstname ?? '',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(
+                                  color: black, fontWeight: FontWeight.bold),
                         )
                       ],
                     ),
@@ -96,14 +110,16 @@ class MainDrawer extends StatelessWidget {
             ...navbar.map((e) {
               final i = navbar.indexOf(e);
               return Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: origin),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 20, horizontal: origin),
                 child: TextButton(
                   onPressed: () {
                     if (i == 4) {
                       authController.logout();
                     } else {
-                      Get.toNamed(e['url']!);
+                      Get.currentRoute == e['url']
+                          ? cancel()
+                          : Get.toNamed(e['url']!);
                     }
                   },
                   child: Text(
@@ -136,10 +152,8 @@ class MainDrawer extends StatelessWidget {
                       space16,
                       Text(
                         mn,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium!
-                            .copyWith(color: black, fontWeight: FontWeight.w700),
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: black, fontWeight: FontWeight.w700),
                       )
                     ],
                   ),
@@ -165,13 +179,14 @@ class LocationDrawer extends StatelessWidget {
   final List<int> selected;
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(MainController());
     return Drawer(
       width: MediaQuery.of(context).size.width > 640
           ? 640 * 0.75
           : MediaQuery.of(context).size.width * 0.75,
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: origin),
+        padding: const EdgeInsets.symmetric(horizontal: origin),
         decoration: BoxDecoration(color: bgGray, boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.25),
@@ -184,21 +199,25 @@ class LocationDrawer extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-          
               ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: addAdValues.length,
-                itemBuilder: (context, index) {
-                return LocationDrawerCard(
-                    text: addAdValues[index],
-                    isSelected:
-                        selected.where((element) => index == element).isNotEmpty,
-                    number: index + 1);
-              }),
-              
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: addAdValues.length,
+                  itemBuilder: (context, index) {
+                    return LocationDrawerCard(
+                        text: addAdValues[index],
+                        isSelected: selected
+                            .where((element) => index == element)
+                            .isNotEmpty,
+                        number: index + 1);
+                  }),
               space20,
-              MainButton(width: double.infinity, onPressed: () {}, text: save),
+              MainButton(
+                  width: double.infinity,
+                  onPressed: () {
+                    controller.updatePost(context);
+                  },
+                  text: save),
             ],
           ),
         ),

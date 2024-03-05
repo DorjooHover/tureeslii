@@ -1,4 +1,5 @@
 // urls
+import 'package:landlord/routes.dart';
 import 'package:landlord/shared/constants/assets.dart';
 import 'package:landlord/shared/constants/strings.dart';
 
@@ -81,6 +82,16 @@ const whomRentValuesValue = [
   "family",
   'foreign',
 ];
+
+final postStepsValue = [
+  Routes.location,
+  Routes.general,
+  Routes.condition,
+  Routes.flatFeature,
+  Routes.flatInfo,
+  Routes.roomInfo,
+  Routes.imageLibrary,
+];
 // flat info
 const heatingValues = [
   'Төвийн',
@@ -135,16 +146,8 @@ const sortValues = [
     'is': 'false',
   },
 ];
- const datesValues = [
-          "week",
-        "month", 
-         "3month"
-    ];
- const datesValuesStr = [
-          "Сүүлийн 7 хоног",
-        "Сүүлийн 1 сар", 
-         "Сүүлийн 3 сар"
-    ];
+const datesValues = ["week", "month", "3month"];
+const datesValuesStr = ["Сүүлийн 7 хоног", "Сүүлийн 1 сар", "Сүүлийн 3 сар"];
 // navigation bar
 const navbar = [
   {
@@ -168,7 +171,7 @@ const navbar = [
   {
     'icon': navOrder,
     'activeIcon': navOrderActive,
-  'url': 'statistic',
+    'url': 'statistic',
     'label': statistic,
   },
   {

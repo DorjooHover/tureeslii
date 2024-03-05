@@ -36,27 +36,32 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
   @override
   void initState() {
     super.initState();
-    elevator = controller.createPost.value!.elevator!;
-    balcony = controller.createPost.value!.balcony!;
-    internet = controller.createPost.value!.wifi!;
-    oven = controller.createPost.value!.stove!;
-    washing = controller.createPost.value!.washingMachine!;
-    cabel = controller.createPost.value!.tvCable!;
-    refrigerator = controller.createPost.value!.refrigerator!;
-    kitchen = controller.createPost.value!.kitchenFurniture!;
-    hasFurniture = controller.createPost.value!.hasFurniture!;
-    refrigerator =
-        controller.createPost.value!.furnitures?.contains('refrigerator') ??
-            false;
-    drawer =
-        controller.createPost.value!.furnitures?.contains('drawer') ?? false;
-    table = controller.createPost.value!.furnitures?.contains('table') ?? false;
-    sofa = controller.createPost.value!.furnitures?.contains('sofa') ?? false;
-    cabinet =
-        controller.createPost.value!.furnitures?.contains('wardrobe') ?? false;
+    if (controller.createPost.value?.id != null) {
+      elevator = controller.createPost.value!.elevator ?? false;
+      balcony = controller.createPost.value!.balcony ?? false;
+      internet = controller.createPost.value!.wifi ?? false;
+      oven = controller.createPost.value!.stove ?? false;
+      washing = controller.createPost.value!.washingMachine ?? false;
+      cabel = controller.createPost.value!.tvCable ?? false;
+      refrigerator = controller.createPost.value!.refrigerator ?? false;
+      kitchen = controller.createPost.value!.kitchenFurniture ?? false;
+      hasFurniture = controller.createPost.value!.hasFurniture ?? false;
+      refrigerator =
+          controller.createPost.value!.furnitures?.contains('refrigerator') ??
+              false;
+      drawer =
+          controller.createPost.value!.furnitures?.contains('drawer') ?? false;
+      table =
+          controller.createPost.value!.furnitures?.contains('table') ?? false;
+      sofa = controller.createPost.value!.furnitures?.contains('sofa') ?? false;
+      cabinet = controller.createPost.value!.furnitures?.contains('wardrobe') ??
+          false;
+    }
   }
 
   nextStep() {
+    bool success = true;
+    String message = '';
     controller.createPost.value!.elevator = elevator;
     controller.createPost.value!.balcony = balcony;
     controller.createPost.value!.wifi = internet;
@@ -84,10 +89,12 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
     if (cabinet) {
       controller.createPost.value!.furnitures?.add('wardrobe');
     }
-    controller.nextStep();
-    Get.toNamed(Routes.flatInfo);
+    controller.nextStep(
+      success,
+      context,
+      message,
+    );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -111,20 +118,8 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () async {
-                  await controller.updatePost([]).then((value) {
-                    if (value) {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.success(message: successSaved),
-                      );
-                    } else {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.info(message: tryAgain),
-                      );
-                    }
-                  });
+                onPressed: () {
+                  controller.updatePost( context);
                 },
                 icon: SvgPicture.asset(
                   iconSave,
@@ -150,7 +145,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                       children: <Widget>[
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: prime,
+                          activeColor: Colors.white,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -177,7 +172,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: prime,
+                          activeColor: Colors.white,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -208,7 +203,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: prime,
+                          activeColor: Colors.white,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -235,7 +230,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: prime,
+                          activeColor: Colors.white,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -262,7 +257,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: prime,
+                          activeColor: Colors.white,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -289,7 +284,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: prime,
+                          activeColor: Colors.white,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -316,7 +311,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                         ),
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: prime,
+                          activeColor: Colors.white,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -351,7 +346,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                       children: <Widget>[
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: prime,
+                          activeColor: Colors.white,
                           activeTrackColor: active,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -382,7 +377,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                             children: <Widget>[
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: prime,
+                                activeColor: Colors.white,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -409,7 +404,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: prime,
+                                activeColor: Colors.white,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -436,7 +431,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: prime,
+                                activeColor: Colors.white,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -463,7 +458,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: prime,
+                                activeColor: Colors.white,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -490,7 +485,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: prime,
+                                activeColor: Colors.white,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -517,7 +512,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: prime,
+                                activeColor: Colors.white,
                                 activeTrackColor: active,
                                 title: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -577,12 +572,12 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
+                        controller.prevStep();
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Icon(
+                          const Icon(
                             Icons.arrow_back_ios_rounded,
                             color: prime,
                             size: 24,
@@ -607,7 +602,7 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           space8,
-                          Icon(
+                          const Icon(
                             Icons.arrow_forward_ios_rounded,
                             color: prime,
                             size: 24,
@@ -625,7 +620,6 @@ class _FlatFeatureViewState extends State<FlatFeatureView> {
             bottom: MediaQuery.of(context).size.height * 0.25,
             child: GestureDetector(
               onHorizontalDragUpdate: (details) {
-                print(details.delta.dx);
                 if (details.delta.dx > 1) {
                   flatFeatureKey.currentState!.openEndDrawer();
                   setState(() {

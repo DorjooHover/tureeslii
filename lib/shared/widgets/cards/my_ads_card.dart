@@ -144,6 +144,7 @@ class MyAdsCard extends StatelessWidget {
             if (status != '')
               Flexible(
                   child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
                     decoration: BoxDecoration(
@@ -209,25 +210,9 @@ class MyAdsCard extends StatelessWidget {
                               text: no,
                             ),
                             MainButton(
-                              onPressed: () async {
-                                ErrorHandler res = await controller
-                                    .deletePost(post.id.toString());
-                                Navigator.pop(context);
-                                if (res.success!) {
-                                  showTopSnackBar(
-                                    Overlay.of(context),
-                                    CustomSnackBar.success(
-                                        message: res.message!),
-                                  );
-                                  controller.ownPost.value = controller.ownPost
-                                      .where((e) => e.id != post.id)
-                                      .toList();
-                                } else {
-                                  showTopSnackBar(
-                                    Overlay.of(context),
-                                    CustomSnackBar.info(message: res.message!),
-                                  );
-                                }
+                              onPressed: () {
+                                controller.deletePost(
+                                    post.id.toString(), context);
                               },
                               color: red,
                               padding: const EdgeInsets.symmetric(
@@ -287,7 +272,7 @@ class NotEnoughCard extends StatelessWidget {
               .map((e) => GestureDetector(
                     onTap: onPress(e),
                     child: Container(
-                        margin: EdgeInsets.only(left: 11),
+                        margin: const EdgeInsets.only(left: 11),
                         alignment: Alignment.center,
                         width: 26,
                         height: 26,

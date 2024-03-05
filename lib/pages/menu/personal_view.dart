@@ -50,9 +50,8 @@ class _PersonalViewState extends State<PersonalView> {
         statusBarColor: bgGray,
       ),
       body: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: origin,
-        ),
+        padding:
+            const EdgeInsets.only(left: origin, right: origin, bottom: origin),
         width: double.infinity,
         height: MediaQuery.of(context).size.height,
         child: SingleChildScrollView(
@@ -69,7 +68,7 @@ class _PersonalViewState extends State<PersonalView> {
                       .displayMedium!
                       .copyWith(color: black, fontWeight: FontWeight.w600),
                 ),
-                space36,
+                // space36,
                 space20,
                 AdditionCard(
                     title: firstName,
@@ -251,7 +250,7 @@ class _PersonalViewState extends State<PersonalView> {
                 space24,
                 SwitchListTile.adaptive(
                   contentPadding: EdgeInsets.zero,
-                  activeColor: prime,
+                  activeColor: Colors.white,
                   activeTrackColor: active,
                   title: Text(
                     infoByEmail,
@@ -268,7 +267,6 @@ class _PersonalViewState extends State<PersonalView> {
                 ),
                 SwitchListTile.adaptive(
                   contentPadding: EdgeInsets.zero,
-                  activeColor: prime,
                   activeTrackColor: active,
                   title: Text(
                     productByEmail,
@@ -285,26 +283,17 @@ class _PersonalViewState extends State<PersonalView> {
                 ),
                 space36,
                 MainButton(
-                  onPressed: () async {
-                    bool res = await controller.savePersonal(User(
-                        firstname: firstNameValue,
-                        lastname: lastNameValue,
-                        mobile: phoneValue,
-                        companyRegistry: registerNumberValue,
-                        companyName: companyNameValue,
-                        orderNotification: info,
-                        productAdsNotification: product));
-                    if (res) {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.success(message: Messages.success),
-                      );
-                    } else {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.info(message: Messages.incomplete),
-                      );
-                    }
+                  onPressed: () {
+                    controller.savePersonal(
+                        User(
+                            firstname: firstNameValue,
+                            lastname: lastNameValue,
+                            mobile: phoneValue,
+                            companyRegistry: registerNumberValue,
+                            companyName: companyNameValue,
+                            orderNotification: info,
+                            productAdsNotification: product),
+                        context);
                   },
                   text: request,
                   width: double.infinity,

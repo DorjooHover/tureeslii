@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -11,7 +9,10 @@ import 'package:landlord/provider/api_prodiver.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/constants/enums.dart';
 import 'package:landlord/shared/constants/strings.dart';
+import 'package:landlord/shared/constants/values.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import "dart:developer" as dev;
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class MainController extends GetxController
     with StateMixin<User>, WidgetsBindingObserver {
@@ -24,8 +25,10 @@ class MainController extends GetxController
   final rxUser = Rxn<User?>();
   final currentUserType = 'user'.obs;
   final our = false.obs;
+  final fetchLoading = false.obs;
   final loading = false.obs;
   final allCategory = <Category>[].obs;
+  final imageFiles = <XFile>[].obs;
   // verification
   final verification = Rxn<Verification?>();
   // config
@@ -108,6 +111,7 @@ class MainController extends GetxController
     if (token == null) {
       return;
     }
+
     try {
       final res = await apiRepository.getUser();
       res.fold(
@@ -160,17 +164,34 @@ class MainController extends GetxController
     res.fold((l) => null, (r) => null);
   }
 
-  savePersonal(User u) async {
-    final res = await apiRepository.savePersonal(User(
-        lastname: u.lastname ?? user!.lastname,
-        firstname: u.firstname ?? user!.firstname,
-        mobile: u.mobile ?? user!.mobile!,
-        companyName: u.companyName ?? user!.companyName,
-        companyRegistry: u.companyRegistry ?? user!.companyRegistry,
-        orderNotification: u.orderNotification ?? user!.orderNotification,
-        productAdsNotification:
-            u.productAdsNotification ?? user!.productAdsNotification));
-    res.fold((l) => null, (r) => refreshUser());
+  savePersonal(User u, BuildContext context) async {
+    try {
+      fetchLoading.value = false;
+      final res = await apiRepository.savePersonal(User(
+          lastname: u.lastname ?? user!.lastname,
+          firstname: u.firstname ?? user!.firstname,
+          mobile: u.mobile ?? user!.mobile!,
+          companyName: u.companyName ?? user!.companyName,
+          companyRegistry: u.companyRegistry ?? user!.companyRegistry,
+          orderNotification: u.orderNotification ?? user!.orderNotification,
+          productAdsNotification:
+              u.productAdsNotification ?? user!.productAdsNotification));
+      res.fold(
+          (l) => showTopSnackBar(
+                Overlay.of(context),
+                CustomSnackBar.info(message: l),
+              ), (r) {
+        showTopSnackBar(
+          Overlay.of(context),
+          CustomSnackBar.success(message: Messages.success),
+        );
+        refreshUser();
+      });
+      fetchLoading.value = false;
+    } catch (e) {
+      fetchLoading.value = false;
+      dev.log(e.toString());
+    }
   }
 
   Future<void> sendVerificationUser(XFile? frontImage, XFile? backImage,
@@ -217,65 +238,117 @@ class MainController extends GetxController
   }
 
   // create post
-  nextStep() {
+  nextStep(
+    bool success,
+    BuildContext context,
+    String message,
+  ) {
+    if (!success) {
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.info(message: message),
+      );
+      return;
+    }
     if (verified.where((p0) => p0 == (currentStep.value + 1)).isEmpty &&
         currentStep.value < 6) {
       verified.add(currentStep.value + 1);
-      currentStep.value = currentStep.value + 1;
     }
+    currentStep.value = currentStep.value + 1;
+
+    Get.toNamed(postStepsValue[currentStep.value]);
   }
 
   prevStep() {
     if (currentStep.value > 0) {
       currentStep.value = currentStep.value - 1;
     }
+
+    Get.back();
   }
 
-  Future<void> createNewPost(List<XFile> images) async {
+  createNewPost(BuildContext context) async {
     try {
+      fetchLoading.value = true;
       List<String> imagesUrl = [];
-      for (final element in images) {
+      if (createPost.value!.postAttachments != null &&
+          createPost.value!.postAttachments!.isNotEmpty) {
+        imagesUrl = createPost.value!.postAttachments!
+            .map((e) => e.fileThumb!)
+            .toList();
+      }
+      for (final element in imageFiles) {
         final res = await apiRepository.uploadFile(element);
-        res.fold((l) => null, (r) => imagesUrl.add(r));
+        res.fold((l) => print(l), (r) => imagesUrl.add(r));
       }
 
-      await apiRepository
-          .createPost(createPost.value!, imagesUrl)
-          .then((value) => createPost.value = Post());
+      final res = await apiRepository.createPost(createPost.value!, imagesUrl);
+      res.fold(
+          (l) => showTopSnackBar(
+                Overlay.of(context),
+                CustomSnackBar.info(message: l),
+              ), (r) {
+        showTopSnackBar(
+          Overlay.of(context),
+          CustomSnackBar.success(message: Messages.success),
+        );
+        createPost.value = Post();
+        Get.toNamed(Routes.myAds);
+      });
+      fetchLoading.value = false;
     } catch (e) {
+      fetchLoading.value = false;
       dev.log(e.toString());
     }
   }
 
   // update post
 
-  Future<bool> updatePost(List<XFile> images) async {
+  updatePost(BuildContext context) async {
     try {
       List<String> imagesUrl = [];
-      bool success = false;
-      if (images.isNotEmpty) {
-        for (final element in images) {
+      fetchLoading.value = true;
+      if (imageFiles.isNotEmpty) {
+        for (final element in imageFiles) {
           final res = await apiRepository.uploadFile(element);
           res.fold((l) => null, (r) => imagesUrl.add(r));
         }
       }
       final res = await apiRepository.updatePost(createPost.value!, imagesUrl);
-      res.fold((l) => null, (r) => success = r);
-      return success;
+      res.fold(
+          (l) => showTopSnackBar(
+                Overlay.of(context),
+                const CustomSnackBar.info(message: tryAgain),
+              ),
+          (r) => showTopSnackBar(
+                Overlay.of(context),
+                CustomSnackBar.success(message: Messages.success),
+              ));
+      fetchLoading.value = false;
     } catch (e) {
-      return false;
+      fetchLoading.value = false;
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.info(message: errorOccurred),
+      );
     }
   }
 
   // delete post
-  Future<ErrorHandler> deletePost(String id) async {
+  deletePost(String id, BuildContext context) async {
     final res = await apiRepository.deletePost(id);
-    ErrorHandler? handler;
-    res.fold(
-        (l) => handler = ErrorHandler(success: false, message: errorOccurred),
-        (r) => handler = r);
 
-    return handler!;
+    res.fold(
+        (l) => showTopSnackBar(
+              Overlay.of(context),
+              CustomSnackBar.info(message: l),
+            ), (r) {
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.success(message: Messages.success),
+      );
+      ownPost.value = ownPost.where((e) => e.id != id).toList();
+    });
   }
 
   // own post
@@ -330,6 +403,7 @@ class MainController extends GetxController
   Future<void> setupApp() async {
     isLoading.value = true;
     final token = await storage.read(StorageKeys.token.name);
+
     if (token != null) {
       refreshUser();
     }
@@ -342,12 +416,6 @@ class MainController extends GetxController
 
   @override
   void onInit() async {
-    await setupApp();
-    super.onInit();
-  }
-
-  @override
-  void onReady() async {
     await setupApp();
     super.onInit();
   }

@@ -134,7 +134,7 @@ class ApiRepository extends GetxService {
 
       final res = await dio.post('/posts', data: data);
 
-      if (res.statusCode == 201) {
+      if (res.data['success']) {
         return right(res.data['success']);
       }
 
@@ -238,13 +238,22 @@ class ApiRepository extends GetxService {
 
   EitherUser<User> login(String username, String password) async {
     try {
+      String message = tryAgain;
       final data = {"username": username, "password": password};
 
+      if (username.isEmpty || password.isEmpty) {
+        message = Messages.pleaseUsernameOrPassword;
+        return left(message);
+      }
       final res = await dio.post('/auth/login', data: data);
       if (res.statusCode == 201) {
         return right(User.fromJson(res.data['data']));
       }
-      return left(tryAgain);
+
+      if (res.data['message'] == "Username or password is wrong") {
+        message = Messages.incompleteUsernameOrPassword;
+      }
+      return left(message);
     } on DioException catch (e) {
       dev.log(e.toString());
       if (e.response?.statusCode == 401 && e.response?.data['message'] != "") {
@@ -321,7 +330,8 @@ class ApiRepository extends GetxService {
       };
 
       final res = await dio.put('/user', data: data);
-      if (res.statusCode == 201) {
+
+      if (res.data['success']) {
         return right(true);
       }
       return left(tryAgain);
@@ -642,6 +652,7 @@ class ApiRepository extends GetxService {
         "filterData": filterData ?? [],
       };
       final res = await dio.post('/posts/getOwnPosts', data: data);
+
       if (res.statusCode == 201) {
         return right(
             (res.data['data'] as List).map((e) => Post.fromJson(e)).toList());

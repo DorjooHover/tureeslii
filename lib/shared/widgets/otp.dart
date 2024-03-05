@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:landlord/shared/constants/colors.dart';
+import 'package:landlord/shared/index.dart';
 
 class OtpView extends StatelessWidget {
   const OtpView({super.key});
@@ -38,10 +39,7 @@ class OtpView extends StatelessWidget {
                 ),
               ),
             ),
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(1),
-            ],
+            inputFormatters: onlyUnsignedNumbers(1),
           ),
         ),
         Container(
@@ -71,10 +69,7 @@ class OtpView extends StatelessWidget {
                 ),
               ),
             ),
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(1),
-            ],
+            inputFormatters: onlyUnsignedNumbers(1),
           ),
         ),
         Container(
@@ -104,10 +99,7 @@ class OtpView extends StatelessWidget {
                 ),
               ),
             ),
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(1),
-            ],
+            inputFormatters: onlyUnsignedNumbers(1),
           ),
         ),
         Container(
@@ -137,10 +129,7 @@ class OtpView extends StatelessWidget {
                 ),
               ),
             ),
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(1),
-            ],
+            inputFormatters: onlyUnsignedNumbers(1),
           ),
         ),
       ],

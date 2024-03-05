@@ -48,7 +48,7 @@ class MainButton extends StatelessWidget {
       child: AnimatedContainer(
         width: width,
         height: height,
-        duration: Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(borderRadius),

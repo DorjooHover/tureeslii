@@ -4,12 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:landlord/controllers/main_controller.dart';
-import 'package:landlord/routes.dart';
+
 import 'package:landlord/shared/index.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class ImageLibraryView extends StatefulWidget {
   const ImageLibraryView({super.key});
@@ -21,28 +20,17 @@ class ImageLibraryView extends StatefulWidget {
 class _ImageLibraryViewState extends State<ImageLibraryView> {
   GlobalKey<ScaffoldState> imageLibraryKey = GlobalKey<ScaffoldState>();
   final ImagePicker picker = ImagePicker();
-  List<XFile> images = [];
-  List<String> networkImages =[];
 
   void selectImages() async {
     final List<XFile> selectedImages = await picker.pickMultiImage();
     if (selectedImages.isNotEmpty) {
-      images.addAll(selectedImages);
+      controller.imageFiles.addAll(selectedImages);
     }
-    setState(() {});
   }
-
 
   @override
   void initState() {
     super.initState();
-  
-  controller.createPost.value!.postAttachments?.forEach((e) { 
-    networkImages.add(e.fileThumb!);
-  });
-    setState(() {
-
-    });
   }
 
   bool isDrawer = false;
@@ -73,9 +61,7 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                       PackageCard(
                           type: '',
                           onPress: () {
-                            controller.createNewPost(images);
-                            Navigator.of(context).pop();
-                            Get.toNamed(Routes.myAds);
+                            controller.createNewPost(context);
                           }),
                       space16,
                       PackageCard(type: 'promo1', onPress: () {}),
@@ -84,7 +70,6 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                     ],
                   ),
                 ],
-  
               ),
             ),
           );
@@ -113,20 +98,8 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () async  {
-                  await controller.updatePost(images.isNotEmpty ? images : []).then((value) {
-                    if (value) {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.success(message: successSaved),
-                      );
-                    } else {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.info(message: tryAgain),
-                      );
-                    }
-                  });
+                onPressed: () {
+                  controller.updatePost(context);
                 },
                 icon: SvgPicture.asset(
                   iconSave,
@@ -168,123 +141,131 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                                       .textTheme
                                       .bodySmall!
                                       .copyWith(color: black),
-                                )
+                                ),
+                                Obx(() => controller.imageFiles.isNotEmpty
+                                    ? space32
+                                    : const SizedBox()),
                               ],
                             )),
-                        if (images.isNotEmpty) space32,
-                        if (images.isNotEmpty)
-                          GridView.count(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            crossAxisCount: 3,
-                            padding: EdgeInsets.zero,
-                            mainAxisSpacing: 10,
-                            crossAxisSpacing: 10,
-                            children: images
-                                .map(
-                                  (e) => Stack(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(4),
-                                        width: double.infinity,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          child: Image.file(
-                                            File(e.path),
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        top: 0,
-                                        right: 0,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              images.remove(e);
-                                            });
-                                          },
-                                          child: Container(
-                                            width: 24,
-                                            height: 24,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(100),
-                                                color: red),
-                                            child: const Icon(
-                                              Icons.delete,
-                                              size: 16,
-                                              color: Colors.white,
+                        Obx(() => controller.imageFiles.isNotEmpty
+                            ? GridView.count(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                crossAxisCount: 3,
+                                padding: EdgeInsets.zero,
+                                mainAxisSpacing: 10,
+                                crossAxisSpacing: 10,
+                                children: controller.imageFiles
+                                    .map(
+                                      (e) => Stack(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(4),
+                                            width: double.infinity,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              child: Image.file(
+                                                File(e.path),
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                          if(networkImages.isNotEmpty && images.isEmpty)
-                          GridView.count(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            crossAxisCount: 3,
-                            padding: EdgeInsets.zero,
-                            mainAxisSpacing: 10,
-                            crossAxisSpacing: 10,
-                            children: images
-                                .map(
-                                  (e) => Stack(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(4),
-                                        width: double.infinity,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          child: CachedNetworkImage(
-                                            imageUrl: '$fileUrl$e',
-                                    
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                controller.imageFiles.remove(e);
+                                              },
+                                              child: Container(
+                                                width: 24,
+                                                height: 24,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            100),
+                                                    color: red),
+                                                child: const Icon(
+                                                  Icons.delete,
+                                                  size: 16,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                      Positioned(
-                                        top: 0,
-                                        right: 0,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              images.remove(e);
-                                            });
-                                          },
-                                          child: Container(
-                                            width: 24,
-                                            height: 24,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(100),
-                                                color: red),
-                                            child: const Icon(
-                                              Icons.delete,
-                                              size: 16,
-                                              color: Colors.white,
+                                    )
+                                    .toList(),
+                              )
+                            : const SizedBox()),
+                        Obx(() => controller
+                                        .createPost.value!.postAttachments !=
+                                    null &&
+                                controller.createPost.value!.postAttachments!
+                                    .isNotEmpty
+                            ? GridView.count(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                crossAxisCount: 3,
+                                padding: EdgeInsets.zero,
+                                mainAxisSpacing: 10,
+                                crossAxisSpacing: 10,
+                                children: controller
+                                    .createPost.value!.postAttachments!
+                                    .map(
+                                      (e) => Stack(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(4),
+                                            width: double.infinity,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              child: CachedNetworkImage(
+                                                imageUrl:
+                                                    '$fileUrl${e.fileThumb}',
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                                .toList(),
-                          ),
-
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                controller.createPost.value!
+                                                    .postAttachments!
+                                                    .remove(e);
+                                              },
+                                              child: Container(
+                                                width: 24,
+                                                height: 24,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            100),
+                                                    color: red),
+                                                child: const Icon(
+                                                  Icons.delete,
+                                                  size: 16,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                    .toList(),
+                              )
+                            : const SizedBox())
                       ],
                     )),
                     space20,
                     Text(
-                      '* $imageRequreUnit',
+                      '* $imageRequireUnit',
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                     space4,
@@ -313,43 +294,43 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
               bottom: MediaQuery.of(context).padding.bottom + 80,
               child: Align(
                   alignment: Alignment.center,
-                  child: MainButton(
-                    onPressed: () async {
-                      await controller.createNewPost(images);
-                      Navigator.of(context).pop();
-                      Get.toNamed(Routes.myAds);
-                    },
-                    borderRadius: 26,
-                    disabled: !images.isNotEmpty,
-                    disabledColor: disableColor,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              color: Colors.white),
-                          alignment: Alignment.center,
-                          child: Icon(
-                            Icons.add,
-                            color: images.isNotEmpty ? prime : disableColor,
-                            size: 20,
-                          ),
+                  child: Obx(() => MainButton(
+                        onPressed: () {
+                          controller.createNewPost(context);
+                        },
+                        borderRadius: 26,
+                        disabled:
+                            !images.isNotEmpty || controller.fetchLoading.value,
+                        loading: controller.fetchLoading.value,
+                        disabledColor: disableColor,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              width: 24,
+                              height: 24,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  color: Colors.white),
+                              alignment: Alignment.center,
+                              child: Icon(
+                                Icons.add,
+                                color: images.isNotEmpty ? prime : disableColor,
+                                size: 20,
+                              ),
+                            ),
+                            space20,
+                            Text(
+                              adAdd,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(color: Colors.white),
+                            )
+                          ],
                         ),
-                        space20,
-                        Text(
-                          adAdd,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(color: Colors.white),
-                        )
-                      ],
-                    ),
-                  )),
+                      ))),
             ),
           if (!isDrawer)
             Positioned(
@@ -367,12 +348,12 @@ class _ImageLibraryViewState extends State<ImageLibraryView> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.pop(context);
+                          controller.prevStep();
                         },
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Icon(
+                            const Icon(
                               Icons.arrow_back_ios_rounded,
                               color: prime,
                               size: 24,

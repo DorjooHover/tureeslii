@@ -3,10 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:landlord/controllers/main_controller.dart';
-import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class GeneralView extends StatefulWidget {
   const GeneralView({super.key});
@@ -29,14 +26,15 @@ class _GeneralViewState extends State<GeneralView> {
       bailMoney = false;
 
   String startRentDateValue = DateTime.now().toString().substring(0, 10);
-  double rentPriceValue = 0.0;
-  double rentPriceMonthValue = 0.0;
+  int rentPriceValue = 0;
+  int rentPriceMonthValue = 0;
   int minimumRentDayValue = 1, minimumRentMonthValue = 1;
   String selectedContractCondition = contractConditionValues[0],
       selectedPaymentCondition = paymentConditionValues[0],
       selectedBailCondition = bailConditionValues[0];
   int selectedCancelCondition = 0;
 
+  @override
   void initState() {
     super.initState();
     if (controller.cancelTerm.isNotEmpty) {
@@ -52,8 +50,8 @@ class _GeneralViewState extends State<GeneralView> {
             controller.createPost.value!.startDate!.substring(0, 10);
         bailMoney = controller.createPost.value!.depositRequired!;
         isMonth = controller.createPost.value!.monthlyRent!;
-        rentPriceMonthValue = controller.createPost.value!.price!;
-        rentPriceValue = controller.createPost.value!.priceDaily!;
+        rentPriceMonthValue = controller.createPost.value!.price!.round();
+        rentPriceValue = controller.createPost.value!.priceDaily!.round();
         minimumRentDayValue = controller.createPost.value!.minDurationDaily!;
         minimumRentMonthValue =
             controller.createPost.value!.minDurationMonthly!;
@@ -72,21 +70,15 @@ class _GeneralViewState extends State<GeneralView> {
   }
 
   Future nextStep() async {
+    bool success = true;
+    String message = '';
     if (!isDay && !isMonth) {
-      showTopSnackBar(
-        Overlay.of(context),
-        CustomSnackBar.info(message: chooseAnyOptionInRentType),
-      );
-
-      return;
+      success = false;
+      message = chooseAnyOptionInRentType;
     }
     if (isDay && minimumRentDayValue > 30) {
-      showTopSnackBar(
-        Overlay.of(context),
-        CustomSnackBar.info(message: inDayCanNot30Day),
-      );
-
-      return;
+      success = false;
+      message = inDayCanNot30Day;
     }
 
     controller.createPost.value!.cancelTerm = selectedCancelCondition;
@@ -107,8 +99,8 @@ class _GeneralViewState extends State<GeneralView> {
     controller.createPost.value!.priceTerm =
         contractConditionValuesValue[contractCondIndex];
 
-    controller.createPost.value!.price = rentPriceMonthValue;
-    controller.createPost.value!.priceDaily = rentPriceValue;
+    controller.createPost.value!.price = rentPriceMonthValue.toDouble();
+    controller.createPost.value!.priceDaily = rentPriceValue.toDouble();
     controller.createPost.value!.minDurationDaily = minimumRentDayValue;
     controller.createPost.value!.minDurationMonthly = minimumRentMonthValue;
 
@@ -129,8 +121,11 @@ class _GeneralViewState extends State<GeneralView> {
       controller.createPost.value!.priceIncluded = [];
     }
 
-    controller.nextStep();
-    Get.toNamed(Routes.condition);
+    controller.nextStep(
+      success,
+      context,
+      message,
+    );
   }
 
   @override
@@ -155,20 +150,8 @@ class _GeneralViewState extends State<GeneralView> {
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () async {
-                  await controller.updatePost([]).then((value) {
-                    if (value) {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.success(message: successSaved),
-                      );
-                    } else {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.info(message: errorOccurred),
-                      );
-                    }
-                  });
+                onPressed: () {
+                  controller.updatePost(context);
                 },
                 icon: SvgPicture.asset(
                   iconSave,
@@ -284,7 +267,8 @@ class _GeneralViewState extends State<GeneralView> {
                           children: <Widget>[
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
-                              activeColor: prime,
+                              activeColor: Colors.white,
+                              activeTrackColor: active,
                               title: Text(
                                 canDay,
                                 style: Theme.of(context)
@@ -309,9 +293,10 @@ class _GeneralViewState extends State<GeneralView> {
                                     value: rentPriceValue.toString(),
                                     textInputType: TextInputType.number,
                                     textInputAction: TextInputAction.next,
+                                    inputFormatter: onlyUnsignedNumbers(),
                                     onChange: (p0) {
                                       setState(() {
-                                        rentPriceValue = double.parse(p0);
+                                        rentPriceValue = int.tryParse(p0) ?? 0;
                                       });
                                     },
                                   )),
@@ -323,9 +308,7 @@ class _GeneralViewState extends State<GeneralView> {
                                     value: minimumRentDayValue.toString(),
                                     textInputType: TextInputType.number,
                                     textInputAction: TextInputAction.next,
-                                    inputFormatter: [
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
+                                    inputFormatter: onlyUnsignedNumbers(),
                                     onChange: (p0) {
                                       setState(() {
                                         minimumRentDayValue =
@@ -342,7 +325,8 @@ class _GeneralViewState extends State<GeneralView> {
                           children: <Widget>[
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
-                              activeColor: prime,
+                              activeColor: Colors.white,
+                              activeTrackColor: active,
                               title: Text(
                                 canMonth,
                                 style: Theme.of(context)
@@ -367,10 +351,11 @@ class _GeneralViewState extends State<GeneralView> {
                                     value: rentPriceMonthValue.toString(),
                                     textInputType: TextInputType.number,
                                     textInputAction: TextInputAction.next,
+                                    inputFormatter: onlyUnsignedNumbers(),
                                     onChange: (p0) {
                                       setState(() {
                                         rentPriceMonthValue =
-                                            double.tryParse(p0) ?? 0.0;
+                                            int.tryParse(p0) ?? 0;
                                       });
                                     },
                                   )),
@@ -382,6 +367,7 @@ class _GeneralViewState extends State<GeneralView> {
                                     value: minimumRentMonthValue.toString(),
                                     textInputType: TextInputType.number,
                                     textInputAction: TextInputAction.next,
+                                    inputFormatter: onlyUnsignedNumbers(),
                                     onChange: (p0) {
                                       setState(() {
                                         minimumRentMonthValue =
@@ -409,7 +395,7 @@ class _GeneralViewState extends State<GeneralView> {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: prime,
+                                activeColor: Colors.white,
                                 activeTrackColor: active,
                                 title: Text(
                                   flatPriceStr,
@@ -429,7 +415,7 @@ class _GeneralViewState extends State<GeneralView> {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: prime,
+                                activeColor: Colors.white,
                                 activeTrackColor: active,
                                 title: Text(
                                   sokhStr,
@@ -449,7 +435,7 @@ class _GeneralViewState extends State<GeneralView> {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: prime,
+                                activeColor: Colors.white,
                                 activeTrackColor: active,
                                 title: Text(
                                   eletronicStr,
@@ -469,7 +455,7 @@ class _GeneralViewState extends State<GeneralView> {
                               ),
                               SwitchListTile.adaptive(
                                 contentPadding: EdgeInsets.zero,
-                                activeColor: prime,
+                                activeColor: Colors.white,
                                 activeTrackColor: active,
                                 title: Text(
                                   internetStr,
@@ -510,7 +496,7 @@ class _GeneralViewState extends State<GeneralView> {
                                 )),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
-                              activeColor: prime,
+                              activeColor: Colors.white,
                               activeTrackColor: active,
                               title: Text(
                                 bailMoneyStr,
@@ -562,7 +548,6 @@ class _GeneralViewState extends State<GeneralView> {
                           GestureDetector(
                             onTap: () {
                               controller.prevStep();
-                              Navigator.pop(context);
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(
@@ -570,7 +555,7 @@ class _GeneralViewState extends State<GeneralView> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  Icon(
+                                  const Icon(
                                     Icons.arrow_back_ios_rounded,
                                     color: prime,
                                     size: 24,
@@ -601,7 +586,7 @@ class _GeneralViewState extends State<GeneralView> {
                                         Theme.of(context).textTheme.bodyMedium,
                                   ),
                                   space8,
-                                  Icon(
+                                  const Icon(
                                     Icons.arrow_forward_ios_rounded,
                                     color: prime,
                                     size: 24,
@@ -627,7 +612,6 @@ class _GeneralViewState extends State<GeneralView> {
                           GestureDetector(
                             onTap: () {
                               controller.prevStep();
-                              Navigator.pop(context);
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(

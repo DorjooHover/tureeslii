@@ -3,12 +3,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:landlord/controllers/auth_controller.dart';
 import 'package:landlord/controllers/main_controller.dart';
-import 'package:landlord/model/models.dart';
 import 'package:landlord/pages/auth/forgot_password_view.dart';
 import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -126,8 +123,8 @@ class _LoginViewState extends State<LoginView> {
                 MainButton(
                   color: Colors.white,
                   onPressed: () {},
-                  child: Social(
-                      icon: const Icon(
+                  child: const Social(
+                      icon: Icon(
                         Icons.facebook,
                         color: Color(0xff125099),
                         size: 24,

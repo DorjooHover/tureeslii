@@ -96,10 +96,10 @@ class _MyOrdersViewState extends State<MyOrdersView> {
               width: double.infinity,
               color: Colors.white,
               child: TabBar(
-                isScrollable: true,
-                indicatorSize: TabBarIndicatorSize.label,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelPadding: EdgeInsets.zero,
                 indicatorColor: prime,
-                labelPadding: const EdgeInsets.only(right: medium),
                 labelStyle: Theme.of(context)
                     .textTheme
                     .bodySmall!
@@ -107,8 +107,6 @@ class _MyOrdersViewState extends State<MyOrdersView> {
                 unselectedLabelStyle: Theme.of(context).textTheme.bodySmall,
                 labelColor: black,
                 unselectedLabelColor: black,
-                tabAlignment: TabAlignment.start,
-                padding: const EdgeInsets.symmetric(horizontal: origin),
                 tabs: const [
                   Tab(height: 30, text: expected),
                   Tab(height: 30, text: agreed),

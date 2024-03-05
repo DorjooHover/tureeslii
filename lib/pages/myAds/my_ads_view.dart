@@ -114,7 +114,7 @@ class _MyAdsViewState extends State<MyAdsView> {
             child: Container(
               color: Colors.white,
               child: TabBar(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 indicatorSize: TabBarIndicatorSize.tab,
                 labelPadding: EdgeInsets.zero,
                 indicatorColor: prime,

@@ -9,20 +9,24 @@ class DatePickerThemeWidget extends StatelessWidget {
     return Theme(
       data: ThemeData.dark().copyWith(
           colorScheme: const ColorScheme.dark(
-              onPrimary: prime, // selected text color
-              onSurface: second, // default text color
-              primary: orange // circle color
-              ),
-          dialogBackgroundColor: Colors.black54,
+              onPrimary: Colors.white, // selected text color
+              onSurface: Colors.white, // default text color
+              primary: prime, // circle color
+
+              background: prime),
+          dialogBackgroundColor: Colors.white,
           textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                   textStyle: const TextStyle(
-                      color: Colors.amber,
+                      color: Colors.white,
                       fontWeight: FontWeight.normal,
                       fontSize: 12,
                       fontFamily: 'Quicksand'),
                   // primary: Colors.amber, // color of button's letters
-                  backgroundColor: Colors.black54, // Background color
+                  backgroundColor: prime,
+                  iconColor: Colors.white, // Background color
+                  shadowColor: Colors.white,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                       side: const BorderSide(
                           color: Colors.transparent,

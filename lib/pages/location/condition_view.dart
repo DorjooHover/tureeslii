@@ -3,10 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:landlord/controllers/main_controller.dart';
-import 'package:landlord/routes.dart';
+
 import 'package:landlord/shared/index.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class ConditionView extends StatefulWidget {
   const ConditionView({super.key});
@@ -30,21 +28,27 @@ class _ConditionViewState extends State<ConditionView> {
   @override
   void initState() {
     super.initState();
-    if(controller.createPost.value?.id != null) {
+    if (controller.createPost.value?.id != null) {
       setState(() {
-        personCount = controller.createPost.value!.acceptedTenants! ;
-    pet = controller.createPost.value!.petAllowed! ;
-invite=     controller.createPost.value!.guestAllowed!;
-    smoke = controller.createPost.value!.smokingAllowed! ;
-    isLive = controller.createPost.value!.livingProperty!;
-    int whomRentIndex = whomRentValuesValue.indexOf(controller.createPost.value!.acceptedGender!);
-    selectedWhomRent =
-        whomRentValues[whomRentIndex];
+        personCount = controller.createPost.value!.acceptedTenants!;
+        pet = controller.createPost.value!.petAllowed!;
+        invite = controller.createPost.value!.guestAllowed!;
+        smoke = controller.createPost.value!.smokingAllowed!;
+        isLive = controller.createPost.value!.livingProperty!;
+        int whomRentIndex = whomRentValuesValue
+            .indexOf(controller.createPost.value!.acceptedGender!);
+        selectedWhomRent = whomRentValues[whomRentIndex];
       });
     }
   }
 
   nextStep() {
+    bool success = true;
+    String message = '';
+    if (personCount < 1) {
+      success = false;
+      message = 'Хүний тоо 1-с олон байна';
+    }
     controller.createPost.value!.acceptedTenants = personCount;
     controller.createPost.value!.petAllowed = pet;
     controller.createPost.value!.guestAllowed = invite;
@@ -53,10 +57,12 @@ invite=     controller.createPost.value!.guestAllowed!;
     int whomRentIndex = whomRentValues.indexOf(selectedWhomRent);
     controller.createPost.value!.acceptedGender =
         whomRentValuesValue[whomRentIndex];
-    controller.nextStep();
-    Get.toNamed(Routes.flatFeature);
+    controller.nextStep(
+      success,
+      context,
+      message,
+    );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -80,19 +86,9 @@ invite=     controller.createPost.value!.guestAllowed!;
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () async {await controller.updatePost([]).then((value) {
-                    if (value) {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.success(message: Messages.success),
-                      );
-                    } else {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.info(message: tryAgain),
-                      );
-                    }
-                  });},
+                onPressed: () {
+                  controller.updatePost(context);
+                },
                 icon: SvgPicture.asset(
                   iconSave,
                   width: 24,
@@ -135,9 +131,7 @@ invite=     controller.createPost.value!.guestAllowed!;
                                 child: Input(
                                   value: personCount.toString(),
                                   textInputType: TextInputType.number,
-                                  inputFormatter: [
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
+                                  inputFormatter: onlyUnsignedNumbers(),
                                   onChange: (p0) {
                                     setState(() {
                                       personCount = int.tryParse(p0) ?? 1;
@@ -163,7 +157,7 @@ invite=     controller.createPost.value!.guestAllowed!;
                             ),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
-                               activeColor: prime,
+                              activeColor: Colors.white,
                               activeTrackColor: active,
                               title: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -190,7 +184,7 @@ invite=     controller.createPost.value!.guestAllowed!;
                             ),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
-                              activeColor: prime,
+                              activeColor: Colors.white,
                               activeTrackColor: active,
                               title: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -217,7 +211,7 @@ invite=     controller.createPost.value!.guestAllowed!;
                             ),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
-                               activeColor: prime,
+                              activeColor: Colors.white,
                               activeTrackColor: active,
                               title: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -244,7 +238,7 @@ invite=     controller.createPost.value!.guestAllowed!;
                             ),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
-                               activeColor: prime,
+                              activeColor: Colors.white,
                               activeTrackColor: active,
                               title: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -291,7 +285,7 @@ invite=     controller.createPost.value!.guestAllowed!;
                         children: [
                           GestureDetector(
                             onTap: () {
-                              Navigator.pop(context);
+                              controller.prevStep();
                             },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,

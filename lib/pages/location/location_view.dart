@@ -7,8 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:landlord/controllers/main_controller.dart';
-import 'package:landlord/model/models.dart';
-import 'package:landlord/routes.dart';
 import 'package:landlord/shared/index.dart';
 import 'package:location/location.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -67,7 +65,7 @@ class _LocationViewState extends State<LocationView>
   @override
   void initState() {
     super.initState();
-
+    controller.currentStep.value = 0;
     if (controller.createPost.value?.id != null) {
       setState(() {
         selectedLocation = LatLng(
@@ -77,19 +75,36 @@ class _LocationViewState extends State<LocationView>
           "latitude": double.parse(controller.createPost.value!.lat!),
           "longitude": double.parse(controller.createPost.value!.long!)
         });
-        cityValue = controller.cities
-            .indexWhere((p0) => p0.name == controller.createPost.value!.city!);
-        stateController.text = controller.createPost.value!.state!;
-        districtController.text = controller.createPost.value!.district!;
-        flatNumberController.text = controller.createPost.value!.apartmentNo!;
-        floorController.text = controller.createPost.value!.floor!.toString();
-        doorNumberController.text = controller.createPost.value!.doorNo!;
-        addressController.text = controller.createPost.value!.address!;
       });
-    } else {
-      if (currentLocation == null) {
-        getCurrentLocation();
-      }
+    }
+    int cityIndex = controller.cities
+        .indexWhere((p0) => p0.name == controller.createPost.value!.city);
+    setState(() {
+      cityValue = cityIndex == -1 ? 0 : cityIndex;
+      controller.createPost.value!.state != null
+          ? stateController.text = controller.createPost.value!.state!
+          : stateController.clear();
+      controller.createPost.value!.district != null
+          ? districtController.text = controller.createPost.value!.district!
+          : districtController.clear();
+      controller.createPost.value!.apartmentNo != null
+          ? flatNumberController.text =
+              controller.createPost.value!.apartmentNo!
+          : flatNumberController.clear();
+      controller.createPost.value!.floor != null
+          ? floorController.text =
+              controller.createPost.value!.floor!.toString()
+          : floorController.clear();
+      controller.createPost.value!.doorNo != null
+          ? doorNumberController.text = controller.createPost.value!.doorNo!
+          : doorNumberController.clear();
+      controller.createPost.value!.address != null
+          ? addressController.text = controller.createPost.value!.address!
+          : addressController.clear();
+    });
+
+    if (currentLocation == null) {
+      getCurrentLocation();
     }
     if (controller.cities.isNotEmpty) {
       if (controller.createPost.value?.id == null) {
@@ -138,29 +153,21 @@ class _LocationViewState extends State<LocationView>
     );
   }
 
-
-  Future nextStep() async {
+  nextStep() async {
+    bool success = true;
+    String message = '';
     if (selectedLocation == null) {
-      showTopSnackBar(
-        Overlay.of(context),
-        CustomSnackBar.info(message: locationErrorStr),
-      );
-
-      return;
+      success = false;
+      message = locationErrorStr;
     }
-    if (cityValue == null) {
-      setState(() {
-        cityValue = 0;
-      });
-    }
-
     if (addressController.text != '' &&
         cityValue != null &&
         stateController.text != '' &&
         districtController.text != '' &&
         floorController.text != "" &&
         flatNumberController.text != '' &&
-        doorNumberController.text != '') {
+        doorNumberController.text != '' &&
+        selectedLocation != null) {
       controller.createPost.value!.address = addressController.text;
       controller.createPost.value!.city = controller.cities[cityValue!].name;
       controller.createPost.value!.state = stateController.text;
@@ -172,15 +179,15 @@ class _LocationViewState extends State<LocationView>
       controller.createPost.value!.long =
           selectedLocation!.longitude.toString();
       controller.createPost.value!.lat = selectedLocation!.latitude.toString();
-      controller.nextStep();
-      Get.toNamed(Routes.general);
     } else {
-      showTopSnackBar(
-        Overlay.of(context),
-        CustomSnackBar.info(message: Messages.incomplete),
-      );
-      return;
+      success = false;
+      message = Messages.incomplete;
     }
+    controller.nextStep(
+      success,
+      context,
+      message,
+    );
   }
 
   @override
@@ -211,20 +218,8 @@ class _LocationViewState extends State<LocationView>
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () async {
-                  await controller.updatePost([]).then((value) {
-                   if (value) {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.success(message: successSaved),
-                      );
-                    } else {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.info(message: tryAgain),
-                      );
-                    }
-                  });
+                onPressed: () {
+                  controller.updatePost(context);
                 },
                 icon: SvgPicture.asset(
                   iconSave,
@@ -262,8 +257,8 @@ class _LocationViewState extends State<LocationView>
                     left: origin,
                     top: 15,
                     child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 5, horizontal: 14),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 14),
                       width: 187,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -284,15 +279,15 @@ class _LocationViewState extends State<LocationView>
                       ),
                     )),
                 Positioned(
-                  bottom: 0,
+                  bottom: MediaQuery.of(context).padding.bottom,
                   right: 0,
                   left: 0,
                   child: AnimatedContainer(
                       constraints: BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height * 0.6,
+                        maxHeight: MediaQuery.of(context).size.height * 0.55,
                       ),
                       curve: Curves.easeOut,
-                      height: !isDrag ? _headerHeight : _size.height * 0.6,
+                      height: !isDrag ? _headerHeight : _size.height * 0.55,
                       duration: const Duration(milliseconds: 600),
                       child: SingleChildScrollView(
                         physics: const NeverScrollableScrollPhysics(),
@@ -310,7 +305,7 @@ class _LocationViewState extends State<LocationView>
                                   topLeft: Radius.circular(20.0),
                                 ),
                               ),
-                              height: _size.height * 0.6,
+                              height: _size.height * 0.55,
                               child: SingleChildScrollView(
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -442,10 +437,8 @@ class _LocationViewState extends State<LocationView>
                                                         TextInputAction.next,
                                                     textInputType:
                                                         TextInputType.number,
-                                                    inputFormatter: [
-                                                      FilteringTextInputFormatter
-                                                          .digitsOnly
-                                                    ],
+                                                    inputFormatter:
+                                                        onlyUnsignedNumbers(),
                                                     onChange: (p0) {
                                                       setState(() {
                                                         stateController.text =
@@ -461,10 +454,8 @@ class _LocationViewState extends State<LocationView>
                                                     controller: floorController,
                                                     textInputType:
                                                         TextInputType.number,
-                                                    inputFormatter: [
-                                                      FilteringTextInputFormatter
-                                                          .digitsOnly
-                                                    ],
+                                                    inputFormatter:
+                                                        onlyUnsignedNumbers(),
                                                     textInputAction:
                                                         TextInputAction.next,
                                                     onChange: (p0) {
@@ -505,10 +496,8 @@ class _LocationViewState extends State<LocationView>
                                                         doorNumberController,
                                                     textInputType:
                                                         TextInputType.number,
-                                                    inputFormatter: [
-                                                      FilteringTextInputFormatter
-                                                          .digitsOnly
-                                                    ],
+                                                    inputFormatter:
+                                                        onlyUnsignedNumbers(),
                                                     textInputAction:
                                                         TextInputAction.next,
                                                     onChange: (p0) {
@@ -558,7 +547,7 @@ class _LocationViewState extends State<LocationView>
                       )),
                 ),
                 Positioned(
-                    bottom: 0,
+                    bottom: MediaQuery.of(context).padding.bottom,
                     left: 0,
                     right: 0,
                     child: GestureDetector(
@@ -569,8 +558,8 @@ class _LocationViewState extends State<LocationView>
                         color: bgGray,
                         width: double.infinity,
                         alignment: Alignment.centerLeft,
-                        padding:
-                            EdgeInsets.only(top: 10, right: 16, bottom: 20),
+                        padding: const EdgeInsets.only(
+                            top: 10, right: 16, bottom: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[

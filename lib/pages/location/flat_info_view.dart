@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:landlord/controllers/main_controller.dart';
-import 'package:landlord/routes.dart';
+
 import 'package:landlord/shared/index.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class FlatInfoView extends StatefulWidget {
   const FlatInfoView({super.key});
@@ -20,36 +19,42 @@ class _FlatInfoViewState extends State<FlatInfoView> {
   final controller = Get.put(MainController());
 
   int selectedHeating = 0, selectedWaterSupply = 0, selectedToilet = 0;
-  double flatArea = 0.0;
+  int flatArea = 0;
   @override
   void initState() {
     super.initState();
-    
-   setState(() {
-      flatArea = controller.createPost.value!.plot!;
-    selectedHeating = heatingValuesValue.indexOf(controller.createPost.value!.heating!);
-    selectedWaterSupply = waterSupplyValuesValue.indexOf(controller.createPost.value!.waterSupply!);
-    selectedToilet = toiletValuesValue.indexOf(controller.createPost.value!.restroom!) ;
-
-   });
-  }
-  nextStep() {
-    if (flatArea <= 0) {
-      showTopSnackBar(
-        Overlay.of(context),
-        CustomSnackBar.info(message: 'Талбайгаа оруулна уу'),
-      );
-
-
-      return;
+    if (controller.createPost.value?.id != null) {
+      setState(() {
+        flatArea = controller.createPost.value!.plot?.round() ?? 0;
+        selectedHeating = heatingValuesValue.indexOf(
+            controller.createPost.value!.heating ?? heatingValuesValue[0]);
+        selectedWaterSupply = waterSupplyValuesValue.indexOf(
+            controller.createPost.value!.waterSupply ??
+                waterSupplyValuesValue[0]);
+        selectedToilet = toiletValuesValue.indexOf(
+            controller.createPost.value!.restroom ?? toiletValuesValue[0]);
+      });
     }
-    controller.createPost.value!.plot = flatArea;
+  }
+
+  nextStep() {
+    bool success = true;
+    String message = '';
+    if (flatArea <= 0) {
+      success = false;
+      message = 'Талбайгаа оруулна уу';
+    }
+
+    controller.createPost.value!.plot = flatArea.toDouble();
     controller.createPost.value!.heating = heatingValuesValue[selectedHeating];
     controller.createPost.value!.waterSupply =
         waterSupplyValuesValue[selectedWaterSupply];
     controller.createPost.value!.restroom = toiletValuesValue[selectedToilet];
-    controller.nextStep();
-    Get.toNamed(Routes.roomInfo);
+    controller.nextStep(
+      success,
+      context,
+      message,
+    );
   }
 
   @override
@@ -74,20 +79,8 @@ class _FlatInfoViewState extends State<FlatInfoView> {
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () async {
-                  await controller.updatePost([]).then((value) {
-                    if (value) {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.success(message: successSaved),
-                      );
-                    } else {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.info(message: tryAgain),
-                      );
-                    }
-                  });
+                onPressed: () {
+                  controller.updatePost(context);
                 },
                 icon: SvgPicture.asset(
                   iconSave,
@@ -166,9 +159,10 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                                   onSubmitted: (p0) {
                                     nextStep();
                                   },
+                                  inputFormatter: onlyUnsignedNumbers(),
                                   onChange: (p0) {
                                     setState(() {
-                                      flatArea = double.parse(p0);
+                                      flatArea = int.tryParse(p0) ?? 0;
                                     });
                                   },
                                 )),
@@ -194,7 +188,7 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              Navigator.pop(context);
+                              controller.prevStep();
                             },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,

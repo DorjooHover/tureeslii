@@ -142,6 +142,7 @@ class _VerificationViewState extends State<VerificationView> {
       appBar: MainAppBar(
         back: true,
         logo: false,
+        isDrawer: false,
         actions: [Container()],
         bgColor: bgGray,
         statusBarColor: bgGray,
@@ -149,8 +150,7 @@ class _VerificationViewState extends State<VerificationView> {
       body: Stack(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: origin, vertical: medium),
+            padding: const EdgeInsets.symmetric(horizontal: origin),
             width: double.infinity,
             child: SingleChildScrollView(
               child: Form(
@@ -271,9 +271,7 @@ class _VerificationViewState extends State<VerificationView> {
                               accountNumberController.text = p0;
                             });
                           },
-                          inputFormatter: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
+                          inputFormatter: onlyUnsignedNumbers(),
                           textInputAction: TextInputAction.next,
                           textInputType: TextInputType.number,
                         )),

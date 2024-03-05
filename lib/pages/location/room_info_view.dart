@@ -30,13 +30,11 @@ class _RoomInfoViewState extends State<RoomInfoView> {
   int bedTwoValue = 0;
 
   Future nextStep() async {
+    bool success = true;
+    String message = '';
     if (titleValue == '') {
-      showTopSnackBar(
-        Overlay.of(context),
-        CustomSnackBar.info(message: incompleteTitle),
-      );
-
-      return;
+      success = false;
+      message = incompleteTitle;
     }
     controller.createPost.value!.singleBed = bedOneValue;
     controller.createPost.value!.doubleBed = bedTwoValue;
@@ -46,8 +44,11 @@ class _RoomInfoViewState extends State<RoomInfoView> {
     controller.createPost.value!.kitchen = kitchenValue;
     controller.createPost.value!.title = titleValue;
     controller.createPost.value!.category = selectedType;
-    controller.nextStep();
-    Get.toNamed(Routes.imageLibrary);
+    controller.nextStep(
+      success,
+      context,
+      message,
+    );
   }
 
   @override
@@ -60,31 +61,32 @@ class _RoomInfoViewState extends State<RoomInfoView> {
     } else {
       controller.getCategories();
     }
-
-    setState(() {
-      bedOneValue = controller.createPost.value!.singleBed == null
-          ? 0
-          : controller.createPost.value!.singleBed!;
-      bedTwoValue = controller.createPost.value!.singleBed == null
-          ? 0
-          : controller.createPost.value!.doubleBed!;
-      bedRoomValue = controller.createPost.value!.singleBed == null
-          ? 0
-          : controller.createPost.value!.bedroom!;
-      bathRoomValue = controller.createPost.value!.singleBed == null
-          ? 0
-          : controller.createPost.value!.bathroom!;
-      livingRoomValue = controller.createPost.value!.singleBed == null
-          ? 0
-          : controller.createPost.value!.livingRoom!;
-      kitchenValue = controller.createPost.value!.singleBed == null
-          ? 0
-          : controller.createPost.value!.kitchen!;
-      selectedType = controller.createPost.value!.category!['id'];
-      controller.createPost.value!.category =
-          controller.createPost.value!.category['id'];
-      titleValue = controller.createPost.value!.title!;
-    });
+    if (controller.createPost.value?.id != null) {
+      setState(() {
+        bedOneValue = controller.createPost.value!.singleBed == null
+            ? 0
+            : controller.createPost.value!.singleBed!;
+        bedTwoValue = controller.createPost.value!.singleBed == null
+            ? 0
+            : controller.createPost.value!.doubleBed!;
+        bedRoomValue = controller.createPost.value!.singleBed == null
+            ? 0
+            : controller.createPost.value!.bedroom!;
+        bathRoomValue = controller.createPost.value!.singleBed == null
+            ? 0
+            : controller.createPost.value!.bathroom!;
+        livingRoomValue = controller.createPost.value!.singleBed == null
+            ? 0
+            : controller.createPost.value!.livingRoom!;
+        kitchenValue = controller.createPost.value!.singleBed == null
+            ? 0
+            : controller.createPost.value!.kitchen!;
+        selectedType = controller.createPost.value!.category['id'] ?? 1;
+        controller.createPost.value!.category =
+            controller.createPost.value!.category['id'];
+        titleValue = controller.createPost.value!.title!;
+      });
+    }
   }
 
   @override
@@ -109,20 +111,8 @@ class _RoomInfoViewState extends State<RoomInfoView> {
               bgColor: bgGray,
               statusBarColor: bgGray,
               child: IconButton(
-                onPressed: () async {
-                  await controller.updatePost([]).then((value) {
-                    if (value) {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.success(message: successSaved),
-                      );
-                    } else {
-                      showTopSnackBar(
-                        Overlay.of(context),
-                        CustomSnackBar.info(message: tryAgain),
-                      );
-                    }
-                  });
+                onPressed: () {
+                  controller.updatePost(context);
                 },
                 icon: SvgPicture.asset(
                   iconSave,
@@ -213,9 +203,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                         value: kitchenValue.toString(),
                                         textInputType: TextInputType.number,
                                         textInputAction: TextInputAction.next,
-                                        inputFormatter: [
-                                          FilteringTextInputFormatter.digitsOnly
-                                        ],
+                                        inputFormatter: onlyUnsignedNumbers(),
                                         onChange: (p0) {
                                           setState(() {
                                             kitchenValue =
@@ -232,9 +220,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                         value: bathRoomValue.toString(),
                                         textInputType: TextInputType.number,
                                         textInputAction: TextInputAction.next,
-                                        inputFormatter: [
-                                          FilteringTextInputFormatter.digitsOnly
-                                        ],
+                                        inputFormatter: onlyUnsignedNumbers(),
                                         onChange: (p0) {
                                           setState(() {
                                             bathRoomValue =
@@ -256,9 +242,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                         value: livingRoomValue.toString(),
                                         textInputType: TextInputType.number,
                                         textInputAction: TextInputAction.next,
-                                        inputFormatter: [
-                                          FilteringTextInputFormatter.digitsOnly
-                                        ],
+                                        inputFormatter: onlyUnsignedNumbers(),
                                         onChange: (p0) {
                                           setState(() {
                                             livingRoomValue =
@@ -275,9 +259,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                         value: bedRoomValue.toString(),
                                         textInputType: TextInputType.number,
                                         textInputAction: TextInputAction.next,
-                                        inputFormatter: [
-                                          FilteringTextInputFormatter.digitsOnly
-                                        ],
+                                        inputFormatter: onlyUnsignedNumbers(),
                                         onChange: (p0) {
                                           setState(() {
                                             bedRoomValue =
@@ -301,10 +283,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                           value: bedOneValue.toString(),
                                           textInputType: TextInputType.number,
                                           textInputAction: TextInputAction.next,
-                                          inputFormatter: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
-                                          ],
+                                          inputFormatter: onlyUnsignedNumbers(),
                                           onChange: (p0) {
                                             setState(() {
                                               bedOneValue =
@@ -320,10 +299,7 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                                         child: Input(
                                           value: bedTwoValue.toString(),
                                           textInputType: TextInputType.number,
-                                          inputFormatter: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
-                                          ],
+                                          inputFormatter: onlyUnsignedNumbers(),
                                           onChange: (p0) {
                                             setState(() {
                                               bedTwoValue =
@@ -359,12 +335,12 @@ class _RoomInfoViewState extends State<RoomInfoView> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              Navigator.pop(context);
+                              controller.prevStep();
                             },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                Icon(
+                                const Icon(
                                   Icons.arrow_back_ios_rounded,
                                   color: prime,
                                   size: 24,

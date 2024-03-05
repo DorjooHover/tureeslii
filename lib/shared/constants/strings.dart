@@ -103,7 +103,7 @@ const String bedTwo = '2 хүний ор';
 
 // images library
 const String addImage = 'Зураг оруулах';
-const String imageRequreUnit = 'Багадаа 3 зураг байршуулна';
+const String imageRequireUnit = 'Багадаа 3 зураг байршуулна';
 const String imageRequireSize = 'Багадаа 620x480 хэмжээтэй байх ёстой';
 const String haveDaySpecial = 'хоног онцгой зар болгох ';
 // listing
@@ -179,8 +179,6 @@ const String totalPaid = 'Нийт төлсөн';
 
 // statistic
 
- 
-
 const String totalViewed = 'Нийт үзсэн';
 const String totalSaved = 'Нийт хадгалсан';
 const String lastOneMonthViewed = 'Сүүлийн 1 сард үзсэн';
@@ -189,7 +187,6 @@ const String viewedCount = 'Үзсэн тоо';
 const String savedCount = 'Хадгалсан тоо';
 const String lastOneMonthCount = 'Сүүлийн 1 сард үзсэн тоо';
 const String lastSevenDayCount = 'Сүүлийн долоо хоногт үзсэн тоо';
-
 
 // global
 const String or = 'Эсвэл';
@@ -265,7 +262,12 @@ const String chooseAnyOptionInRentType =
 const String incompleteTitle = 'Гарчигаа оруулна уу';
 const String tryAgain = 'Дахин оролдоно уу';
 const String errorOccurred = 'Алдаа гарлаа';
+
 class Messages {
-  static String success = "Амжилттай"; 
-  static String incomplete = "Дутуу байна."; 
+  static String success = "Амжилттай";
+  static String incomplete = "Дутуу байна.";
+  static String pleaseUsernameOrPassword =
+      "Нэвтрэх нэр эсвэл нууц үгээ оруулна уу. ";
+  static String incompleteUsernameOrPassword =
+      "Нэвтрэх нэр эсвэл нууц үг буруу байна.";
 }

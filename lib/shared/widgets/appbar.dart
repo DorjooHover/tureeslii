@@ -46,7 +46,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
         statusBarIconBrightness:
             Brightness.dark, //<-- For Android SEE HERE (dark icons)
         statusBarBrightness:
-            Brightness.light, //<-- For iOS SEE HERE (dark icons)
+            Brightness.dark, //<-- For iOS SEE HERE (dark icons)
       ),
       leading: const SizedBox(),
       actions: actions ??
@@ -54,7 +54,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
             if (menu)
               Builder(
                 builder: (context) => IconButton(
-                  icon: Icon(Icons.menu_sharp),
+                  icon: const Icon(Icons.menu_sharp),
                   onPressed: () => Scaffold.of(context).openEndDrawer(),
                   tooltip:
                       MaterialLocalizations.of(context).openAppDrawerTooltip,
@@ -67,12 +67,13 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: currentIndex == 4
-            ? BorderRadius.only(
+            ? const BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30))
             : BorderRadius.zero,
       ),
       backgroundColor: bgColor,
+      surfaceTintColor: bgColor,
       title: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: origin),
@@ -99,7 +100,6 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                   logo
                       ? GestureDetector(
                           onTap: () {
-                            print('asdf');
                             Get.toNamed(Routes.main);
                           },
                           child: Image.asset(

@@ -7,6 +7,7 @@ class Input extends StatelessWidget {
       {super.key,
       this.controller,
       this.maxLine,
+      this.minLine,
       this.onSubmitted,
       this.value,
       this.autoFocus = false,
@@ -24,6 +25,7 @@ class Input extends StatelessWidget {
   final String? value;
   final bool autoFocus;
   final int? maxLine;
+  final int? minLine;
   final TextInputAction textInputAction;
   final bool obscureText;
   final TextInputType textInputType;
@@ -37,7 +39,7 @@ class Input extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       initialValue: value,
-
+      minLines: minLine,
       onFieldSubmitted: onSubmitted,
       autofocus: autoFocus,
       textInputAction: textInputAction,

@@ -72,11 +72,11 @@ class AuthController extends GetxController {
                 Overlay.of(context),
                 CustomSnackBar.info(message: l),
               ),
-          (r) => {
-                Overlay.of(context),
-                CustomSnackBar.success(message: Messages.success),
+          (r) {
+                Overlay.of(context);
+                CustomSnackBar.success(message: Messages.success);
                 _saveTokens(r.accessToken ?? '')
-                    .then((value) => Get.toNamed(Routes.main)),
+                    .then((value) => Get.toNamed(Routes.main));
               });
       fetchLoading.value = false;
     } catch (e) {
