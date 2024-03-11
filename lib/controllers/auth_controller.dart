@@ -13,7 +13,9 @@ class AuthController extends GetxController {
   ApiRepository apiRepository = ApiRepository();
   final fetchLoading = false.obs;
   final storage = GetStorage();
-
+  final code = TextEditingController();
+  final email = TextEditingController();
+  final password = TextEditingController();
   @override
   onInit() {
     super.onInit();
@@ -42,20 +44,41 @@ class AuthController extends GetxController {
     }
   }
 
-  forgotPassword(String email) async {
+  forgotPassword(BuildContext context) async {
     try {
-      final res = await apiRepository.forgotPassword(email);
-      res.fold((l) => null, (r) => null);
+      fetchLoading.value = true;
+      final res = await apiRepository.forgotPassword(email.text);
+      res.fold((l) => showTopSnackBar(
+                Overlay.of(context),
+                CustomSnackBar.info(message: l),
+              ), (r) => showTopSnackBar(
+                Overlay.of(context),
+                const CustomSnackBar.success(message: "Амжилттай илгээлээ."),
+              ));
+      fetchLoading.value = false;
     } catch (e) {
+      fetchLoading.value = false;
       dev.log(e.toString());
     }
   }
 
-  forgotPasswordVerify(String password, String code, String email) async {
+  forgotPasswordVerify(BuildContext context) async {
     try {
       final res =
-          await apiRepository.verifyForgotPassword(password, code, email);
-      res.fold((l) => null, (r) => null);
+          await apiRepository.verifyForgotPassword(password.text, code.text, email.text);
+      res.fold((l) => showTopSnackBar(
+                Overlay.of(context),
+                CustomSnackBar.info(message: l),
+              ), (r) => {
+        showTopSnackBar(
+                Overlay.of(context),
+                CustomSnackBar.success(message: Messages.success),
+              ),
+              Get.toNamed(Routes.auth)
+      });
+      code.clear();
+      email.clear();
+      password.clear();
     } catch (e) {
       dev.log(e.toString());
     }

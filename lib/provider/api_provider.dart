@@ -287,7 +287,8 @@ class ApiRepository extends GetxService {
   EitherSuccess<bool> forgotPassword(String email) async {
     try {
       final res = await dio.post('/auth/forgotpwd', data: {"username": email});
-      if (res.statusCode == 201) {
+      
+      if (res.data['success'] ) {
         return right(true);
       }
       return left(tryAgain);
@@ -306,6 +307,7 @@ class ApiRepository extends GetxService {
         "email_code": email
       };
       final res = await dio.post('/auth/changepwdforgot', data: data);
+      print(res);
       if (res.statusCode == 201) {
         return right(true);
       }

@@ -13,12 +13,12 @@ class ForgotPasswordView extends StatefulWidget {
 class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   final editKey = GlobalKey<FormState>();
   final controller = Get.put(AuthController());
-  String codeValue = "", emailValue = "", passwordValue = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgGray,
-      appBar: MainAppBar(
+      appBar: const MainAppBar(
         bgColor: bgGray,
         statusBarColor: bgGray,
         back: true,
@@ -36,17 +36,16 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                 AdditionCard(
                     title: email,
                     child: Input(
+                      controller: controller.email,
                       textInputAction: TextInputAction.next,
                       onChange: (p0) {
-                        setState(() {
-                          emailValue = p0;
-                        });
+                        controller.email.text = p0;
                       },
                     )),
                 space24,
                 MainButton(
                   onPressed: () {
-                    controller.forgotPassword(emailValue);
+                    controller.forgotPassword(context);
                   },
                   text: 'Мартсан',
                   width: double.infinity,
@@ -55,29 +54,26 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                 AdditionCard(
                     title: password,
                     child: Input(
+                      controller: controller.password,
                       textInputAction: TextInputAction.done,
                       onChange: (p0) {
-                        setState(() {
-                          passwordValue = p0;
-                        });
+                        controller.password.text = p0;
                       },
                     )),
                 space24,
                 AdditionCard(
                     title: 'code',
                     child: Input(
+                      controller: controller.code,
                       textInputAction: TextInputAction.done,
                       onChange: (p0) {
-                        setState(() {
-                          codeValue = p0;
-                        });
+                       controller.code.text = p0;
                       },
                     )),
                 space32,
                 MainButton(
                   onPressed: () {
-                    controller.forgotPasswordVerify(
-                        passwordValue, codeValue, emailValue);
+                    controller.forgotPasswordVerify(context);
                   },
                   text: register,
                   width: double.infinity,
