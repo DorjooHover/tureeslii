@@ -712,21 +712,23 @@ class _GeneralViewState extends State<GeneralView> {
                 }
               },
               child: Container(
-                decoration: const BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage(imageTriangle), fit: BoxFit.contain)),
-                height: 130,
-                width: 48,
-                padding: const EdgeInsets.only(left: 26),
-                alignment: Alignment.center,
-                child: Text(
-                  (controller.currentStep.value + 1).toString(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(color: blue, fontWeight: FontWeight.bold),
-                ),
-              ),
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage(imageTriangle),
+                          fit: BoxFit.contain)),
+                  height: 130,
+                  width: 48,
+                  padding: const EdgeInsets.only(left: 26),
+                  alignment: Alignment.center,
+                  child: Obx(
+                    () => Text(
+                      '${controller.currentStep.value + 1}',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(color: blue, fontWeight: FontWeight.bold),
+                    ),
+                  )),
             ),
           )
         ],

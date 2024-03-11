@@ -284,13 +284,13 @@ class _FlatInfoViewState extends State<FlatInfoView> {
                 width: 48,
                 padding: const EdgeInsets.only(left: 26),
                 alignment: Alignment.center,
-                child: Text(
+                child: Obx(() => Text(
                   '${controller.currentStep.value + 1}',
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!
                       .copyWith(color: blue, fontWeight: FontWeight.bold),
-                ),
+                ),)
               ),
             ),
           )
