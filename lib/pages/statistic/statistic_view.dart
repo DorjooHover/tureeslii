@@ -90,189 +90,191 @@ class _StatisticViewState extends State<StatisticView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: MyAdsAppBar(
-          back: true,
-        ),
-        backgroundColor: Colors.white,
-        body: SingleChildScrollView(
-          child: Container(
-              margin:
-                  EdgeInsets.symmetric(horizontal: origin, vertical: medium),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    statistic,
-                    style: Theme.of(context)
-                        .textTheme
-                        .displayMedium!
-                        .copyWith(color: black, fontWeight: FontWeight.bold),
-                  ),
-                  space45,
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              post,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(color: black),
-                            ),
-                            space4,
-                            DropDown(
-                                list: data,
-                                value: postId ?? '0',
-                                onChanged: (String? e) {
-                                  print(e);
-                                  // if (e != null) {
-                                  //   setState(() {
-                                  //     postId = e;
-                                  //   });
-
-                                  //   getViews(e, date);
-                                  // }
-                                })
-                          ],
-                        ),
-                      ),
-                      space16,
-                      Expanded(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              time,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(color: black),
-                            ),
-                            space4,
-                            DropDown(
-                                list: datesValuesStr,
-                                value: date,
-                                onChanged: (String? e) {
-                                  changeDate(e);
-                                })
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  space32,
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              viewed.toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displayMedium!
-                                  .copyWith(
-                                      color: orange,
-                                      fontWeight: FontWeight.bold),
-                            ),
-                            space4,
-                            Text(
-                              totalViewed,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(color: black),
-                            ),
-                          ],
-                        ),
-                      ),
-                      space16,
-                      Expanded(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              '$saved',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displayMedium!
-                                  .copyWith(
-                                      color: prime,
-                                      fontWeight: FontWeight.bold),
-                            ),
-                            space4,
-                            Text(
-                              totalSaved,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(color: black),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  space20,
-                  // Row(
-                  //   children: <Widget>[
-                  //    Expanded(
-                  //       child: Column(
-                  //         mainAxisSize: MainAxisSize.min,
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: <Widget>[
-                  //           Text('175', style: Theme.of(context).textTheme.displayMedium!.copyWith(color: black, fontWeight: FontWeight.bold),),
-                  //           space4,
-                  //           Text(lastSevenDayViewed, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: black),),
-
-                  //         ],
-                  //       ),
-                  //     ),
-                  //     space16,
-                  //     Expanded(
-                  //       child: Column(
-                  //         mainAxisSize: MainAxisSize.min,
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: <Widget>[
-                  //           Text('75', style: Theme.of(context).textTheme.displayMedium!.copyWith(color: black, fontWeight: FontWeight.bold),),
-                  //           space4,
-                  //           Text(lastOneMonthViewed, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: black),),
-
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  space32,
-                  SfCartesianChart(
-                    plotAreaBorderWidth: 0,
-                    legend: Legend(
-                      isVisible: true,
-                      position: LegendPosition.bottom,
+    return SafeArea(
+      child: Scaffold(
+          appBar: MyAdsAppBar(
+            back: true,
+          ),
+          backgroundColor: Colors.white,
+          body: SingleChildScrollView(
+            child: Container(
+                margin:
+                    EdgeInsets.symmetric(horizontal: origin, vertical: medium),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      statistic,
+                      style: Theme.of(context)
+                          .textTheme
+                          .displayMedium!
+                          .copyWith(color: black, fontWeight: FontWeight.bold),
                     ),
-                    primaryXAxis: CategoryAxis(
-                        majorGridLines: const MajorGridLines(width: 0),
-                        labelRotation: 0),
-                    primaryYAxis: NumericAxis(
-                        maximum: 200,
-                        axisLine: const AxisLine(width: 0),
-                        labelFormat: r'{value}',
-                        majorTickLines: const MajorTickLines(size: 0)),
-                    series: _getStackedLineSeries(),
-                    trackballBehavior: _trackballBehavior,
-                  )
-                ],
-              )),
-        ));
+                    space45,
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                post,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(color: black),
+                              ),
+                              space4,
+                              DropDown(
+                                  list: data,
+                                  value: postId ?? '0',
+                                  onChanged: (String? e) {
+                                    print(e);
+                                    // if (e != null) {
+                                    //   setState(() {
+                                    //     postId = e;
+                                    //   });
+
+                                    //   getViews(e, date);
+                                    // }
+                                  })
+                            ],
+                          ),
+                        ),
+                        space16,
+                        Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                time,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(color: black),
+                              ),
+                              space4,
+                              DropDown(
+                                  list: datesValuesStr,
+                                  value: date,
+                                  onChanged: (String? e) {
+                                    changeDate(e);
+                                  })
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    space32,
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                viewed.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .copyWith(
+                                        color: orange,
+                                        fontWeight: FontWeight.bold),
+                              ),
+                              space4,
+                              Text(
+                                totalViewed,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(color: black),
+                              ),
+                            ],
+                          ),
+                        ),
+                        space16,
+                        Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                '$saved',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .copyWith(
+                                        color: prime,
+                                        fontWeight: FontWeight.bold),
+                              ),
+                              space4,
+                              Text(
+                                totalSaved,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(color: black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    space20,
+                    // Row(
+                    //   children: <Widget>[
+                    //    Expanded(
+                    //       child: Column(
+                    //         mainAxisSize: MainAxisSize.min,
+                    //         crossAxisAlignment: CrossAxisAlignment.start,
+                    //         children: <Widget>[
+                    //           Text('175', style: Theme.of(context).textTheme.displayMedium!.copyWith(color: black, fontWeight: FontWeight.bold),),
+                    //           space4,
+                    //           Text(lastSevenDayViewed, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: black),),
+
+                    //         ],
+                    //       ),
+                    //     ),
+                    //     space16,
+                    //     Expanded(
+                    //       child: Column(
+                    //         mainAxisSize: MainAxisSize.min,
+                    //         crossAxisAlignment: CrossAxisAlignment.start,
+                    //         children: <Widget>[
+                    //           Text('75', style: Theme.of(context).textTheme.displayMedium!.copyWith(color: black, fontWeight: FontWeight.bold),),
+                    //           space4,
+                    //           Text(lastOneMonthViewed, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: black),),
+
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    space32,
+                    SfCartesianChart(
+                      plotAreaBorderWidth: 0,
+                      legend: Legend(
+                        isVisible: true,
+                        position: LegendPosition.bottom,
+                      ),
+                      primaryXAxis: CategoryAxis(
+                          majorGridLines: const MajorGridLines(width: 0),
+                          labelRotation: 0),
+                      primaryYAxis: NumericAxis(
+                          maximum: 200,
+                          axisLine: const AxisLine(width: 0),
+                          labelFormat: r'{value}',
+                          majorTickLines: const MajorTickLines(size: 0)),
+                      series: _getStackedLineSeries(),
+                      trackballBehavior: _trackballBehavior,
+                    )
+                  ],
+                )),
+          )),
+    );
   }
 
   List<StackedLineSeries<ChartSampleData, String>> _getStackedLineSeries() {

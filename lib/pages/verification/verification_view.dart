@@ -123,176 +123,177 @@ class _VerificationViewState extends State<VerificationView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgGray,
-      appBar: MainAppBar(
-        back: true,
-        logo: false,
-        isDrawer: false,
-        actions: [Container()],
-        bgColor: bgGray,
-        statusBarColor: bgGray,
-      ),
-      body: Stack(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: origin),
-            width: double.infinity,
-            child: SingleChildScrollView(
-              child: Form(
-                key: verificationKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      verification,
-                      style: Theme.of(context)
-                          .textTheme
-                          .displayMedium!
-                          .copyWith(color: black, fontWeight: FontWeight.w600),
-                    ),
-                    space36,
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                            child: AdditionCard(
-                                title: front,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    selectImage(true);
-                                  },
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: 96,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: divider),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: small),
-                                    alignment: Alignment.center,
-                                    child: fImage != null
-                                        ? frontImage == null
-                                            ? CachedNetworkImage(
-                                                imageUrl: "$fileUrl$fImage",
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Image.file(
-                                                File(frontImage!.path),
-                                                fit: BoxFit.cover,
-                                              )
-                                        : SvgPicture.asset(
-                                            iconAddImage,
-                                            width: 40,
-                                          ),
-                                  ),
-                                ))),
-                        space16,
-                        Expanded(
-                            child: AdditionCard(
-                                title: back,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    selectImage(false);
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: divider),
-                                    ),
-                                    width: double.infinity,
-                                    height: 96,
-                                    alignment: Alignment.center,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: small),
-                                    child: bImage != null
-                                        ? backImage == null
-                                            ? CachedNetworkImage(
-                                                imageUrl: "$fileUrl$bImage",
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Image.file(
-                                                File(backImage!.path),
-                                                fit: BoxFit.cover,
-                                              )
-                                        : SvgPicture.asset(
-                                            iconAddImage,
-                                            width: 40,
-                                          ),
-                                  ),
-                                ))),
-                      ],
-                    ),
-                    space16,
-                    Text(
-                      yourId,
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelSmall!
-                          .copyWith(fontStyle: FontStyle.italic, color: black),
-                    ),
-                    space24,
-                    AdditionCard(
-                      title: bank,
-                      child: DropDown(
-                        list: controller.banks,
-                        value: selectedBank ?? controller.banks[0],
-                        onChanged: (value) {
-                          if (value != null) {
-                            setState(() {
-                              selectedBank = value;
-                            });
-                          }
-                        },
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: bgGray,
+        appBar: MainAppBar(
+          back: true,
+          logo: false,
+          isDrawer: false,
+          actions: [Container()],
+          bgColor: bgGray,
+          statusBarColor: bgGray,
+        ),
+        body: Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: origin),
+              width: double.infinity,
+              child: SingleChildScrollView(
+                child: Form(
+                  key: verificationKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        verification,
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .copyWith(
+                                color: black, fontWeight: FontWeight.w600),
                       ),
-                    ),
-                    space24,
-                    AdditionCard(
-                        title: accountNumber,
-                        child: Input(
-                          controller: accountNumberController,
-                          onChange: (p0) {
-                            setState(() {
-                              accountNumberController.text = p0;
-                            });
+                      space36,
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                              child: AdditionCard(
+                                  title: front,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      selectImage(true);
+                                    },
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 96,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(color: divider),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: small),
+                                      alignment: Alignment.center,
+                                      child: fImage != null
+                                          ? frontImage == null
+                                              ? CachedNetworkImage(
+                                                  imageUrl: "$fileUrl$fImage",
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Image.file(
+                                                  File(frontImage!.path),
+                                                  fit: BoxFit.cover,
+                                                )
+                                          : SvgPicture.asset(
+                                              iconAddImage,
+                                              width: 40,
+                                            ),
+                                    ),
+                                  ))),
+                          space16,
+                          Expanded(
+                              child: AdditionCard(
+                                  title: back,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      selectImage(false);
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(color: divider),
+                                      ),
+                                      width: double.infinity,
+                                      height: 96,
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: small),
+                                      child: bImage != null
+                                          ? backImage == null
+                                              ? CachedNetworkImage(
+                                                  imageUrl: "$fileUrl$bImage",
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Image.file(
+                                                  File(backImage!.path),
+                                                  fit: BoxFit.cover,
+                                                )
+                                          : SvgPicture.asset(
+                                              iconAddImage,
+                                              width: 40,
+                                            ),
+                                    ),
+                                  ))),
+                        ],
+                      ),
+                      space16,
+                      Text(
+                        yourId,
+                        style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                            fontStyle: FontStyle.italic, color: black),
+                      ),
+                      space24,
+                      AdditionCard(
+                        title: bank,
+                        child: DropDown(
+                          list: controller.banks,
+                          value: selectedBank ?? controller.banks[0],
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                selectedBank = value;
+                              });
+                            }
                           },
-                          inputFormatter: onlyUnsignedNumbers(),
-                          textInputAction: TextInputAction.next,
-                          textInputType: TextInputType.number,
-                        )),
-                    space24,
-                    AdditionCard(
-                        title: accountName,
-                        child: Input(
-                          controller: accountNameController,
-                          onChange: (p0) {
-                            setState(() {
-                              accountNameController.text = p0;
-                            });
-                          },
-                          onSubmitted: ((p0) {
+                        ),
+                      ),
+                      space24,
+                      AdditionCard(
+                          title: accountNumber,
+                          child: Input(
+                            controller: accountNumberController,
+                            onChange: (p0) {
+                              setState(() {
+                                accountNumberController.text = p0;
+                              });
+                            },
+                            inputFormatter: onlyUnsignedNumbers(),
+                            textInputAction: TextInputAction.next,
+                            textInputType: TextInputType.number,
+                          )),
+                      space24,
+                      AdditionCard(
+                          title: accountName,
+                          child: Input(
+                            controller: accountNameController,
+                            onChange: (p0) {
+                              setState(() {
+                                accountNameController.text = p0;
+                              });
+                            },
+                            onSubmitted: ((p0) {
+                              submit();
+                            }),
+                          )),
+                      space36,
+                      Obx(
+                        () => MainButton(
+                          loading: controller.fetchLoading.value,
+                          onPressed: () {
                             submit();
-                          }),
-                        )),
-                    space36,
-                    Obx(
-                      () => MainButton(
-                        loading: controller.fetchLoading.value,
-                        onPressed: () {
-                          submit();
-                        },
-                        text: request,
-                        width: double.infinity,
+                          },
+                          text: request,
+                          width: double.infinity,
+                        ),
                       ),
-                    ),
-                    space40
-                  ],
+                      space40
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

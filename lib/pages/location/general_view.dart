@@ -132,606 +132,615 @@ class _GeneralViewState extends State<GeneralView> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Stack(
-        children: [
-          Scaffold(
-            backgroundColor: bgGray,
-            key: generalKey,
-            appBar: MainAppBar(
-              back: true,
-              logo: false,
-              center: Text(
-                general,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(fontWeight: FontWeight.bold),
-              ),
-              actions: [Container()],
-              onPressed: () {
-                controller.prevStep();
-              },
-              bgColor: bgGray,
-              statusBarColor: bgGray,
-              child: IconButton(
+    return SafeArea(
+      child: Material(
+        child: Stack(
+          children: [
+            Scaffold(
+              backgroundColor: bgGray,
+              key: generalKey,
+              appBar: MainAppBar(
+                back: true,
+                logo: false,
+                center: Text(
+                  general,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(fontWeight: FontWeight.bold),
+                ),
+                actions: [Container()],
                 onPressed: () {
-                  nextStep(true);
+                  controller.prevStep();
                 },
-                icon: SvgPicture.asset(
-                  iconSave,
-                  width: 24,
-                  height: 24,
+                bgColor: bgGray,
+                statusBarColor: bgGray,
+                child: IconButton(
+                  onPressed: () {
+                    nextStep(true);
+                  },
+                  icon: SvgPicture.asset(
+                    iconSave,
+                    width: 24,
+                    height: 24,
+                  ),
                 ),
               ),
-            ),
-            body: Stack(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: origin),
-                  margin: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).padding.bottom + 80),
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height - 63,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        MenuContainer(
-                            child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            AdditionCard(
-                              title: startRentDate,
-                              child: GestureDetector(
-                                onTap: () async {
-                                  final DateTime now = DateTime.now();
-                                  final DateTime? selectedDate =
-                                      await showDatePicker(
-                                          context: context,
-                                          initialDate: now,
-                                          firstDate: DateTime(
-                                              now.year, now.month, now.day),
-                                          lastDate: DateTime(now.year + 10),
-                                          builder: (context, child) {
-                                            return DatePickerThemeWidget(
-                                                child: child!);
-                                          });
-                                  if (selectedDate != null) {
-                                    setState(() {
-                                      startRentDateValue = selectedDate
-                                          .toString()
-                                          .substring(0, 10);
-                                    });
-                                  }
-                                },
-                                child: Container(
-                                  width: double.infinity,
-                                  height: 50,
-                                  alignment: Alignment.centerLeft,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 13),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(color: black, width: 1),
-                                  ),
-                                  child: Text(
-                                    startRentDateValue,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium!
-                                        .copyWith(color: black),
+              body: Stack(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: origin),
+                    margin: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).padding.bottom + 80),
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height - 63,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          MenuContainer(
+                              child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              AdditionCard(
+                                title: startRentDate,
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    final DateTime now = DateTime.now();
+                                    final DateTime? selectedDate =
+                                        await showDatePicker(
+                                            context: context,
+                                            initialDate: now,
+                                            firstDate: DateTime(
+                                                now.year, now.month, now.day),
+                                            lastDate: DateTime(now.year + 10),
+                                            builder: (context, child) {
+                                              return DatePickerThemeWidget(
+                                                  child: child!);
+                                            });
+                                    if (selectedDate != null) {
+                                      setState(() {
+                                        startRentDateValue = selectedDate
+                                            .toString()
+                                            .substring(0, 10);
+                                      });
+                                    }
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 50,
+                                    alignment: Alignment.centerLeft,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 13),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5),
+                                      border:
+                                          Border.all(color: black, width: 1),
+                                    ),
+                                    child: Text(
+                                      startRentDateValue,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(color: black),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            if (isMonth) space24,
-                            if (isMonth)
+                              if (isMonth) space24,
+                              if (isMonth)
+                                AdditionCard(
+                                    mark: true,
+                                    title: contractCondition,
+                                    child: DropDown(
+                                      list: contractConditionValues,
+                                      value: selectedContractCondition,
+                                      onChanged: (value) {
+                                        if (value != null) {
+                                          setState(() {
+                                            selectedContractCondition = value;
+                                          });
+                                        }
+                                      },
+                                    )),
+                              space24,
                               AdditionCard(
                                   mark: true,
-                                  title: contractCondition,
+                                  title: cancelCondition,
                                   child: DropDown(
-                                    list: contractConditionValues,
-                                    value: selectedContractCondition,
+                                    list: cancelConditionValues,
+                                    value: controller.cancelTerm.isNotEmpty
+                                        ? controller
+                                            .cancelTerm[selectedCancelCondition]
+                                            .name!
+                                        : "",
                                     onChanged: (value) {
                                       if (value != null) {
+                                        int i = controller.cancelTerm
+                                            .indexWhere((element) =>
+                                                element.name == value);
                                         setState(() {
-                                          selectedContractCondition = value;
+                                          selectedCancelCondition = i;
                                         });
                                       }
                                     },
                                   )),
-                            space24,
-                            AdditionCard(
-                                mark: true,
-                                title: cancelCondition,
-                                child: DropDown(
-                                  list: cancelConditionValues,
-                                  value: controller.cancelTerm.isNotEmpty
-                                      ? controller
-                                          .cancelTerm[selectedCancelCondition]
-                                          .name!
-                                      : "",
+                            ],
+                          )),
+                          space40,
+                          MenuContainer(
+                              child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              SwitchListTile.adaptive(
+                                contentPadding: EdgeInsets.zero,
+                                activeColor: Colors.white,
+                                activeTrackColor: active,
+                                title: Text(
+                                  canDay,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(
+                                          color: black,
+                                          fontWeight: FontWeight.bold),
+                                ),
+                                value: isDay,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isDay = value;
+                                  });
+                                },
+                              ),
+                              if (isDay) space24,
+                              if (isDay)
+                                AdditionCard(
+                                    title: rentPrice,
+                                    child: Input(
+                                      value: rentPriceValue.toString(),
+                                      textInputType: TextInputType.number,
+                                      textInputAction: TextInputAction.next,
+                                      inputFormatter: onlyUnsignedNumbers(),
+                                      onChange: (p0) {
+                                        setState(() {
+                                          rentPriceValue =
+                                              int.tryParse(p0) ?? 0;
+                                        });
+                                      },
+                                    )),
+                              if (isDay) space24,
+                              if (isDay)
+                                AdditionCard(
+                                    title: minimumRentDay,
+                                    child: Input(
+                                      value: minimumRentDayValue.toString(),
+                                      textInputType: TextInputType.number,
+                                      textInputAction: TextInputAction.next,
+                                      inputFormatter: onlyUnsignedNumbers(),
+                                      onChange: (p0) {
+                                        setState(() {
+                                          minimumRentDayValue =
+                                              int.tryParse(p0) ?? 1;
+                                        });
+                                      },
+                                    )),
+                            ],
+                          )),
+                          space40,
+                          MenuContainer(
+                              child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              SwitchListTile.adaptive(
+                                contentPadding: EdgeInsets.zero,
+                                activeColor: Colors.white,
+                                activeTrackColor: active,
+                                title: Text(
+                                  canMonth,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(
+                                          color: black,
+                                          fontWeight: FontWeight.bold),
+                                ),
+                                value: isMonth,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isMonth = value;
+                                  });
+                                },
+                              ),
+                              if (isMonth) space24,
+                              if (isMonth)
+                                AdditionCard(
+                                    title: rentPrice,
+                                    child: Input(
+                                      value: rentPriceMonthValue.toString(),
+                                      textInputType: TextInputType.number,
+                                      textInputAction: TextInputAction.next,
+                                      inputFormatter: onlyUnsignedNumbers(),
+                                      onChange: (p0) {
+                                        setState(() {
+                                          rentPriceMonthValue =
+                                              int.tryParse(p0) ?? 0;
+                                        });
+                                      },
+                                    )),
+                              if (isMonth) space24,
+                              if (isMonth)
+                                AdditionCard(
+                                    title: minimumRentMonth,
+                                    child: Input(
+                                      value: minimumRentMonthValue.toString(),
+                                      textInputType: TextInputType.number,
+                                      textInputAction: TextInputAction.next,
+                                      inputFormatter: onlyUnsignedNumbers(),
+                                      onChange: (p0) {
+                                        setState(() {
+                                          minimumRentMonthValue =
+                                              int.tryParse(p0) ?? 1;
+                                        });
+                                      },
+                                    )),
+                            ],
+                          )),
+                          if (isMonth) space40,
+                          if (isMonth)
+                            MenuContainer(
+                                child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  inPayment,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(
+                                          color: black,
+                                          fontWeight: FontWeight.bold),
+                                ),
+                                SwitchListTile.adaptive(
+                                  contentPadding: EdgeInsets.zero,
+                                  activeColor: Colors.white,
+                                  activeTrackColor: active,
+                                  title: Text(
+                                    flatPriceStr,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(
+                                          color: black,
+                                        ),
+                                  ),
+                                  value: flatPrice,
                                   onChanged: (value) {
-                                    if (value != null) {
-                                      int i = controller.cancelTerm.indexWhere(
-                                          (element) => element.name == value);
-                                      setState(() {
-                                        selectedCancelCondition = i;
-                                      });
-                                    }
+                                    setState(() {
+                                      flatPrice = value;
+                                    });
                                   },
-                                )),
-                          ],
-                        )),
-                        space40,
-                        MenuContainer(
-                            child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            SwitchListTile.adaptive(
-                              contentPadding: EdgeInsets.zero,
-                              activeColor: Colors.white,
-                              activeTrackColor: active,
-                              title: Text(
-                                canDay,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(
-                                        color: black,
-                                        fontWeight: FontWeight.bold),
-                              ),
-                              value: isDay,
-                              onChanged: (value) {
-                                setState(() {
-                                  isDay = value;
-                                });
-                              },
-                            ),
-                            if (isDay) space24,
-                            if (isDay)
-                              AdditionCard(
-                                  title: rentPrice,
-                                  child: Input(
-                                    value: rentPriceValue.toString(),
-                                    textInputType: TextInputType.number,
-                                    textInputAction: TextInputAction.next,
-                                    inputFormatter: onlyUnsignedNumbers(),
-                                    onChange: (p0) {
-                                      setState(() {
-                                        rentPriceValue = int.tryParse(p0) ?? 0;
-                                      });
-                                    },
-                                  )),
-                            if (isDay) space24,
-                            if (isDay)
-                              AdditionCard(
-                                  title: minimumRentDay,
-                                  child: Input(
-                                    value: minimumRentDayValue.toString(),
-                                    textInputType: TextInputType.number,
-                                    textInputAction: TextInputAction.next,
-                                    inputFormatter: onlyUnsignedNumbers(),
-                                    onChange: (p0) {
-                                      setState(() {
-                                        minimumRentDayValue =
-                                            int.tryParse(p0) ?? 1;
-                                      });
-                                    },
-                                  )),
-                          ],
-                        )),
-                        space40,
-                        MenuContainer(
-                            child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            SwitchListTile.adaptive(
-                              contentPadding: EdgeInsets.zero,
-                              activeColor: Colors.white,
-                              activeTrackColor: active,
-                              title: Text(
-                                canMonth,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(
-                                        color: black,
-                                        fontWeight: FontWeight.bold),
-                              ),
-                              value: isMonth,
-                              onChanged: (value) {
-                                setState(() {
-                                  isMonth = value;
-                                });
-                              },
-                            ),
-                            if (isMonth) space24,
-                            if (isMonth)
-                              AdditionCard(
-                                  title: rentPrice,
-                                  child: Input(
-                                    value: rentPriceMonthValue.toString(),
-                                    textInputType: TextInputType.number,
-                                    textInputAction: TextInputAction.next,
-                                    inputFormatter: onlyUnsignedNumbers(),
-                                    onChange: (p0) {
-                                      setState(() {
-                                        rentPriceMonthValue =
-                                            int.tryParse(p0) ?? 0;
-                                      });
-                                    },
-                                  )),
-                            if (isMonth) space24,
-                            if (isMonth)
-                              AdditionCard(
-                                  title: minimumRentMonth,
-                                  child: Input(
-                                    value: minimumRentMonthValue.toString(),
-                                    textInputType: TextInputType.number,
-                                    textInputAction: TextInputAction.next,
-                                    inputFormatter: onlyUnsignedNumbers(),
-                                    onChange: (p0) {
-                                      setState(() {
-                                        minimumRentMonthValue =
-                                            int.tryParse(p0) ?? 1;
-                                      });
-                                    },
-                                  )),
-                          ],
-                        )),
-                        if (isMonth) space40,
-                        if (isMonth)
+                                ),
+                                SwitchListTile.adaptive(
+                                  contentPadding: EdgeInsets.zero,
+                                  activeColor: Colors.white,
+                                  activeTrackColor: active,
+                                  title: Text(
+                                    sokhStr,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(
+                                          color: black,
+                                        ),
+                                  ),
+                                  value: sokh,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      sokh = value;
+                                    });
+                                  },
+                                ),
+                                SwitchListTile.adaptive(
+                                  contentPadding: EdgeInsets.zero,
+                                  activeColor: Colors.white,
+                                  activeTrackColor: active,
+                                  title: Text(
+                                    eletronicStr,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(
+                                          color: black,
+                                        ),
+                                  ),
+                                  value: electronic,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      electronic = value;
+                                    });
+                                  },
+                                ),
+                                SwitchListTile.adaptive(
+                                  contentPadding: EdgeInsets.zero,
+                                  activeColor: Colors.white,
+                                  activeTrackColor: active,
+                                  title: Text(
+                                    internetStr,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(
+                                          color: black,
+                                        ),
+                                  ),
+                                  value: internet,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      internet = value;
+                                    });
+                                  },
+                                ),
+                              ],
+                            )),
+                          space40,
                           MenuContainer(
                               child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(
-                                inPayment,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(
-                                        color: black,
-                                        fontWeight: FontWeight.bold),
-                              ),
-                              SwitchListTile.adaptive(
-                                contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
-                                activeTrackColor: active,
-                                title: Text(
-                                  flatPriceStr,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(
-                                        color: black,
-                                      ),
-                                ),
-                                value: flatPrice,
-                                onChanged: (value) {
-                                  setState(() {
-                                    flatPrice = value;
-                                  });
-                                },
-                              ),
-                              SwitchListTile.adaptive(
-                                contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
-                                activeTrackColor: active,
-                                title: Text(
-                                  sokhStr,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(
-                                        color: black,
-                                      ),
-                                ),
-                                value: sokh,
-                                onChanged: (value) {
-                                  setState(() {
-                                    sokh = value;
-                                  });
-                                },
-                              ),
-                              SwitchListTile.adaptive(
-                                contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
-                                activeTrackColor: active,
-                                title: Text(
-                                  eletronicStr,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(
-                                        color: black,
-                                      ),
-                                ),
-                                value: electronic,
-                                onChanged: (value) {
-                                  setState(() {
-                                    electronic = value;
-                                  });
-                                },
-                              ),
-                              SwitchListTile.adaptive(
-                                contentPadding: EdgeInsets.zero,
-                                activeColor: Colors.white,
-                                activeTrackColor: active,
-                                title: Text(
-                                  internetStr,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(
-                                        color: black,
-                                      ),
-                                ),
-                                value: internet,
-                                onChanged: (value) {
-                                  setState(() {
-                                    internet = value;
-                                  });
-                                },
-                              ),
-                            ],
-                          )),
-                        space40,
-                        MenuContainer(
-                            child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            AdditionCard(
-                                title: paymentCondition,
-                                child: DropDown(
-                                  list: paymentConditionValues,
-                                  value: selectedPaymentCondition,
-                                  onChanged: (value) {
-                                    if (value != null) {
-                                      setState(() {
-                                        selectedPaymentCondition = value;
-                                      });
-                                    }
-                                  },
-                                )),
-                            SwitchListTile.adaptive(
-                              contentPadding: EdgeInsets.zero,
-                              activeColor: Colors.white,
-                              activeTrackColor: active,
-                              title: Text(
-                                bailMoneyStr,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(
-                                      color: black,
-                                    ),
-                              ),
-                              value: bailMoney,
-                              onChanged: (value) {
-                                setState(() {
-                                  bailMoney = value;
-                                });
-                              },
-                            ),
-                            if (bailMoney)
                               AdditionCard(
-                                  title: bailCondition,
+                                  title: paymentCondition,
                                   child: DropDown(
-                                    list: bailConditionValues,
-                                    value: selectedBailCondition,
+                                    list: paymentConditionValues,
+                                    value: selectedPaymentCondition,
                                     onChanged: (value) {
                                       if (value != null) {
                                         setState(() {
-                                          selectedBailCondition = value;
+                                          selectedPaymentCondition = value;
                                         });
                                       }
                                     },
                                   )),
-                          ],
-                        )),
-                      ],
+                              SwitchListTile.adaptive(
+                                contentPadding: EdgeInsets.zero,
+                                activeColor: Colors.white,
+                                activeTrackColor: active,
+                                title: Text(
+                                  bailMoneyStr,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(
+                                        color: black,
+                                      ),
+                                ),
+                                value: bailMoney,
+                                onChanged: (value) {
+                                  setState(() {
+                                    bailMoney = value;
+                                  });
+                                },
+                              ),
+                              if (bailMoney)
+                                AdditionCard(
+                                    title: bailCondition,
+                                    child: DropDown(
+                                      list: bailConditionValues,
+                                      value: selectedBailCondition,
+                                      onChanged: (value) {
+                                        if (value != null) {
+                                          setState(() {
+                                            selectedBailCondition = value;
+                                          });
+                                        }
+                                      },
+                                    )),
+                            ],
+                          )),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Positioned(
-                    bottom: MediaQuery.of(context).padding.bottom,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      color: bgGray,
-                      width: double.infinity,
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              controller.prevStep();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 18, right: 16, left: 16, bottom: 32),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  const Icon(
-                                    Icons.arrow_back_ios_rounded,
-                                    color: prime,
-                                    size: 24,
-                                  ),
-                                  space8,
-                                  Text(
-                                    prev,
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                ],
+                  Positioned(
+                      bottom: MediaQuery.of(context).padding.bottom,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        color: bgGray,
+                        width: double.infinity,
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                controller.prevStep();
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 18, right: 16, left: 16, bottom: 32),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    const Icon(
+                                      Icons.arrow_back_ios_rounded,
+                                      color: prime,
+                                      size: 24,
+                                    ),
+                                    space8,
+                                    Text(
+                                      prev,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              nextStep(false);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 18, right: 16, left: 16, bottom: 32),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Text(
-                                    next,
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                  space8,
-                                  const Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    color: prime,
-                                    size: 24,
-                                  )
-                                ],
+                            GestureDetector(
+                              onTap: () {
+                                nextStep(false);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 18, right: 16, left: 16, bottom: 32),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(
+                                      next,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                    space8,
+                                    const Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      color: prime,
+                                      size: 24,
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    )),
-                Positioned(
-                    bottom: MediaQuery.of(context).padding.bottom,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      color: bgGray,
-                      width: double.infinity,
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              controller.prevStep();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 18, right: 16, left: 16, bottom: 32),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  const Icon(
-                                    Icons.arrow_back_ios_rounded,
-                                    color: prime,
-                                    size: 24,
-                                  ),
-                                  space8,
-                                  Text(
-                                    prev,
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                ],
+                          ],
+                        ),
+                      )),
+                  Positioned(
+                      bottom: MediaQuery.of(context).padding.bottom,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        color: bgGray,
+                        width: double.infinity,
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                controller.prevStep();
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 18, right: 16, left: 16, bottom: 32),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    const Icon(
+                                      Icons.arrow_back_ios_rounded,
+                                      color: prime,
+                                      size: 24,
+                                    ),
+                                    space8,
+                                    Text(
+                                      prev,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              nextStep(false);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 18, right: 16, left: 16, bottom: 32),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Text(
-                                    next,
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                  space8,
-                                  Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    color: prime,
-                                    size: 24,
-                                  )
-                                ],
+                            GestureDetector(
+                              onTap: () {
+                                nextStep(false);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 18, right: 16, left: 16, bottom: 32),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(
+                                      next,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                    space8,
+                                    Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      color: prime,
+                                      size: 24,
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    )),
-              ],
-            ),
-            drawerScrimColor: Colors.transparent,
-            endDrawer: LocationDrawer(selected: controller.verified),
-            onEndDrawerChanged: (isOpened) {
-              if (isOpened != isDrawer) {
-                setState(() {
-                  isDrawer = isOpened;
-                });
-              }
-            },
-          ),
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 300),
-            right: !isDrawer ? 0 : MediaQuery.of(context).size.width * 0.75,
-            curve: Curves.ease,
-            bottom: MediaQuery.of(context).size.height * 0.25,
-            child: GestureDetector(
-              onHorizontalDragUpdate: (details) {
-                if (details.delta.dx > 1) {
-                  generalKey.currentState!.openEndDrawer();
+                          ],
+                        ),
+                      )),
+                ],
+              ),
+              drawerScrimColor: Colors.transparent,
+              endDrawer: LocationDrawer(selected: controller.verified),
+              onEndDrawerChanged: (isOpened) {
+                if (isOpened != isDrawer) {
                   setState(() {
-                    isDrawer = true;
-                  });
-                } else {
-                  generalKey.currentState!.closeEndDrawer();
-                  setState(() {
-                    isDrawer = false;
+                    isDrawer = isOpened;
                   });
                 }
               },
-              onTap: () {
-                if (isDrawer) {
-                  generalKey.currentState!.closeEndDrawer();
-                  setState(() {
-                    isDrawer = false;
-                  });
-                } else {
-                  generalKey.currentState!.openEndDrawer();
-                  setState(() {
-                    isDrawer = true;
-                  });
-                }
-              },
-              child: Container(
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(imageTriangle),
-                          fit: BoxFit.contain)),
-                  height: 130,
-                  width: 48,
-                  padding: const EdgeInsets.only(left: 26),
-                  alignment: Alignment.center,
-                  child: Obx(
-                    () => Text(
-                      '${controller.currentStep.value + 1}',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(color: blue, fontWeight: FontWeight.bold),
-                    ),
-                  )),
             ),
-          )
-        ],
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 300),
+              right: !isDrawer ? 0 : MediaQuery.of(context).size.width * 0.75,
+              curve: Curves.ease,
+              bottom: MediaQuery.of(context).size.height * 0.25,
+              child: GestureDetector(
+                onHorizontalDragUpdate: (details) {
+                  if (details.delta.dx > 1) {
+                    generalKey.currentState!.openEndDrawer();
+                    setState(() {
+                      isDrawer = true;
+                    });
+                  } else {
+                    generalKey.currentState!.closeEndDrawer();
+                    setState(() {
+                      isDrawer = false;
+                    });
+                  }
+                },
+                onTap: () {
+                  if (isDrawer) {
+                    generalKey.currentState!.closeEndDrawer();
+                    setState(() {
+                      isDrawer = false;
+                    });
+                  } else {
+                    generalKey.currentState!.openEndDrawer();
+                    setState(() {
+                      isDrawer = true;
+                    });
+                  }
+                },
+                child: Container(
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage(imageTriangle),
+                            fit: BoxFit.contain)),
+                    height: 130,
+                    width: 48,
+                    padding: const EdgeInsets.only(left: 26),
+                    alignment: Alignment.center,
+                    child: Obx(
+                      () => Text(
+                        '${controller.currentStep.value + 1}',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(color: blue, fontWeight: FontWeight.bold),
+                      ),
+                    )),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

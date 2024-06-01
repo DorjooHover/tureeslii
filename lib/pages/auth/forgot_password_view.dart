@@ -16,69 +16,71 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgGray,
-      appBar: const MainAppBar(
-        bgColor: bgGray,
-        statusBarColor: bgGray,
-        back: true,
-        logo: false,
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: origin, vertical: large),
-          child: Form(
-            key: editKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AdditionCard(
-                    title: email,
-                    child: Input(
-                      controller: controller.email,
-                      textInputAction: TextInputAction.next,
-                      onChange: (p0) {
-                        controller.email.text = p0;
-                      },
-                    )),
-                space24,
-                MainButton(
-                  onPressed: () {
-                    controller.forgotPassword(context);
-                  },
-                  text: 'Мартсан',
-                  width: double.infinity,
-                ),
-                space32,
-                AdditionCard(
-                    title: password,
-                    child: Input(
-                      controller: controller.password,
-                      textInputAction: TextInputAction.done,
-                      onChange: (p0) {
-                        controller.password.text = p0;
-                      },
-                    )),
-                space24,
-                AdditionCard(
-                    title: 'code',
-                    child: Input(
-                      controller: controller.code,
-                      textInputAction: TextInputAction.done,
-                      onChange: (p0) {
-                       controller.code.text = p0;
-                      },
-                    )),
-                space32,
-                MainButton(
-                  onPressed: () {
-                    controller.forgotPasswordVerify(context);
-                  },
-                  text: register,
-                  width: double.infinity,
-                )
-              ],
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: bgGray,
+        appBar: const MainAppBar(
+          bgColor: bgGray,
+          statusBarColor: bgGray,
+          back: true,
+          logo: false,
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: origin, vertical: large),
+            child: Form(
+              key: editKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AdditionCard(
+                      title: email,
+                      child: Input(
+                        controller: controller.email,
+                        textInputAction: TextInputAction.next,
+                        onChange: (p0) {
+                          controller.email.text = p0;
+                        },
+                      )),
+                  space24,
+                  MainButton(
+                    onPressed: () {
+                      controller.forgotPassword(context);
+                    },
+                    text: 'Мартсан',
+                    width: double.infinity,
+                  ),
+                  space32,
+                  AdditionCard(
+                      title: password,
+                      child: Input(
+                        controller: controller.password,
+                        textInputAction: TextInputAction.done,
+                        onChange: (p0) {
+                          controller.password.text = p0;
+                        },
+                      )),
+                  space24,
+                  AdditionCard(
+                      title: 'code',
+                      child: Input(
+                        controller: controller.code,
+                        textInputAction: TextInputAction.done,
+                        onChange: (p0) {
+                          controller.code.text = p0;
+                        },
+                      )),
+                  space32,
+                  MainButton(
+                    onPressed: () {
+                      controller.forgotPasswordVerify(context);
+                    },
+                    text: register,
+                    width: double.infinity,
+                  )
+                ],
+              ),
             ),
           ),
         ),
